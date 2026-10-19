@@ -20,4 +20,3 @@ Plain HTML, no build step. Based on [Jon Barron's website](https://github.com/jo
 ## To do
 
 - Add co-authors and the arXiv link for the CVPR preprint.
-- Add a Google Scholar link.
