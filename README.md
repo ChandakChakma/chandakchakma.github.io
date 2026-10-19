@@ -19,6 +19,5 @@ Plain HTML, no build step. Based on [Jon Barron's website](https://github.com/jo
 
 ## To do
 
-- Replace `images/profile.svg` with a real headshot (`images/chandak.jpg`, square crop).
 - Add co-authors and the arXiv link for the CVPR preprint.
 - Add a Google Scholar link.
