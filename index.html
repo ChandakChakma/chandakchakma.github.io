@@ -63,7 +63,9 @@
               <td style="padding:20px;width:100%;vertical-align:middle">
                 <h2>Research</h2>
                 <p>
-                  Papers are listed newest first.
+                  I'm interested in world models and reinforcement learning for LLM reasoning.
+                  Most of my research asks whether the many samples a model draws form an honest distribution, and what to do when they do not.
+                  Representative papers are <span class="highlight">highlighted</span>.
                 </p>
               </td>
             </tr>
@@ -72,7 +74,7 @@
           <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
 
             <!-- Paper 1: CVPR preprint -->
-            <tr>
+            <tr bgcolor="#ffffd0">
               <td style="padding:16px;width:30%;vertical-align:middle">
                 <img src="images/paper_oracle_sq.png" width="100%" alt="Kinetics and KITTI examples: true future next to per-patch maps of where the truth falls outside all samples, for DeltaWorld and ALE-WI (ours)">
               </td>
@@ -82,23 +84,19 @@
                 <strong>Chandak Chakma</strong>
                 <!-- TODO: add co-authors in order once the author list is final -->
                 <br>
-                <em>Preprint, 2026. Under review.</em>
+                <em>Preprint</em>, 2026
                 <br>
                 <!-- TODO: replace with the arXiv link once posted; add the project page -->
-                <span style="color:#888">arXiv (coming soon)</span> &nbsp;/&nbsp;
-                <span style="color:#888">project page (coming soon)</span>
+                <span style="color:#888">project page</span> / <span style="color:#888">arXiv</span> <span style="color:#888">(coming soon)</span>
                 <p></p>
                 <p>
-                  One-pass video world models such as DeltaWorld generate many futures in one forward pass and are trained and judged by the best of <i>K</i> samples.
-                  We show that this metric can prefer the worse-calibrated model: the samples form a tight core with far outliers, and the true future falls outside the samples too often.
-                  A controlled loss swap traces the problem to best-of-many training and reveals a ranking reversal between best-of-<i>K</i> and proper scores.
-                  ALE-WI, a short fine-tuning with a per-patch energy score and weight interpolation, improves CRPS by 2.1 to 2.8% on Kinetics, VSPW and KITTI, with the same architecture and sampling cost.
+                  Judging a one-pass video world model by its best-of-<i>K</i> sample rewards a tight core with far outliers; training every sample with a proper score instead (ALE-WI) gives futures that cover the truth, at the same architecture and sampling cost.
                 </p>
               </td>
             </tr>
 
             <!-- Paper 2: NeurIPS 2026 workshop -->
-            <tr>
+            <tr bgcolor="#ffffd0">
               <td style="padding:16px;width:30%;vertical-align:middle">
                 <img src="images/paper_rlvr_sq.png" width="100%" alt="Number of unlearnable prompts shrinks as more seeds are intersected">
               </td>
@@ -108,22 +106,17 @@
                 </a>
                 <br>
                 <strong>Chandak Chakma</strong>,
-                Syed Nazmus Sakib,
-                Nafiul Haque,
-                Shifat E. Arman
+                <a href="https://scholar.google.com/scholar?q=Syed+Nazmus+Sakib">Syed Nazmus Sakib</a>,
+                <a href="https://scholar.google.com/scholar?q=Nafiul+Haque">Nafiul Haque</a>,
+                <a href="https://scholar.google.com/scholar?q=Shifat+E.+Arman">Shifat E. Arman</a>
                 <br>
-                <em>NeurIPS 2026 Workshop: Transitioning from Pre-Training to Post-Training (Pre&rarr;Post)</em>
+                <em>NeurIPS Workshop (Pre&rarr;Post)</em>, 2026
                 <br>
-                <a href="https://arxiv.org/abs/2609.40115">arXiv</a> &nbsp;/&nbsp;
-                <a href="https://arxiv.org/pdf/2609.40115">pdf</a>
+                <a href="https://arxiv.org/abs/2609.40115">arXiv</a>
                 <!-- TODO: add code link if released -->
                 <p></p>
                 <p>
-                  Recent RLVR work reports sets of "unlearnable" prompts that the policy never learns.
-                  We show that these sets depend heavily on how difficulty is measured: the same data gives 74 to 228 prompts under different aggregation rules,
-                  and re-evaluating a single checkpoint reproduces much of the disagreement across seeds.
-                  The slow-learning effect itself survives: these prompts learn at about one third of the normal rate.
-                  A binomial sampling model gives the number of rollouts a reproducible difficulty label needs, and a matched-sample check shrinks the reported gradient-similarity gap.
+                  Which RLVR prompts count as "unlearnable" depends on how difficulty is measured (the same data yields 74 to 228 of them), but the effect itself is real: these prompts learn about three times slower.
                 </p>
               </td>
             </tr>
@@ -138,21 +131,18 @@
                   <span class="papertitle">Escape Without a Recipe: Maneuver-Agnostic Mars Rover Recovery from Granular Entrapment</span>
                 </a>
                 <br>
-                Meraj Hossain Promit,
+                <a href="https://scholar.google.com/scholar?q=Meraj+Hossain+Promit">Meraj Hossain Promit</a>,
                 <strong>Chandak Chakma</strong>,
-                Md Jubair Ahmed Sourov,
-                Sejuti Rahman
+                <a href="https://scholar.google.com/scholar?q=Md+Jubair+Ahmed+Sourov">Md Jubair Ahmed Sourov</a>,
+                <a href="https://scholar.google.com/scholar?q=Sejuti+Rahman">Sejuti Rahman</a>
                 <br>
-                <em>IEEE IROS 2026 Workshop (SRW), Pittsburgh. Poster.</em>
+                <em>IROS Workshop (SRW)</em>, 2026
                 <br>
-                <a href="data/promit2026escape.pdf">pdf</a>
+                <a href="data/promit2026escape.pdf">paper</a>
                 <!-- TODO: add arXiv / code links if available -->
                 <p></p>
                 <p>
-                  A recurrent policy learns to free a wheeled rover from loose regolith without a scripted maneuver.
-                  In a material point method (MPM) simulator, the policy escapes 62.5% of verified traps on average across five training seeds,
-                  against 7 of 32 for the best of ten scripted controllers.
-                  A numerical audit found a coupling-buffer fault that silently dropped 9.7% of contact nodes.
+                  A recurrent policy trained in a grain-level simulator frees a stuck rover without any scripted maneuver, escaping 62.5% of verified traps where the best of ten scripted controllers manages 7 of 32.
                 </p>
               </td>
             </tr>
