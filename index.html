@@ -6,7 +6,7 @@
     <title>Chandak Chakma</title>
 
     <meta name="author" content="Chandak Chakma">
-    <meta name="description" content="Chandak Chakma. B.Sc. in Robotics and Mechatronics Engineering, University of Dhaka (2026). Research on video world models, RL for LLM reasoning, and LLM self-correction. Applying to PhD programs for Fall 2027.">
+    <meta name="description" content="Chandak Chakma. B.Sc. in Robotics and Mechatronics Engineering, University of Dhaka (2026). Research on self-play and RL for LLM reasoning without an answer key, and on video world models. Applying to PhD programs for Fall 2027.">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="only light">
     <link rel="canonical" href="https://chandakchakma.github.io/">
@@ -17,12 +17,12 @@
     <!-- Preview card when the link is shared on LinkedIn, Twitter, Slack, etc. -->
     <meta property="og:type" content="profile">
     <meta property="og:title" content="Chandak Chakma">
-    <meta property="og:description" content="Chandak Chakma. B.Sc. in Robotics and Mechatronics Engineering, University of Dhaka (2026). Research on video world models, RL for LLM reasoning, and LLM self-correction. Applying to PhD programs for Fall 2027.">
+    <meta property="og:description" content="Chandak Chakma. B.Sc. in Robotics and Mechatronics Engineering, University of Dhaka (2026). Research on self-play and RL for LLM reasoning without an answer key, and on video world models. Applying to PhD programs for Fall 2027.">
     <meta property="og:url" content="https://chandakchakma.github.io/">
     <meta property="og:image" content="https://chandakchakma.github.io/images/chandak_photo6.jpg">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Chandak Chakma">
-    <meta name="twitter:description" content="Chandak Chakma. B.Sc. in Robotics and Mechatronics Engineering, University of Dhaka (2026). Research on video world models, RL for LLM reasoning, and LLM self-correction. Applying to PhD programs for Fall 2027.">
+    <meta name="twitter:description" content="Chandak Chakma. B.Sc. in Robotics and Mechatronics Engineering, University of Dhaka (2026). Research on self-play and RL for LLM reasoning without an answer key, and on video world models. Applying to PhD programs for Fall 2027.">
     <meta name="twitter:image" content="https://chandakchakma.github.io/images/chandak_photo6.jpg">
   </head>
 
@@ -43,15 +43,20 @@
                   <a href="https://www.du.ac.bd/">University of Dhaka</a> (class of 2026).
                   I am a research assistant at the <a href="https://cortexairg.com/">Cortex AI Lab</a>, where I work with
                   <a href="https://scholar.google.com/citations?user=9IRPbVkAAAAJ&amp;hl=en">Shifat E. Arman</a> (now a DPhil student at Oxford),
-                  and I did my thesis in the Robotics Lab with
+                  and I completed my undergraduate thesis in the Robotics Lab with
                   <a href="https://scholar.google.com/citations?user=j8XhiIEAAAAJ&amp;hl=en">Dr. Sejuti Rahman</a>.
                   <strong>I am applying to PhD programs for Fall 2027.</strong>
                 </p>
                 <p>
-                  I study how a model should use its own samples.
-                  In <strong>video world models</strong>, I ask whether the sampled futures match the real spread of outcomes, and how to fix them when they do not.
-                  In <strong>RL for LLM reasoning</strong>, I study how difficulty is measured, reward design beyond ground-truth labels, and the pass@1 versus pass@<i>k</i> trade-off.
-                  In <strong>LLM self-correction</strong>, I ask when a model should keep, rewind, or restart its derivation after feedback, and how a learned test-time controller can make that choice.
+                  My research asks how a model can learn to reason when no one knows the answer.
+                  I work on <strong>self-play for LLM reasoning</strong>, where a model poses its own problems and learns to solve them.
+                  With no human labels and no external verifier, the model must also build its own answer key, and every error in that key is trained back into the model.
+                  I study when these self-generated signals carry real information, and how to keep them reliable as the problems grow harder.
+                </p>
+                <p>
+                  This question grew out of my earlier work on how models use their own samples.
+                  In <strong>RL with verifiable rewards</strong>, I showed that the set of &ldquo;unlearnable&rdquo; prompts depends heavily on how difficulty is measured, even though such prompts do learn about three times more slowly.
+                  In <strong>video world models</strong>, I showed that best-of-<i>K</i> evaluation favors a tight core of samples plus far outliers, and that training every sample with a proper scoring rule yields futures that cover the truth.
                 </p>
                 <p style="text-align:center">
                   <a href="mailto:chandakchakma2398@gmail.com">Email</a> &nbsp;/&nbsp;
@@ -73,7 +78,7 @@
               <td style="padding:20px;width:100%;vertical-align:middle">
                 <h2>Research</h2>
                 <p>
-                  I'm interested in world models, reinforcement learning for LLM reasoning, and LLM self-correction.
+                  I work on self-play and reinforcement learning for LLM reasoning, focusing on learning signals that need no answer key. I have also worked on predictive distributions in video world models.
                 </p>
               </td>
             </tr>
@@ -81,29 +86,7 @@
 
           <table style="width:100%;border:0px;border-spacing:0px 10px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
 
-            <!-- Paper 1: CVPR preprint -->
-            <tr class="paper-row">
-              <td style="padding:16px;width:30%;vertical-align:middle">
-                <img src="images/paper_oracle_sq.png" width="100%" alt="Kinetics and KITTI examples: true future next to per-patch maps of where the truth falls outside all samples, for DeltaWorld and ALE-WI (ours)">
-              </td>
-              <td style="padding:8px;width:70%;vertical-align:middle">
-                <span class="papertitle">Only an Oracle Knows the Best Sample: Predictive Distributions in a One-Pass Vision World Model</span>
-                <br>
-                <strong>Chandak Chakma</strong>
-                <!-- TODO: add co-authors in order once the author list is final -->
-                <br>
-                <em>Preprint</em>, 2026
-                <br>
-                <!-- TODO: replace with the arXiv link once posted; add the project page -->
-                <span style="color:#888">project page</span> / <span style="color:#888">arXiv</span> <span style="color:#888">(coming soon)</span>
-                <p></p>
-                <p>
-                  Judging a one-pass video world model by its best-of-<i>K</i> sample rewards a tight core with far outliers; training every sample with a proper score instead (ALE-WI) gives futures that cover the truth, at the same architecture and sampling cost.
-                </p>
-              </td>
-            </tr>
-
-            <!-- Paper 2: NeurIPS 2026 workshop -->
+            <!-- Paper 1: NeurIPS 2026 workshop -->
             <tr class="paper-row">
               <td style="padding:16px;width:30%;vertical-align:middle">
                 <img src="images/paper_rlvr_sq.png" width="100%" alt="Number of unlearnable prompts shrinks as more seeds are intersected">
@@ -125,6 +108,28 @@
                 <p></p>
                 <p>
                   Which RLVR prompts count as "unlearnable" depends on how difficulty is measured (the same data yields 74 to 228 of them), but the effect itself is real: these prompts learn about three times slower.
+                </p>
+              </td>
+            </tr>
+
+            <!-- Paper 2: CVPR preprint -->
+            <tr class="paper-row">
+              <td style="padding:16px;width:30%;vertical-align:middle">
+                <img src="images/paper_oracle_sq.png" width="100%" alt="Kinetics and KITTI examples: true future next to per-patch maps of where the truth falls outside all samples, for DeltaWorld and ALE-WI (ours)">
+              </td>
+              <td style="padding:8px;width:70%;vertical-align:middle">
+                <span class="papertitle">Only an Oracle Knows the Best Sample: Predictive Distributions in a One-Pass Vision World Model</span>
+                <br>
+                <strong>Chandak Chakma</strong>
+                <!-- TODO: add co-authors in order once the author list is final -->
+                <br>
+                <em>Preprint</em>, 2026
+                <br>
+                <!-- TODO: replace with the arXiv link once posted; add the project page -->
+                <span style="color:#888">project page</span> / <span style="color:#888">arXiv</span> <span style="color:#888">(coming soon)</span>
+                <p></p>
+                <p>
+                  Judging a one-pass video world model by its best-of-<i>K</i> sample rewards a tight core with far outliers; training every sample with a proper score instead (ALE-WI) gives futures that cover the truth, at the same architecture and sampling cost.
                 </p>
               </td>
             </tr>
