@@ -15,15 +15,6 @@
 <meta property="og:url" content="https://chandakchakma.github.io/notes/information-limits.html">
 <meta property="og:image" content="https://chandakchakma.github.io/images/chandak_photo6.jpg">
 <meta name="twitter:card" content="summary">
-<script>
-  (function () {
-    var t = null;
-    try { t = localStorage.getItem('pref-theme'); } catch (e) {}
-    if (t === 'dark' || (t === null && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      document.documentElement.classList.add('dark');
-    }
-  })();
-</script>
 <link rel="stylesheet" href="../blog.css?v=1">
 <script>
   MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
@@ -35,11 +26,10 @@
 <body>
 <header class="header">
   <nav class="nav">
-    <div class="logo"><a href="../notes.html">Chandak&rsquo;s Notes</a>
-      <button id="theme-toggle" title="Switch light or dark theme" aria-label="Switch light or dark theme"><svg id="moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg><svg id="sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></button></div>
+    <div class="logo"><a href="../index.html">Chandak Chakma</a></div>
     <ul class="menu">
       <li><a href="../index.html">Home</a></li>
-      <li><a href="../notes.html">Notes</a></li>
+      <li><a href="../index.html#notes">Notes</a></li>
       <li><a href="../data/selfplay-foundations-notes.pdf">PDF</a></li>
     </ul>
   </nav>
@@ -47,11 +37,11 @@
 <main class="main">
 <article class="post-single">
 <header class="post-header">
-  <div class="breadcrumbs"><a href="../index.html">Home</a>&nbsp;&raquo;&nbsp;<a href="../notes.html">Notes</a></div>
+  <div class="breadcrumbs"><a href="../index.html">Home</a>&nbsp;&raquo;&nbsp;<a href="../index.html#notes">Notes</a></div>
   <h1 class="post-title">Where Can New Knowledge Come From? Data Processing and the Verifier Gap</h1>
   <div class="post-meta">Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 3 min&nbsp; | &nbsp;Author: Chandak Chakma</div>
 </header>
-<p class="series-note">Part 5 of 10 in <a href="../notes.html">Foundations of Self-Play for LLM Reasoning</a>. All parts are also in one <a href="../data/selfplay-foundations-notes.pdf">PDF</a>.</p>
+<p class="series-note">Part 5 of 10 in <a href="../index.html#notes">Foundations of Self-Play for LLM Reasoning</a>. All parts are also in one <a href="../data/selfplay-foundations-notes.pdf">PDF</a>.</p>
 <div class="toc"><details open><summary>Table of Contents</summary><ul>
 <li class="toc-h2"><a href="#s15">15 The data processing inequality</a></li>
 <li class="toc-h2"><a href="#s16">16 The generator–verifier gap</a></li>
@@ -103,11 +93,5 @@
 </article>
 </main>
 <footer class="footer">&copy; 2026 <a href="../index.html">Chandak Chakma</a></footer>
-<script>
-  document.getElementById('theme-toggle').addEventListener('click', function () {
-    var dark = document.documentElement.classList.toggle('dark');
-    try { localStorage.setItem('pref-theme', dark ? 'dark' : 'light'); } catch (e) {}
-  });
-</script>
 </body>
 </html>
