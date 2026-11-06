@@ -15,7 +15,7 @@
 <meta property="og:url" content="https://chandakchakma.github.io/notes/evidence-and-open-problems.html">
 <meta property="og:image" content="https://chandakchakma.github.io/images/chandak_photo6.jpg">
 <meta name="twitter:card" content="summary">
-<link rel="stylesheet" href="../blog.css?v=20261106152217">
+<link rel="stylesheet" href="../blog.css?v=20261106152929">
 <script>
   MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
               options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
@@ -40,9 +40,10 @@
   <div class="breadcrumbs"><a href="../index.html">Home</a>&nbsp;&raquo;&nbsp;<a href="../index.html#notes">Notes</a></div>
   <h1 class="post-title">Evidence Reviewers Trust, and Open Problems</h1>
   <div class="post-meta">Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 3 min&nbsp; | &nbsp;Author: Chandak Chakma</div>
+  <p class="lede">How big benchmark noise really is, a checklist before claiming anything, five open problems where a new research thread can start, and a four-week study plan.</p>
 </header>
 <p class="series-note">Part 9 of 10 in <a href="../index.html#notes">Foundations of Self-Play for LLM Reasoning</a>. All parts are also in one <a href="../data/selfplay-foundations-notes.pdf">PDF</a>.</p>
-<div class="toc"><details open><summary>Table of Contents</summary><ul>
+<div class="toc"><details open><summary>Contents</summary><ul>
 <li class="toc-h2"><a href="#s21">21 How big is the noise?</a></li>
 <li class="toc-h2"><a href="#s22">22 A checklist before you claim anything</a></li>
 <li class="toc-h2"><a href="#s-open">Open problems: where a new thread can lead</a></li>
@@ -144,21 +145,21 @@
 <p><strong>The test of understanding.</strong> For each key result, you should be able to (1) derive it on a blank page, (2) redo its worked example without notes, and (3) say in one sentence what it implies for a Challenger–Solver loop.</p>
 
 <h2 id="references">References</h2>
-<ol class="refs">
-<li value="2">R. S. Sutton and A. G. Barto. <em>Reinforcement Learning: An Introduction</em>, 2nd ed. MIT Press, 2018.</li>
-<li value="5">A. Ahmadian et al. Back to Basics: Revisiting REINFORCE Style Optimization for Learning from Human Feedback in LLMs (RLOO). arXiv:2402.14740, 2024.</li>
-<li value="10">Y. Yue et al. Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model? arXiv:2504.13837, 2025.</li>
-<li value="12">M. Dennis et al. Emergent Complexity and Zero-shot Transfer via Unsupervised Environment Design (PAIRED). arXiv:2012.02096, 2020.</li>
-<li value="15">A. Zhao et al. Absolute Zero: Reinforced Self-play Reasoning with Zero Data. arXiv:2505.03335, 2025.</li>
-<li value="16">C. Huang et al. R-Zero: Self-Evolving Reasoning LLM from Zero Data. arXiv:2508.05004, 2025.</li>
-<li value="17">S. Sundaram, J. Kempe and Y. Ollivier. Teaching Models to Teach Themselves: Reasoning at the Edge of Learnability (SOAR). arXiv:2601.18778, ICML 2026.</li>
-<li value="18">R-Diverse: Mitigating Diversity Illusion in Self-Play LLM Training. arXiv:2602.13103, 2026.</li>
-<li value="19">Survive or Collapse: The Asymmetric Roles of Data Gating and Reward Grounding in Self-Play RL. arXiv:2605.22217, 2026.</li>
-<li value="24">E. Zelikman et al. STaR: Bootstrapping Reasoning With Reasoning. arXiv:2203.14465, 2022.</li>
-<li value="28">Y. Song et al. Mind the Gap: Examining the Self-Improvement Capabilities of Large Language Models. arXiv:2412.02674, ICLR 2025.</li>
-<li value="43">B. Brown et al. Large Language Monkeys: Scaling Inference Compute with Repeated Sampling. arXiv:2407.21787, 2024.</li>
-<li value="45">W. Jiang et al. Forward-Backward Reasoning in Large Language Models for Mathematical Verification (FOBAR). arXiv:2308.07758, 2023.</li>
-</ol>
+<ul class="refs">
+<li>R. S. Sutton and A. G. Barto. <em>Reinforcement Learning: An Introduction</em>, 2nd ed. MIT Press, 2018.</li>
+<li>A. Ahmadian et al. Back to Basics: Revisiting REINFORCE Style Optimization for Learning from Human Feedback in LLMs (RLOO). arXiv:2402.14740, 2024.</li>
+<li>Y. Yue et al. Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model? arXiv:2504.13837, 2025.</li>
+<li>M. Dennis et al. Emergent Complexity and Zero-shot Transfer via Unsupervised Environment Design (PAIRED). arXiv:2012.02096, 2020.</li>
+<li>A. Zhao et al. Absolute Zero: Reinforced Self-play Reasoning with Zero Data. arXiv:2505.03335, 2025.</li>
+<li>C. Huang et al. R-Zero: Self-Evolving Reasoning LLM from Zero Data. arXiv:2508.05004, 2025.</li>
+<li>S. Sundaram, J. Kempe and Y. Ollivier. Teaching Models to Teach Themselves: Reasoning at the Edge of Learnability (SOAR). arXiv:2601.18778, ICML 2026.</li>
+<li>R-Diverse: Mitigating Diversity Illusion in Self-Play LLM Training. arXiv:2602.13103, 2026.</li>
+<li>Survive or Collapse: The Asymmetric Roles of Data Gating and Reward Grounding in Self-Play RL. arXiv:2605.22217, 2026.</li>
+<li>E. Zelikman et al. STaR: Bootstrapping Reasoning With Reasoning. arXiv:2203.14465, 2022.</li>
+<li>Y. Song et al. Mind the Gap: Examining the Self-Improvement Capabilities of Large Language Models. arXiv:2412.02674, ICLR 2025.</li>
+<li>B. Brown et al. Large Language Monkeys: Scaling Inference Compute with Repeated Sampling. arXiv:2407.21787, 2024.</li>
+<li>W. Jiang et al. Forward-Backward Reasoning in Large Language Models for Mathematical Verification (FOBAR). arXiv:2308.07758, 2023.</li>
+</ul>
 
 <h2 id="citation">Citation</h2>
 <p>Cited as:</p>

@@ -15,7 +15,7 @@
 <meta property="og:url" content="https://chandakchakma.github.io/notes/what-rl-can-do.html">
 <meta property="og:image" content="https://chandakchakma.github.io/images/chandak_photo6.jpg">
 <meta name="twitter:card" content="summary">
-<link rel="stylesheet" href="../blog.css?v=20261106152217">
+<link rel="stylesheet" href="../blog.css?v=20261106152929">
 <script>
   MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
               options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
@@ -40,9 +40,10 @@
   <div class="breadcrumbs"><a href="../index.html">Home</a>&nbsp;&raquo;&nbsp;<a href="../index.html#notes">Notes</a></div>
   <h1 class="post-title">What RL Can and Cannot Do: Sharpening, pass@k and Entropy</h1>
   <div class="post-meta">Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 6 min&nbsp; | &nbsp;Author: Chandak Chakma</div>
+  <p class="lede">The KL-regularized optimum multiplies the odds of what the base model already says, so RL mostly sharpens. We derive it, read the sharpening signature in pass@k curves, and look at entropy collapse.</p>
 </header>
 <p class="series-note">Part 2 of 10 in <a href="../index.html#notes">Foundations of Self-Play for LLM Reasoning</a>. All parts are also in one <a href="../data/selfplay-foundations-notes.pdf">PDF</a>.</p>
-<div class="toc"><details open><summary>Table of Contents</summary><ul>
+<div class="toc"><details open><summary>Contents</summary><ul>
 <li class="toc-h2"><a href="#s6">6 The KL-regularized optimum: why RL mostly sharpens</a></li>
 <li class="toc-h2"><a href="#s7">7 pass@\(k\), coverage and the sharpening signature</a></li>
 <li class="toc-h2"><a href="#s8">8 Entropy and exploration</a></li>
@@ -117,7 +118,7 @@
 </tbody>
 </table></div>
 <p class="caption">mean over problems A and B</p>
-<figure><img src="img/fig-2.svg?v=20261106152217" alt="Figure 2" loading="lazy"></figure>
+<figure><img src="img/fig-2.svg?v=20261106152929" alt="Figure 2" loading="lazy"></figure>
 <p>For B before training, <span class="math inline">\(1-0.98^{256}=1-e^{256\ln 0.98}=1-e^{-5.17}=0.994\)</span>. pass@1 rises while pass@256 falls: the model became more reliable on what it knew and lost what it could only sometimes do. The curves cross between <span class="math inline">\(k=3\)</span> and <span class="math inline">\(k=4\)</span>. Yue et al. (2025) report this pattern for RLVR at large <span class="math inline">\(k\)</span>.</p>
 </div></div>
 <div class="box box-why"><div class="box-title"><span class="box-label">Why it matters</span></div><div class="box-body">
@@ -130,12 +131,12 @@
 <div class="exercise"><p><strong>Exercise 4.</strong> Use the estimator with <span class="math inline">\(n=16\)</span>, <span class="math inline">\(c=1\)</span>, <span class="math inline">\(k=8\)</span>. Then show that with a single correct sample (<span class="math inline">\(c=1\)</span>) the estimate is always <span class="math inline">\(k/n\)</span>.</p><details><summary>Show answer</summary><p><span class="math inline">\(1-\binom{15}{8}/\binom{16}{8}=1-6435/12870=0.5\)</span>. In general, <span class="math inline">\(\binom{n-1}{k}/\binom nk=(n-k)/n\)</span>, so the estimate is <span class="math inline">\(k/n\)</span>.</p></details></div>
 
 <h2 id="references">References</h2>
-<ol class="refs">
-<li value="6">Q. Yu et al. DAPO: An Open-Source LLM Reinforcement Learning System at Scale. arXiv:2503.14476, 2025.</li>
-<li value="8">R. Rafailov et al. Direct Preference Optimization. arXiv:2305.18290, 2023.</li>
-<li value="9">M. Chen et al. Evaluating Large Language Models Trained on Code (unbiased pass@<span class="math inline">\(k\)</span>). arXiv:2107.03374, 2021.</li>
-<li value="10">Y. Yue et al. Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model? arXiv:2504.13837, 2025.</li>
-</ol>
+<ul class="refs">
+<li>Q. Yu et al. DAPO: An Open-Source LLM Reinforcement Learning System at Scale. arXiv:2503.14476, 2025.</li>
+<li>R. Rafailov et al. Direct Preference Optimization. arXiv:2305.18290, 2023.</li>
+<li>M. Chen et al. Evaluating Large Language Models Trained on Code (unbiased pass@<span class="math inline">\(k\)</span>). arXiv:2107.03374, 2021.</li>
+<li>Y. Yue et al. Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model? arXiv:2504.13837, 2025.</li>
+</ul>
 
 <h2 id="citation">Citation</h2>
 <p>Cited as:</p>
