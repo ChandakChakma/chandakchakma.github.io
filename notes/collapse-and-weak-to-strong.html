@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Model Collapse and Weak-to-Strong Generalization | Chandak’s Notes</title>
+<meta name="author" content="Chandak Chakma">
+<meta name="description" content="Training only on your own outputs loses the tails; labels weaker than the student can still teach it. Two results that frame how far self-labels can go.">
+<link rel="canonical" href="https://chandakchakma.github.io/notes/collapse-and-weak-to-strong.html">
+<link rel="icon" href="../images/favicon.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Model Collapse and Weak-to-Strong Generalization | Chandak’s Notes">
+<meta property="og:description" content="Training only on your own outputs loses the tails; labels weaker than the student can still teach it. Two results that frame how far self-labels can go.">
+<meta property="og:url" content="https://chandakchakma.github.io/notes/collapse-and-weak-to-strong.html">
+<meta property="og:image" content="https://chandakchakma.github.io/images/chandak_photo6.jpg">
+<meta name="twitter:card" content="summary">
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('pref-theme'); } catch (e) {}
+    if (t === 'dark' || (t === null && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+  })();
+</script>
+<link rel="stylesheet" href="../blog.css?v=1">
+<script>
+  MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+              options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+              chtml: { scale: 0.94 } };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<header class="header">
+  <nav class="nav">
+    <div class="logo"><a href="../notes.html">Chandak&rsquo;s Notes</a>
+      <button id="theme-toggle" title="Switch light or dark theme" aria-label="Switch light or dark theme"><svg id="moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg><svg id="sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></button></div>
+    <ul class="menu">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../notes.html">Notes</a></li>
+      <li><a href="../data/selfplay-foundations-notes.pdf">PDF</a></li>
+    </ul>
+  </nav>
+</header>
+<main class="main">
+<article class="post-single">
+<header class="post-header">
+  <div class="breadcrumbs"><a href="../index.html">Home</a>&nbsp;&raquo;&nbsp;<a href="../notes.html">Notes</a></div>
+  <h1 class="post-title">Model Collapse and Weak-to-Strong Generalization</h1>
+  <div class="post-meta">Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 3 min&nbsp; | &nbsp;Author: Chandak Chakma</div>
+</header>
+<p class="series-note">Part 8 of 10 in <a href="../notes.html">Foundations of Self-Play for LLM Reasoning</a>. All parts are also in one <a href="../data/selfplay-foundations-notes.pdf">PDF</a>.</p>
+<div class="toc"><details open><summary>Table of Contents</summary><ul>
+<li class="toc-h2"><a href="#s19">19 Model collapse</a></li>
+<li class="toc-h2"><a href="#s20">20 Weak-to-strong generalization</a></li>
+<li class="toc-h2"><a href="#exercises">Exercises</a></li>
+<li class="toc-h2"><a href="#references">References</a></li>
+</ul></details></div>
+
+<div class="post-content">
+<h2 class="unnumbered" id="s19"><span class="secnum">19</span> Model collapse</h2>
+<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> recursive training loses the tails</div><div class="box-body">
+<p>Fit a Gaussian by maximum likelihood to <span class="math inline">\(N\)</span> samples drawn from the previous generation’s fit. Since <span class="math inline">\(\mathbb{E}[\hat\sigma^2]=\frac{N-1}{N}\sigma^2\)</span> for the maximum-likelihood variance, iterating gives <span class="math display">\[\mathbb{E}[\sigma_t^2]=\Big(\frac{N-1}{N}\Big)^{t}\sigma_0^2\ \longrightarrow\ 0 .\]</span></p>
+</div></div>
+<div class="box box-ex"><div class="box-title">Worked example <span class="box-sep">|</span> how fast</div><div class="box-body">
+<p><span class="math inline">\(N=100\)</span>, <span class="math inline">\(t=100\)</span>: <span class="math inline">\((0.99)^{100}=0.366\)</span>. Two thirds of the variance is gone, and the rare cases (the tails) go first.</p>
+</div></div>
+<p>Shumailov et al. (2024) show the same tail loss for language models trained recursively on their own outputs. Gerstgrasser et al. (2024) show that <em>accumulating</em> real and synthetic data, instead of replacing old data, keeps the error bounded.</p>
+<div class="box box-why"><div class="box-title">Why it matters for self-play</div><div class="box-body">
+<p>R-Zero’s Solver trains only on labels it made itself: the pure “replace” regime. Keeping earlier data, anchoring to the base model, and adding outside data are the known fixes.</p>
+</div></div>
+<h2 class="unnumbered" id="s20"><span class="secnum">20</span> Weak-to-strong generalization</h2>
+<div class="box box-def"><div class="box-title">Definition <span class="box-sep">|</span> performance gap recovered (Burns et al., 2023)</div><div class="box-body">
+<p><span class="math display">\[\mathrm{PGR}=\frac{\mathrm{Perf}_{\text{weak}\to\text{strong}}-\mathrm{Perf}_{\text{weak}}}{\mathrm{Perf}_{\text{strong ceiling}}-\mathrm{Perf}_{\text{weak}}}.\]</span></p>
+</div></div>
+<p>Strong models trained on a weaker model’s labels often recover a substantial part of the gap to their ceiling: labels worse than the student can still teach it. This is the optimistic counterpart of model collapse.</p>
+<div class="box box-why"><div class="box-title">Why it matters for self-play</div><div class="box-body">
+<p>Noisy self-labels can still teach, as long as their errors are not the ones the student already believes. Self-labels are risky because their errors are, by construction, the student’s own beliefs.</p>
+</div></div>
+<h2 id="exercises">Exercises</h2>
+<div class="exercise"><p><strong>Exercise 11.</strong> In the Gaussian collapse model with <span class="math inline">\(N=50\)</span>, what fraction of the variance remains after <span class="math inline">\(50\)</span> generations?</p><details><summary>Show answer</summary><p><span class="math inline">\((49/50)^{50}=e^{50\ln0.98}=0.364\)</span>.</p></details></div>
+
+<h2 id="references">References</h2>
+<ol class="refs">
+<li value="16">C. Huang et al. R-Zero: Self-Evolving Reasoning LLM from Zero Data. arXiv:2508.05004, 2025.</li>
+<li value="29">I. Shumailov et al. AI models collapse when trained on recursively generated data. <em>Nature</em>, 2024 (arXiv:2305.17493).</li>
+<li value="30">M. Gerstgrasser et al. Is Model Collapse Inevitable? Breaking the Curse of Recursion by Accumulating Real and Synthetic Data. arXiv:2404.01413, 2024.</li>
+<li value="31">C. Burns et al. Weak-to-Strong Generalization: Eliciting Strong Capabilities With Weak Supervision. arXiv:2312.09390, 2023.</li>
+<li value="39">C. Burns, H. Ye, D. Klein and J. Steinhardt. Discovering Latent Knowledge in Language Models Without Supervision. arXiv:2212.03827, 2022.</li>
+</ol>
+
+<h2 id="citation">Citation</h2>
+<p>Cited as:</p>
+<blockquote>Chakma, Chandak. (Nov 2026). Model Collapse and Weak-to-Strong Generalization. Chandak&rsquo;s Notes. https://chandakchakma.github.io/notes/collapse-and-weak-to-strong.html</blockquote>
+<pre><code>@article{chakma2026collapseandweaktostrong,
+  title   = "Model Collapse and Weak-to-Strong Generalization",
+  author  = "Chakma, Chandak",
+  journal = "chandakchakma.github.io",
+  year    = "2026",
+  month   = "Nov",
+  url     = "https://chandakchakma.github.io/notes/collapse-and-weak-to-strong.html"
+}</code></pre>
+
+</div>
+<nav class="paginav"><a class="prev" href="search-and-correctness.html"><span class="title">&laquo; Prev</span><br><span>Search and Correctness: Finding and Recognizing Rare Answers</span></a><a class="next" href="evidence-and-open-problems.html"><span class="title">Next &raquo;</span><br><span>Evidence Reviewers Trust, and Open Problems</span></a></nav>
+</article>
+</main>
+<footer class="footer">&copy; 2026 <a href="../index.html">Chandak Chakma</a></footer>
+<script>
+  document.getElementById('theme-toggle').addEventListener('click', function () {
+    var dark = document.documentElement.classList.toggle('dark');
+    try { localStorage.setItem('pref-theme', dark ? 'dark' : 'light'); } catch (e) {}
+  });
+</script>
+</body>
+</html>

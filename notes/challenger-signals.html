@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What Should the Challenger Make? Learnability, Proposer Rewards and Noisy Labels | Chandak’s Notes</title>
+<meta name="author" content="Chandak Chakma">
+<meta name="description" content="Why problems at the edge of ability teach the most, how Asymmetric Self-Play, PAIRED, Absolute Zero, R-Zero and SOAR pay their problem setters, and why correlated label noise is worse than random noise.">
+<link rel="canonical" href="https://chandakchakma.github.io/notes/challenger-signals.html">
+<link rel="icon" href="../images/favicon.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+<meta property="og:type" content="article">
+<meta property="og:title" content="What Should the Challenger Make? Learnability, Proposer Rewards and Noisy Labels | Chandak’s Notes">
+<meta property="og:description" content="Why problems at the edge of ability teach the most, how Asymmetric Self-Play, PAIRED, Absolute Zero, R-Zero and SOAR pay their problem setters, and why correlated label noise is worse than random noise.">
+<meta property="og:url" content="https://chandakchakma.github.io/notes/challenger-signals.html">
+<meta property="og:image" content="https://chandakchakma.github.io/images/chandak_photo6.jpg">
+<meta name="twitter:card" content="summary">
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('pref-theme'); } catch (e) {}
+    if (t === 'dark' || (t === null && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+  })();
+</script>
+<link rel="stylesheet" href="../blog.css?v=1">
+<script>
+  MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+              options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+              chtml: { scale: 0.94 } };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<header class="header">
+  <nav class="nav">
+    <div class="logo"><a href="../notes.html">Chandak&rsquo;s Notes</a>
+      <button id="theme-toggle" title="Switch light or dark theme" aria-label="Switch light or dark theme"><svg id="moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg><svg id="sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></button></div>
+    <ul class="menu">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../notes.html">Notes</a></li>
+      <li><a href="../data/selfplay-foundations-notes.pdf">PDF</a></li>
+    </ul>
+  </nav>
+</header>
+<main class="main">
+<article class="post-single">
+<header class="post-header">
+  <div class="breadcrumbs"><a href="../index.html">Home</a>&nbsp;&raquo;&nbsp;<a href="../notes.html">Notes</a></div>
+  <h1 class="post-title">What Should the Challenger Make? Learnability, Proposer Rewards and Noisy Labels</h1>
+  <div class="post-meta">Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 6 min&nbsp; | &nbsp;Author: Chandak Chakma</div>
+</header>
+<p class="series-note">Part 3 of 10 in <a href="../notes.html">Foundations of Self-Play for LLM Reasoning</a>. All parts are also in one <a href="../data/selfplay-foundations-notes.pdf">PDF</a>.</p>
+<div class="toc"><details open><summary>Table of Contents</summary><ul>
+<li class="toc-h2"><a href="#s9">9 Learnability</a></li>
+<li class="toc-h2"><a href="#s10">10 Proposer rewards: a comparison</a></li>
+<li class="toc-h2"><a href="#s11">11 Learning from noisy labels</a></li>
+<li class="toc-h2"><a href="#exercises">Exercises</a></li>
+<li class="toc-h2"><a href="#references">References</a></li>
+</ul></details></div>
+
+<div class="post-content">
+<h2 class="unnumbered" id="s9"><span class="secnum">9</span> Learnability</h2>
+<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> the <span class="math inline">\(p(1-p)\)</span> law</div><div class="box-body">
+<p>For a binary reward with success probability <span class="math inline">\(p\)</span>, <span class="math inline">\(\operatorname{Var}[R]=p(1-p)\)</span>, largest (<span class="math inline">\(1/4\)</span>) at <span class="math inline">\(p=1/2\)</span>. A GRPO group of size <span class="math inline">\(G\)</span> carries a signal only if its rewards are not all equal: <span class="math display">\[\Pr[\text{informative group}]=1-p^G-(1-p)^G .\]</span></p>
+</div></div>
+<div class="box box-ex"><div class="box-title">Worked example <span class="box-sep">|</span> <span class="math inline">\(G=8\)</span></div><div class="box-body">
+<div class="center">
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align: left;"><span class="math inline">\(p\)</span> (or <span class="math inline">\(1-p\)</span>)</th>
+<th style="text-align: center;"><span class="math inline">\(0.5\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(0.9\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(0.99\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">informative groups</td>
+<td style="text-align: center;"><span class="math inline">\(0.992\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.570\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.077\)</span></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p>A problem solved <span class="math inline">\(99\%\)</span> of the time gives a signal in only <span class="math inline">\(1\)</span> group out of <span class="math inline">\(13\)</span>. This is the arithmetic behind “make problems at the edge of the Solver’s ability”. R-Zero motivates the same target with a lower bound on the Solver’s remaining learning potential that grows with <span class="math inline">\(\hat p(1-\hat p)\)</span>.</p>
+</div></div>
+<div class="box box-pit"><div class="box-title">Pitfall</div><div class="box-body">
+<p>The law needs the <em>true</em> success rate. In label-free self-play we only measure agreement <span class="math inline">\(\hat p\)</span> with a pseudo-label, which equals <span class="math inline">\(p\)</span> only when the label is right.</p>
+</div></div>
+<h2 class="unnumbered" id="s10"><span class="secnum">10</span> Proposer rewards: a comparison</h2>
+<div class="center">
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Method</strong></th>
+<th style="text-align: left;"><strong>Challenger (proposer) reward</strong></th>
+<th style="text-align: left;"><strong>Truth from</strong></th>
+<th style="text-align: left;"><strong>Main limit</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Asymmetric self-play (2017)</td>
+<td style="text-align: left;"><span class="math inline">\(r_A=\gamma\max(0,\,t_B-t_A)\)</span>, <span class="math inline">\(r_B=-\gamma t_B\)</span> (times to finish)</td>
+<td style="text-align: left;">environment</td>
+<td style="text-align: left;">needs a reversible world</td>
+</tr>
+<tr>
+<td style="text-align: left;">PAIRED (2020)</td>
+<td style="text-align: left;">regret <span class="math inline">\(=U(\pi_{\mathrm{antagonist}})-U(\pi_{\mathrm{protagonist}})\)</span></td>
+<td style="text-align: left;">environment reward</td>
+<td style="text-align: left;">antagonist must be strong</td>
+</tr>
+<tr>
+<td style="text-align: left;">Absolute Zero (2025)</td>
+<td style="text-align: left;"><span class="math inline">\(1-\bar r\)</span> if <span class="math inline">\(0&lt;\bar r&lt;1\)</span>, else <span class="math inline">\(0\)</span> (<span class="math inline">\(\bar r\)</span> = solve rate)</td>
+<td style="text-align: left;">Python executor</td>
+<td style="text-align: left;">code only</td>
+</tr>
+<tr>
+<td style="text-align: left;">R-Zero (2025)</td>
+<td style="text-align: left;"><span class="math inline">\(\max\!\big(0,\ 1-2|\hat p-\tfrac12|-\lambda|C_k|/B\big)\)</span></td>
+<td style="text-align: left;">none (majority vote)</td>
+<td style="text-align: left;">labels decay</td>
+</tr>
+<tr>
+<td style="text-align: left;">SOAR (2026)</td>
+<td style="text-align: left;"><span class="math inline">\(\mathrm{Perf}_H(\mathrm{Train}(\theta,D_\phi))-\mathrm{Perf}_H(\theta)\)</span></td>
+<td style="text-align: left;">labeled hard set <span class="math inline">\(H\)</span></td>
+<td style="text-align: left;">needs labels on <span class="math inline">\(H\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;">Learning progress (2007)</td>
+<td style="text-align: left;">decrease of the learner’s error over time</td>
+<td style="text-align: left;">environment</td>
+<td style="text-align: left;">needs a measurable error</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p><strong>SOAR</strong> (Sundaram, Kempe and Ollivier, ICML 2026) is the current accepted frontier. It is bilevel: the teacher writes a problem set <span class="math inline">\(D_\phi\)</span>, the student trains on it briefly, and the teacher is paid by the student’s real gain on hard problems it could not solve (<span class="math inline">\(0\)</span> of <span class="math inline">\(128\)</span> samples). Grounded rewards beat learnability rewards, and well-posed questions matter more than correct answers. Its gap is the labeled hard set <span class="math inline">\(H\)</span>. <strong>PowerPlay</strong> (Schmidhuber, 2011) is the conceptual root: keep searching for the simplest problem the current solver cannot yet solve.</p>
+<div class="box box-ex"><div class="box-title">Worked example <span class="box-sep">|</span> what R-Zero’s reward cannot see</div><div class="box-body">
+<p>Ten Solver answers: four say <span class="math inline">\(20\)</span>, four say <span class="math inline">\(22\)</span>, two have no boxed answer. Then <span class="math inline">\(\hat p=4/10\)</span> and <span class="math inline">\(r_{\mathrm{unc}}=1-2|0.4-0.5|=0.8\)</span>, a high reward, and the question passes the <span class="math inline">\(3\)</span>–<span class="math inline">\(7\)</span> filter. In the released code the label is whichever of <span class="math inline">\(20\)</span> and <span class="math inline">\(22\)</span> appeared first (Python’s <code>max</code> returns the first maximal key), and each unboxed answer counts as a vote for the string <code>"None"</code> (the question is dropped later only if <code>"None"</code> wins the vote). The reward cannot tell a two-way split from scattered guessing, and the label is a coin flip. Always read the code.</p>
+</div></div>
+<div class="box box-why"><div class="box-title">Why it matters for self-play</div><div class="box-body">
+<p>Rewards built only from the Solver’s agreement measure difficulty, not truth. Rewards grounded in real progress (SOAR, PAIRED) need a source of truth. A grounded signal <em>without</em> labels is the open problem.</p>
+</div></div>
+<h2 class="unnumbered" id="s11"><span class="secnum">11</span> Learning from noisy labels</h2>
+<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> random noise only shrinks the signal</div><div class="box-body">
+<p>Suppose the observed reward <span class="math inline">\(\tilde R\)</span> flips the true reward with probability <span class="math inline">\(\eta\)</span>, independently of which response was sampled. Then <span class="math inline">\(\mathbb{E}[\tilde R\mid y]=\eta+(1-2\eta)R(y)\)</span> and, because <span class="math inline">\(\mathbb{E}[\nabla_\theta\log\pi_\theta]=0\)</span>, <span class="math display">\[\mathbb{E}\big[\tilde R\,\nabla_\theta\log\pi_\theta\big]=(1-2\eta)\,\nabla_\theta J .\]</span> The gradient keeps its direction whenever <span class="math inline">\(\eta&lt;1/2\)</span>; only its size shrinks.</p>
+</div></div>
+<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> correlated noise biases the signal</div><div class="box-body">
+<p>If the label error depends on the response, write <span class="math inline">\(\tilde R=R+\delta(x,y)\)</span>. Then <span class="math inline">\(\mathbb{E}[\tilde R\,\nabla_\theta\log\pi_\theta]=\nabla_\theta J+\mathbb{E}\big[\delta\,\nabla_\theta\log\pi_\theta\big]\)</span>: an extra push toward whatever responses <span class="math inline">\(\delta\)</span> favors.</p>
+</div></div>
+<div class="box box-ex"><div class="box-title">Worked example <span class="box-sep">|</span> the majority-vote reward</div><div class="box-body">
+<p>The pseudo-label is the mode <span class="math inline">\(m(x)\)</span> of the Solver’s own samples, and the reward is <span class="math inline">\(\mathbf{1}[\text{answer}(y)=m(x)]\)</span>. Its expected value is <span class="math inline">\(\pi_\theta(m\mid x)\)</span>, which is maximized by putting all mass on <span class="math inline">\(m\)</span>, whether or not <span class="math inline">\(m\)</span> is correct. Example: <span class="math inline">\(\pi(20)=0.40\)</span>, <span class="math inline">\(\pi(22)=0.35\)</span>, other answers <span class="math inline">\(0.25\)</span>, and the truth is <span class="math inline">\(22\)</span>. The vote makes <span class="math inline">\(20\)</span> the label and training pushes <span class="math inline">\(\pi(20)\)</span> toward <span class="math inline">\(1\)</span>: the model becomes confidently wrong.</p>
+</div></div>
+<div class="box box-why"><div class="box-title">Why it matters for self-play</div><div class="box-body">
+<p>This is the mechanism behind “rise, then fall”. Early on the mode is usually right (R-Zero’s labels are <span class="math inline">\(79\%\)</span> correct in round 1), so sharpening helps. As the Challenger writes harder questions, the mode is wrong more often (<span class="math inline">\(63\%\)</span> correct by round 3), and the same sharpening now teaches errors.</p>
+</div></div>
+<h2 id="exercises">Exercises</h2>
+<div class="exercise"><p><strong>Exercise 5.</strong> For <span class="math inline">\(G=4\)</span> and <span class="math inline">\(p=0.75\)</span>, what fraction of groups is informative?</p><details><summary>Show answer</summary><p><span class="math inline">\(1-0.75^4-0.25^4=1-0.316-0.004=0.680\)</span>.</p></details></div>
+<div class="exercise"><p><strong>Exercise 6.</strong> With symmetric label noise <span class="math inline">\(\eta=0.3\)</span>, by what factor is the expected gradient scaled? What happens at <span class="math inline">\(\eta=0.5\)</span>?</p><details><summary>Show answer</summary><p><span class="math inline">\(1-2\eta=0.4\)</span>. At <span class="math inline">\(\eta=0.5\)</span> the factor is <span class="math inline">\(0\)</span>: the labels carry no signal.</p></details></div>
+
+<h2 id="references">References</h2>
+<ol class="refs">
+<li value="12">M. Dennis et al. Emergent Complexity and Zero-shot Transfer via Unsupervised Environment Design (PAIRED). arXiv:2012.02096, 2020.</li>
+<li value="13">J. Schmidhuber. PowerPlay: Training an Increasingly General Problem Solver by Continually Searching for the Simplest Still Unsolvable Problem. arXiv:1112.5309, 2011.</li>
+<li value="15">A. Zhao et al. Absolute Zero: Reinforced Self-play Reasoning with Zero Data. arXiv:2505.03335, 2025.</li>
+<li value="16">C. Huang et al. R-Zero: Self-Evolving Reasoning LLM from Zero Data. arXiv:2508.05004, 2025.</li>
+<li value="17">S. Sundaram, J. Kempe and Y. Ollivier. Teaching Models to Teach Themselves: Reasoning at the Edge of Learnability (SOAR). arXiv:2601.18778, ICML 2026.</li>
+</ol>
+
+<h2 id="citation">Citation</h2>
+<p>Cited as:</p>
+<blockquote>Chakma, Chandak. (Nov 2026). What Should the Challenger Make? Learnability, Proposer Rewards and Noisy Labels. Chandak&rsquo;s Notes. https://chandakchakma.github.io/notes/challenger-signals.html</blockquote>
+<pre><code>@article{chakma2026challengersignals,
+  title   = "What Should the Challenger Make? Learnability, Proposer Rewards and Noisy Labels",
+  author  = "Chakma, Chandak",
+  journal = "chandakchakma.github.io",
+  year    = "2026",
+  month   = "Nov",
+  url     = "https://chandakchakma.github.io/notes/challenger-signals.html"
+}</code></pre>
+
+</div>
+<nav class="paginav"><a class="prev" href="what-rl-can-do.html"><span class="title">&laquo; Prev</span><br><span>What RL Can and Cannot Do: Sharpening, pass@k and Entropy</span></a><a class="next" href="self-play-as-a-game.html"><span class="title">Next &raquo;</span><br><span>Self-Play as a Game: Cycling, Expert Iteration and STaR</span></a></nav>
+</article>
+</main>
+<footer class="footer">&copy; 2026 <a href="../index.html">Chandak Chakma</a></footer>
+<script>
+  document.getElementById('theme-toggle').addEventListener('click', function () {
+    var dark = document.documentElement.classList.toggle('dark');
+    try { localStorage.setItem('pref-theme', dark ? 'dark' : 'light'); } catch (e) {}
+  });
+</script>
+</body>
+</html>

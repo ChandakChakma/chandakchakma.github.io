@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Self-Play as a Game: Cycling, Expert Iteration and STaR | Chandak’s Notes</title>
+<meta name="author" content="Chandak Chakma">
+<meta name="description" content="Naive self-play can spiral or cycle. Fictitious play, opponent pools and PSRO fix it; expert iteration explains AlphaZero; and STaR turns out to be an EM algorithm for the log-likelihood of the right answer.">
+<link rel="canonical" href="https://chandakchakma.github.io/notes/self-play-as-a-game.html">
+<link rel="icon" href="../images/favicon.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Self-Play as a Game: Cycling, Expert Iteration and STaR | Chandak’s Notes">
+<meta property="og:description" content="Naive self-play can spiral or cycle. Fictitious play, opponent pools and PSRO fix it; expert iteration explains AlphaZero; and STaR turns out to be an EM algorithm for the log-likelihood of the right answer.">
+<meta property="og:url" content="https://chandakchakma.github.io/notes/self-play-as-a-game.html">
+<meta property="og:image" content="https://chandakchakma.github.io/images/chandak_photo6.jpg">
+<meta name="twitter:card" content="summary">
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('pref-theme'); } catch (e) {}
+    if (t === 'dark' || (t === null && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+  })();
+</script>
+<link rel="stylesheet" href="../blog.css?v=1">
+<script>
+  MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+              options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+              chtml: { scale: 0.94 } };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<header class="header">
+  <nav class="nav">
+    <div class="logo"><a href="../notes.html">Chandak&rsquo;s Notes</a>
+      <button id="theme-toggle" title="Switch light or dark theme" aria-label="Switch light or dark theme"><svg id="moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg><svg id="sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></button></div>
+    <ul class="menu">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../notes.html">Notes</a></li>
+      <li><a href="../data/selfplay-foundations-notes.pdf">PDF</a></li>
+    </ul>
+  </nav>
+</header>
+<main class="main">
+<article class="post-single">
+<header class="post-header">
+  <div class="breadcrumbs"><a href="../index.html">Home</a>&nbsp;&raquo;&nbsp;<a href="../notes.html">Notes</a></div>
+  <h1 class="post-title">Self-Play as a Game: Cycling, Expert Iteration and STaR</h1>
+  <div class="post-meta">Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 5 min&nbsp; | &nbsp;Author: Chandak Chakma</div>
+</header>
+<p class="series-note">Part 4 of 10 in <a href="../notes.html">Foundations of Self-Play for LLM Reasoning</a>. All parts are also in one <a href="../data/selfplay-foundations-notes.pdf">PDF</a>.</p>
+<div class="toc"><details open><summary>Table of Contents</summary><ul>
+<li class="toc-h2"><a href="#s12">12 Games, equilibria, and why self-play cycles</a></li>
+<li class="toc-h2"><a href="#s13">13 Search as a teacher: expert iteration and AlphaZero</a></li>
+<li class="toc-h2"><a href="#s14">14 STaR as maximum marginal likelihood</a></li>
+<li class="toc-h2"><a href="#exercises">Exercises</a></li>
+<li class="toc-h2"><a href="#references">References</a></li>
+</ul></details></div>
+
+<div class="post-content">
+<h2 class="unnumbered" id="s12"><span class="secnum">12</span> Games, equilibria, and why self-play cycles</h2>
+<div class="box box-def"><div class="box-title">Definition <span class="box-sep">|</span> zero-sum games and equilibria</div><div class="box-body">
+<p>Player 1 gets payoff <span class="math inline">\(u(a,b)\)</span> and player 2 gets <span class="math inline">\(-u(a,b)\)</span>. With mixed strategies <span class="math inline">\(s,t\)</span> and payoff matrix <span class="math inline">\(U\)</span>, von Neumann’s minimax theorem states <span class="math inline">\(\max_s\min_t s^\top U t=\min_t\max_s s^\top U t\)</span>. A <em>Nash equilibrium</em> is a pair of strategies in which no player gains by changing alone.</p>
+</div></div>
+<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> naive self-play can spiral</div><div class="box-body">
+<p>On <span class="math inline">\(f(u,v)=uv\)</span>, where <span class="math inline">\(u\)</span> minimizes and <span class="math inline">\(v\)</span> maximizes, simultaneous gradient steps <span class="math inline">\(u_{t+1}=u_t-\eta v_t\)</span>, <span class="math inline">\(v_{t+1}=v_t+\eta u_t\)</span> give <span class="math display">\[u_{t+1}^2+v_{t+1}^2=(1+\eta^2)\,(u_t^2+v_t^2),\]</span> so the iterates spiral away from the equilibrium <span class="math inline">\((0,0)\)</span> for any step size.</p>
+</div></div>
+<p>In rock–paper–scissors, best responses cycle forever: rock, then paper, then scissors, then rock. The standard fixes:</p>
+<ul>
+<li><p><strong>Fictitious play:</strong> best-respond to the <em>average</em> of all past opponents; the time-averages converge in two-player zero-sum games (Robinson, 1951).</p></li>
+<li><p><strong>Opponent pools:</strong> play against a random earlier checkpoint, as AlphaGo did.</p></li>
+<li><p><strong>PSRO</strong> (Lanctot et al., 2017): grow a population of policies and mix them by a meta-level Nash equilibrium.</p></li>
+<li><p><strong>Optimistic or extragradient updates:</strong> these converge on bilinear games where plain gradient steps spiral.</p></li>
+</ul>
+<div class="box box-why"><div class="box-title">Why it matters for self-play</div><div class="box-body">
+<p>Challenger–Solver self-play is general-sum and non-stationary: each side’s target moves as the other learns. Forgetting earlier skills, the cross-round mode cycling reported by R-Diverse, is the LLM form of this cycling. Memory banks and populations are the LLM form of fictitious play.</p>
+</div></div>
+<h2 class="unnumbered" id="s13"><span class="secnum">13</span> Search as a teacher: expert iteration and AlphaZero</h2>
+<p>Expert iteration (Anthony et al., 2017) alternates two steps. An <em>improvement operator</em> <span class="math inline">\(\mathcal I\)</span>, such as tree search, filtering or voting, turns the current policy into a stronger one; then the policy is trained to imitate it, <span class="math inline">\(\pi\leftarrow\arg\min_\pi D_{\mathrm{KL}}(\mathcal I(\pi)\,\|\,\pi)\)</span>. AlphaZero is the famous case, with loss <span class="math display">\[\ell=(z-v)^2-\boldsymbol{\pi}_{\mathrm{MCTS}}^{\top}\log\mathbf p+c\,\|\theta\|^2 ,\]</span> where <span class="math inline">\(z\)</span> is the real game result, <span class="math inline">\(v\)</span> the predicted value, <span class="math inline">\(\boldsymbol\pi_{\mathrm{MCTS}}\)</span> the search’s move distribution and <span class="math inline">\(\mathbf p\)</span> the network’s.</p>
+<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> the condition for self-improvement</div><div class="box-body">
+<p>The loop improves only if <span class="math inline">\(\mathcal I(\pi)\)</span> is reliably better than <span class="math inline">\(\pi\)</span>. In Go, search plus the true game result guarantees this. In label-free LLM self-play the operator is usually a majority vote, which is better than the policy only when the mode is right.</p>
+</div></div>
+<h2 class="unnumbered" id="s14"><span class="secnum">14</span> STaR as maximum marginal likelihood</h2>
+<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> Fisher’s identity</div><div class="box-body">
+<p>With a latent rationale <span class="math inline">\(z\)</span> and gold answer <span class="math inline">\(y^\star\)</span>, <span class="math display">\[\nabla_\theta\log p_\theta(y^\star\mid x)=\mathbb{E}_{z\sim p_\theta(z\mid x,y^\star)}\Big[\nabla_\theta\log p_\theta(z,y^\star\mid x)\Big].\]</span></p>
+</div></div>
+<p><strong>Derivation.</strong> <span class="math inline">\(\nabla_\theta\log p(y^\star\mid x)=\frac{1}{p(y^\star\mid x)}\sum_z\nabla_\theta p(z,y^\star\mid x)=\sum_z\frac{p(z,y^\star\mid x)}{p(y^\star\mid x)}\nabla_\theta\log p(z,y^\star\mid x)\)</span>, and the weight is the posterior <span class="math inline">\(p(z\mid x,y^\star)\)</span>. If the answer is read off the rationale, <span class="math inline">\(y=\mathrm{ans}(z)\)</span>, then sampling <span class="math inline">\(z\sim p_\theta(z\mid x)\)</span> and keeping it only when <span class="math inline">\(\mathrm{ans}(z)=y^\star\)</span> gives exact posterior samples. Fine-tuning on the kept rationales, as STaR does (Zelikman et al., 2022), is therefore a stochastic gradient of <span class="math inline">\(\log p_\theta(y^\star\mid x)\)</span>: an EM-style algorithm.</p>
+<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> RL versus likelihood</div><div class="box-body">
+<p>RL with a <span class="math inline">\(0/1\)</span> reward maximizes <span class="math inline">\(p_\theta(y^\star\mid x)\)</span>, and <span class="math inline">\(\nabla_\theta p=p\,\nabla_\theta\log p\)</span>. STaR maximizes <span class="math inline">\(\log p_\theta(y^\star\mid x)\)</span>, and <span class="math inline">\(\nabla_\theta\log p=\nabla_\theta p/p\)</span>. On a problem solved <span class="math inline">\(1\%\)</span> of the time, the likelihood objective weights the gradient <span class="math inline">\(100\)</span> times more than RL does: log-likelihood favors hard problems.</p>
+</div></div>
+<div class="box box-why"><div class="box-title">Why it matters for self-play</div><div class="box-body">
+<p>“Maximize <span class="math inline">\(p\)</span>” versus “maximize <span class="math inline">\(\log p\)</span>” decides whether rare successes on hard problems drive learning. It ties directly to the Challenger’s job of keeping <span class="math inline">\(p\)</span> in the learnable range.</p>
+</div></div>
+<h2 id="exercises">Exercises</h2>
+<div class="exercise"><p><strong>Exercise 7.</strong> In the bilinear example with <span class="math inline">\(\eta=0.1\)</span> and start <span class="math inline">\((u,v)=(1,0)\)</span>, how far from the equilibrium are the iterates after <span class="math inline">\(10\)</span> steps?</p><details><summary>Show answer</summary><p>The squared radius grows by <span class="math inline">\(1.01\)</span> per step: <span class="math inline">\(\sqrt{1.01^{10}}=1.051\)</span>.</p></details></div>
+<div class="exercise"><p><strong>Exercise 8.</strong> A problem has <span class="math inline">\(p_\theta(y^\star\mid x)=0.05\)</span>. By what factor does the likelihood gradient exceed the RL gradient on this problem?</p><details><summary>Show answer</summary><p><span class="math inline">\(1/p=20\)</span>.</p></details></div>
+
+<h2 id="references">References</h2>
+<ol class="refs">
+<li value="18">R-Diverse: Mitigating Diversity Illusion in Self-Play LLM Training. arXiv:2602.13103, 2026.</li>
+<li value="20">J. Robinson. An iterative method of solving a game. <em>Annals of Mathematics</em>, 1951.</li>
+<li value="21">M. Lanctot et al. A Unified Game-Theoretic Approach to Multiagent Reinforcement Learning (PSRO). arXiv:1711.00832, 2017.</li>
+<li value="22">T. Anthony, Z. Tian and D. Barber. Thinking Fast and Slow with Deep Learning and Tree Search (expert iteration). arXiv:1705.08439, 2017.</li>
+<li value="24">E. Zelikman et al. STaR: Bootstrapping Reasoning With Reasoning. arXiv:2203.14465, 2022.</li>
+</ol>
+
+<h2 id="citation">Citation</h2>
+<p>Cited as:</p>
+<blockquote>Chakma, Chandak. (Nov 2026). Self-Play as a Game: Cycling, Expert Iteration and STaR. Chandak&rsquo;s Notes. https://chandakchakma.github.io/notes/self-play-as-a-game.html</blockquote>
+<pre><code>@article{chakma2026selfplayasagame,
+  title   = "Self-Play as a Game: Cycling, Expert Iteration and STaR",
+  author  = "Chakma, Chandak",
+  journal = "chandakchakma.github.io",
+  year    = "2026",
+  month   = "Nov",
+  url     = "https://chandakchakma.github.io/notes/self-play-as-a-game.html"
+}</code></pre>
+
+</div>
+<nav class="paginav"><a class="prev" href="challenger-signals.html"><span class="title">&laquo; Prev</span><br><span>What Should the Challenger Make? Learnability, Proposer Rewards and Noisy Labels</span></a><a class="next" href="information-limits.html"><span class="title">Next &raquo;</span><br><span>Where Can New Knowledge Come From? Data Processing and the Verifier Gap</span></a></nav>
+</article>
+</main>
+<footer class="footer">&copy; 2026 <a href="../index.html">Chandak Chakma</a></footer>
+<script>
+  document.getElementById('theme-toggle').addEventListener('click', function () {
+    var dark = document.documentElement.classList.toggle('dark');
+    try { localStorage.setItem('pref-theme', dark ? 'dark' : 'light'); } catch (e) {}
+  });
+</script>
+</body>
+</html>

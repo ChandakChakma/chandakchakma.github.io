@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evidence Reviewers Trust, and Open Problems | Chandak’s Notes</title>
+<meta name="author" content="Chandak Chakma">
+<meta name="description" content="How big benchmark noise really is, a checklist before claiming anything, five open problems where a new research thread can start, and a four-week study plan.">
+<link rel="canonical" href="https://chandakchakma.github.io/notes/evidence-and-open-problems.html">
+<link rel="icon" href="../images/favicon.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Evidence Reviewers Trust, and Open Problems | Chandak’s Notes">
+<meta property="og:description" content="How big benchmark noise really is, a checklist before claiming anything, five open problems where a new research thread can start, and a four-week study plan.">
+<meta property="og:url" content="https://chandakchakma.github.io/notes/evidence-and-open-problems.html">
+<meta property="og:image" content="https://chandakchakma.github.io/images/chandak_photo6.jpg">
+<meta name="twitter:card" content="summary">
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('pref-theme'); } catch (e) {}
+    if (t === 'dark' || (t === null && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+  })();
+</script>
+<link rel="stylesheet" href="../blog.css?v=1">
+<script>
+  MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+              options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+              chtml: { scale: 0.94 } };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<header class="header">
+  <nav class="nav">
+    <div class="logo"><a href="../notes.html">Chandak&rsquo;s Notes</a>
+      <button id="theme-toggle" title="Switch light or dark theme" aria-label="Switch light or dark theme"><svg id="moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg><svg id="sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></button></div>
+    <ul class="menu">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../notes.html">Notes</a></li>
+      <li><a href="../data/selfplay-foundations-notes.pdf">PDF</a></li>
+    </ul>
+  </nav>
+</header>
+<main class="main">
+<article class="post-single">
+<header class="post-header">
+  <div class="breadcrumbs"><a href="../index.html">Home</a>&nbsp;&raquo;&nbsp;<a href="../notes.html">Notes</a></div>
+  <h1 class="post-title">Evidence Reviewers Trust, and Open Problems</h1>
+  <div class="post-meta">Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 4 min&nbsp; | &nbsp;Author: Chandak Chakma</div>
+</header>
+<p class="series-note">Part 9 of 10 in <a href="../notes.html">Foundations of Self-Play for LLM Reasoning</a>. All parts are also in one <a href="../data/selfplay-foundations-notes.pdf">PDF</a>.</p>
+<div class="toc"><details open><summary>Table of Contents</summary><ul>
+<li class="toc-h2"><a href="#s21">21 How big is the noise?</a></li>
+<li class="toc-h2"><a href="#s22">22 A checklist before you claim anything</a></li>
+<li class="toc-h2"><a href="#s-open">Open problems: where a new thread can lead</a></li>
+<li class="toc-h2"><a href="#s-plan">A four-week study plan</a></li>
+<li class="toc-h2"><a href="#references">References</a></li>
+</ul></details></div>
+
+<div class="post-content">
+<h2 class="unnumbered" id="s21"><span class="secnum">21</span> How big is the noise?</h2>
+<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> benchmark uncertainty</div><div class="box-body">
+<p>On <span class="math inline">\(N\)</span> problems with accuracy near <span class="math inline">\(p\)</span>, the standard error is <span class="math inline">\(\sqrt{p(1-p)/N}\)</span> and a <span class="math inline">\(95\%\)</span> interval is about <span class="math inline">\(\pm1.96\)</span> standard errors.</p>
+</div></div>
+<div class="center">
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align: left;">benchmark</th>
+<th style="text-align: center;">problems <span class="math inline">\(N\)</span></th>
+<th style="text-align: center;">standard error at <span class="math inline">\(p=0.5\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(95\%\)</span> half-width</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">AIME (one year)</td>
+<td style="text-align: center;"><span class="math inline">\(30\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.091\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\pm 17.9\)</span> points</td>
+</tr>
+<tr>
+<td style="text-align: left;">MATH-500</td>
+<td style="text-align: center;"><span class="math inline">\(500\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.022\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\pm 4.4\)</span> points</td>
+</tr>
+<tr>
+<td style="text-align: left;">GSM8K test</td>
+<td style="text-align: center;"><span class="math inline">\(1{,}319\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.014\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\pm 2.7\)</span> points</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p>Averaging <span class="math inline">\(k\)</span> samples per problem (avg@<span class="math inline">\(k\)</span>) removes sampling noise, not the noise from which problems happen to be in the set. Compare two methods with a <em>paired</em> bootstrap over the same problems.</p>
+<h2 class="unnumbered" id="s22"><span class="secnum">22</span> A checklist before you claim anything</h2>
+<ul>
+<li><p><strong>Same compute:</strong> match rollouts, tokens and optimizer steps against every baseline.</p></li>
+<li><p><strong>Seeds:</strong> at least three for training curves; a “rise, then fall” claim needs the fall to exceed the seed spread.</p></li>
+<li><p><strong>pass@<span class="math inline">\(k\)</span>:</strong> the unbiased estimator with <span class="math inline">\(n\gg k\)</span>, reported up to large <span class="math inline">\(k\)</span>.</p></li>
+<li><p><strong>Newness:</strong> report base pass@256 and count problems the base model never solves.</p></li>
+<li><p><strong>Contamination:</strong> exact and <span class="math inline">\(13\)</span>-gram overlap between generated problems and every benchmark.</p></li>
+<li><p><strong>Decision rules first:</strong> write the pass/fail rule before the run, and never pick checkpoints on test sets.</p></li>
+<li><p><strong>Read the code:</strong> published numbers come from code, not from equations (Section <a href="challenger-signals.html#s10">10</a>).</p></li>
+</ul>
+<h2 class="unnumbered" id="s-open">Open problems: where a new thread can lead</h2>
+<ol>
+<li><p><strong>Growth.</strong> Pure self-play peaks after about three to five rounds, and later Challengers do not teach more than earlier ones (<em>What Actually Evolves in Self-Evolving RL?</em>, ICLR 2027 submission). Collapse fixes such as R-Diverse and data gating (Survive or Collapse) stop the fall, but not the stall. <em>Goal:</em> a loop that keeps improving.</p></li>
+<li><p><strong>Answer keys under shared errors.</strong> A label-free signal that beats the vote on the minority-truth zone (Section <a href="voting-shared-errors.html#s17">17</a>), using a channel that a shared misreading does not control (Sections <a href="voting-shared-errors.html#s17-4">17.4</a> and <a href="voting-shared-errors.html#s17-8">17.8</a>).</p></li>
+<li><p><strong>Search with a strict check.</strong> Find rare right answers and recognize them without labels. The check’s false-accept rate on the vote’s wrong answer must stay below the truth’s share of the samples (Section <a href="search-and-correctness.html#s18">18</a>).</p></li>
+<li><p><strong>Measured expansion.</strong> Newly solved problems at large <span class="math inline">\(k\)</span>, beyond the base model’s pass@256 (Section <a href="what-rl-can-do.html#s7">7</a>), instead of pass@1 gains that may be sharpening.</p></li>
+<li><p><strong>Grounded teacher rewards without labels.</strong> SOAR shows that rewarding real student progress works, but it needs a labeled hard set (Section <a href="challenger-signals.html#s10">10</a>).</p></li>
+<li><p><strong>A theory of closed-loop improvement.</strong> When can a loop with no outside information improve, and by how much? The data processing inequality (Section <a href="information-limits.html#s15">15</a>) and the verifier gap (Section <a href="information-limits.html#s16">16</a>) mark the boundary.</p></li>
+</ol>
+<h2 class="unnumbered" id="s-plan">A four-week study plan</h2>
+<div class="center">
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Week</strong></th>
+<th style="text-align: left;"><strong>Read in this guide, then derive by hand</strong></th>
+<th style="text-align: left;"><strong>Read the papers</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Part I: policy gradient, baselines, the RLOO identity, PPO clipping</td>
+<td style="text-align: left;">Sutton and Barto, ch. 13 [2]; PPO [3]; GRPO [4]; RLOO [5]</td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Part II: the tilted optimum, pass@<span class="math inline">\(k\)</span> and its estimator</td>
+<td style="text-align: left;">DPO derivation [8]; pass@<span class="math inline">\(k\)</span> [9]; Yue et al. [10]; Dr. GRPO [7]</td>
+</tr>
+<tr>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">Part III: learnability, proposer rewards, noisy labels</td>
+<td style="text-align: left;">Absolute Zero [15]; R-Zero [16]; SOAR [17]; PAIRED [12]</td>
+</tr>
+<tr>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">Parts IV–V: games, STaR, information limits, voting, search + check, collapse</td>
+<td style="text-align: left;">STaR [24]; Mind the Gap [28]; Large Language Monkeys [43]; resampling limits [44]; FOBAR [45]; model collapse [29, 30]; weak-to-strong [31]</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p><strong>The test of understanding.</strong> For each key result, you should be able to (1) derive it on a blank page, (2) redo its worked example without notes, and (3) say in one sentence what it implies for a Challenger–Solver loop.</p>
+
+<h2 id="references">References</h2>
+<ol class="refs">
+<li value="2">R. S. Sutton and A. G. Barto. <em>Reinforcement Learning: An Introduction</em>, 2nd ed. MIT Press, 2018.</li>
+<li value="5">A. Ahmadian et al. Back to Basics: Revisiting REINFORCE Style Optimization for Learning from Human Feedback in LLMs (RLOO). arXiv:2402.14740, 2024.</li>
+<li value="10">Y. Yue et al. Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model? arXiv:2504.13837, 2025.</li>
+<li value="12">M. Dennis et al. Emergent Complexity and Zero-shot Transfer via Unsupervised Environment Design (PAIRED). arXiv:2012.02096, 2020.</li>
+<li value="15">A. Zhao et al. Absolute Zero: Reinforced Self-play Reasoning with Zero Data. arXiv:2505.03335, 2025.</li>
+<li value="16">C. Huang et al. R-Zero: Self-Evolving Reasoning LLM from Zero Data. arXiv:2508.05004, 2025.</li>
+<li value="17">S. Sundaram, J. Kempe and Y. Ollivier. Teaching Models to Teach Themselves: Reasoning at the Edge of Learnability (SOAR). arXiv:2601.18778, ICML 2026.</li>
+<li value="18">R-Diverse: Mitigating Diversity Illusion in Self-Play LLM Training. arXiv:2602.13103, 2026.</li>
+<li value="19">Survive or Collapse: The Asymmetric Roles of Data Gating and Reward Grounding in Self-Play RL. arXiv:2605.22217, 2026.</li>
+<li value="24">E. Zelikman et al. STaR: Bootstrapping Reasoning With Reasoning. arXiv:2203.14465, 2022.</li>
+<li value="28">Y. Song et al. Mind the Gap: Examining the Self-Improvement Capabilities of Large Language Models. arXiv:2412.02674, ICLR 2025.</li>
+<li value="43">B. Brown et al. Large Language Monkeys: Scaling Inference Compute with Repeated Sampling. arXiv:2407.21787, 2024.</li>
+<li value="45">W. Jiang et al. Forward-Backward Reasoning in Large Language Models for Mathematical Verification (FOBAR). arXiv:2308.07758, 2023.</li>
+</ol>
+
+<h2 id="citation">Citation</h2>
+<p>Cited as:</p>
+<blockquote>Chakma, Chandak. (Nov 2026). Evidence Reviewers Trust, and Open Problems. Chandak&rsquo;s Notes. https://chandakchakma.github.io/notes/evidence-and-open-problems.html</blockquote>
+<pre><code>@article{chakma2026evidenceandopenproblems,
+  title   = "Evidence Reviewers Trust, and Open Problems",
+  author  = "Chakma, Chandak",
+  journal = "chandakchakma.github.io",
+  year    = "2026",
+  month   = "Nov",
+  url     = "https://chandakchakma.github.io/notes/evidence-and-open-problems.html"
+}</code></pre>
+
+</div>
+<nav class="paginav"><a class="prev" href="collapse-and-weak-to-strong.html"><span class="title">&laquo; Prev</span><br><span>Model Collapse and Weak-to-Strong Generalization</span></a><a class="next" href="formula-sheet.html"><span class="title">Next &raquo;</span><br><span>A One-Page Formula Sheet for Self-Play</span></a></nav>
+</article>
+</main>
+<footer class="footer">&copy; 2026 <a href="../index.html">Chandak Chakma</a></footer>
+<script>
+  document.getElementById('theme-toggle').addEventListener('click', function () {
+    var dark = document.documentElement.classList.toggle('dark');
+    try { localStorage.setItem('pref-theme', dark ? 'dark' : 'light'); } catch (e) {}
+  });
+</script>
+</body>
+</html>

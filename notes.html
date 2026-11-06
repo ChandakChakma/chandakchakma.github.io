@@ -1,76 +1,122 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notes | Chandak Chakma</title>
+<meta name="author" content="Chandak Chakma">
+<meta name="description" content="Study notes by Chandak Chakma on self-play and reinforcement learning for LLM reasoning.">
+<link rel="canonical" href="https://chandakchakma.github.io/notes.html">
+<link rel="icon" href="images/favicon.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Notes | Chandak Chakma">
+<meta property="og:description" content="Study notes by Chandak Chakma on self-play and reinforcement learning for LLM reasoning.">
+<meta property="og:url" content="https://chandakchakma.github.io/notes.html">
+<meta property="og:image" content="https://chandakchakma.github.io/images/chandak_photo6.jpg">
+<meta name="twitter:card" content="summary">
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('pref-theme'); } catch (e) {}
+    if (t === 'dark' || (t === null && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+  })();
+</script>
+<link rel="stylesheet" href="blog.css?v=1">
+<script>
+  MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+              options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+              chtml: { scale: 0.94 } };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<header class="header">
+  <nav class="nav">
+    <div class="logo"><a href="notes.html">Chandak&rsquo;s Notes</a>
+      <button id="theme-toggle" title="Switch light or dark theme" aria-label="Switch light or dark theme"><svg id="moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg><svg id="sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></button></div>
+    <ul class="menu">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="notes.html">Notes</a></li>
+      <li><a href="data/selfplay-foundations-notes.pdf">PDF</a></li>
+    </ul>
+  </nav>
+</header>
+<main class="main">
+<article class="first-entry home-info">
+  <header class="entry-header"><h1>Notes</h1></header>
+  <div class="entry-content"><p>Hi, I&rsquo;m Chandak. These are my study notes on self-play and reinforcement learning for LLM reasoning: the definitions, derivations and worked examples I needed, each with exercises and answers. The series <em>Foundations of Self-Play for LLM Reasoning</em> is also available as <a href="data/selfplay-foundations-notes.pdf">one PDF</a>.</p></div>
+</article>
+<article class="post-entry">
+  <header class="entry-header"><h2>The RL Engine Behind LLM Reasoning</h2></header>
+  <div class="entry-content"><p>Every method for training LLM reasoners, from PPO to GRPO to self-play, estimates the same policy gradient. This post derives it, shows why baselines add no bias, compares GRPO with RLOO, and explains what PPO clipping and the KL term really do.</p></div>
+  <footer class="entry-footer">Part 1&nbsp; | &nbsp;Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 9 min&nbsp; | &nbsp;Author: Chandak Chakma</footer>
+  <a class="entry-link" aria-label="post link to The RL Engine Behind LLM Reasoning" href="notes/rl-engine.html"></a>
+</article>
+<article class="post-entry">
+  <header class="entry-header"><h2>What RL Can and Cannot Do: Sharpening, pass@k and Entropy</h2></header>
+  <div class="entry-content"><p>The KL-regularized optimum multiplies the odds of what the base model already says, so RL mostly sharpens. We derive it, read the sharpening signature in pass@k curves, and look at entropy collapse.</p></div>
+  <footer class="entry-footer">Part 2&nbsp; | &nbsp;Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 6 min&nbsp; | &nbsp;Author: Chandak Chakma</footer>
+  <a class="entry-link" aria-label="post link to What RL Can and Cannot Do: Sharpening, pass@k and Entropy" href="notes/what-rl-can-do.html"></a>
+</article>
+<article class="post-entry">
+  <header class="entry-header"><h2>What Should the Challenger Make? Learnability, Proposer Rewards and Noisy Labels</h2></header>
+  <div class="entry-content"><p>Why problems at the edge of ability teach the most, how Asymmetric Self-Play, PAIRED, Absolute Zero, R-Zero and SOAR pay their problem setters, and why correlated label noise is worse than random noise.</p></div>
+  <footer class="entry-footer">Part 3&nbsp; | &nbsp;Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 6 min&nbsp; | &nbsp;Author: Chandak Chakma</footer>
+  <a class="entry-link" aria-label="post link to What Should the Challenger Make? Learnability, Proposer Rewards and Noisy Labels" href="notes/challenger-signals.html"></a>
+</article>
+<article class="post-entry">
+  <header class="entry-header"><h2>Self-Play as a Game: Cycling, Expert Iteration and STaR</h2></header>
+  <div class="entry-content"><p>Naive self-play can spiral or cycle. Fictitious play, opponent pools and PSRO fix it; expert iteration explains AlphaZero; and STaR turns out to be an EM algorithm for the log-likelihood of the right answer.</p></div>
+  <footer class="entry-footer">Part 4&nbsp; | &nbsp;Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 5 min&nbsp; | &nbsp;Author: Chandak Chakma</footer>
+  <a class="entry-link" aria-label="post link to Self-Play as a Game: Cycling, Expert Iteration and STaR" href="notes/self-play-as-a-game.html"></a>
+</article>
+<article class="post-entry">
+  <header class="entry-header"><h2>Where Can New Knowledge Come From? Data Processing and the Verifier Gap</h2></header>
+  <div class="entry-content"><p>A loop with no outside information cannot create knowledge, only concentrate it. The data processing inequality draws that line, and the generator-verifier gap says exactly when filtering your own answers helps.</p></div>
+  <footer class="entry-footer">Part 5&nbsp; | &nbsp;Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 3 min&nbsp; | &nbsp;Author: Chandak Chakma</footer>
+  <a class="entry-link" aria-label="post link to Where Can New Knowledge Come From? Data Processing and the Verifier Gap" href="notes/information-limits.html"></a>
+</article>
+<article class="post-entry">
+  <header class="entry-header"><h2>When Does Voting Find the Truth? Shared Errors in Self-Play</h2></header>
+  <div class="entry-content"><p>Majority voting is the default answer key of label-free self-play. Condorcet, plurality margins, three models of correlated errors, the minority-truth zone, an indistinguishability lemma, and the exact condition a new signal must meet to beat the vote.</p></div>
+  <footer class="entry-footer">Part 6&nbsp; | &nbsp;Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 20 min&nbsp; | &nbsp;Author: Chandak Chakma</footer>
+  <a class="entry-link" aria-label="post link to When Does Voting Find the Truth? Shared Errors in Self-Play" href="notes/voting-shared-errors.html"></a>
+</article>
+<article class="post-entry">
+  <header class="entry-header"><h2>Search and Correctness: Finding and Recognizing Rare Answers</h2></header>
+  <div class="entry-content"><p>Finding a rare right answer needs many samples; recognizing it needs a check whose false-accept rate is below the answer’s own rate. Coverage laws, the resampling ceiling, a verified-vote condition, FOBAR and Absolute Zero.</p></div>
+  <footer class="entry-footer">Part 7&nbsp; | &nbsp;Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 20 min&nbsp; | &nbsp;Author: Chandak Chakma</footer>
+  <a class="entry-link" aria-label="post link to Search and Correctness: Finding and Recognizing Rare Answers" href="notes/search-and-correctness.html"></a>
+</article>
+<article class="post-entry">
+  <header class="entry-header"><h2>Model Collapse and Weak-to-Strong Generalization</h2></header>
+  <div class="entry-content"><p>Training only on your own outputs loses the tails; labels weaker than the student can still teach it. Two results that frame how far self-labels can go.</p></div>
+  <footer class="entry-footer">Part 8&nbsp; | &nbsp;Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 3 min&nbsp; | &nbsp;Author: Chandak Chakma</footer>
+  <a class="entry-link" aria-label="post link to Model Collapse and Weak-to-Strong Generalization" href="notes/collapse-and-weak-to-strong.html"></a>
+</article>
+<article class="post-entry">
+  <header class="entry-header"><h2>Evidence Reviewers Trust, and Open Problems</h2></header>
+  <div class="entry-content"><p>How big benchmark noise really is, a checklist before claiming anything, five open problems where a new research thread can start, and a four-week study plan.</p></div>
+  <footer class="entry-footer">Part 9&nbsp; | &nbsp;Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 4 min&nbsp; | &nbsp;Author: Chandak Chakma</footer>
+  <a class="entry-link" aria-label="post link to Evidence Reviewers Trust, and Open Problems" href="notes/evidence-and-open-problems.html"></a>
+</article>
+<article class="post-entry">
+  <header class="entry-header"><h2>A One-Page Formula Sheet for Self-Play</h2></header>
+  <div class="entry-content"><p>Every key formula of the series in one table, from the policy gradient to the verified-vote condition, each linked to the post that derives it.</p></div>
+  <footer class="entry-footer">Part 10&nbsp; | &nbsp;Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 2 min&nbsp; | &nbsp;Author: Chandak Chakma</footer>
+  <a class="entry-link" aria-label="post link to A One-Page Formula Sheet for Self-Play" href="notes/formula-sheet.html"></a>
+</article>
 
-    <title>Notes | Chandak Chakma</title>
-
-    <meta name="author" content="Chandak Chakma">
-    <meta name="description" content="Study notes by Chandak Chakma on self-play and reinforcement learning for LLM reasoning.">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="color-scheme" content="only light">
-    <link rel="canonical" href="https://chandakchakma.github.io/notes.html">
-    <link rel="icon" href="images/favicon.png" type="image/png" sizes="192x192">
-    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
-    <link rel="stylesheet" type="text/css" href="stylesheet.css?v=5">
-
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Notes | Chandak Chakma">
-    <meta property="og:description" content="Study notes on self-play and reinforcement learning for LLM reasoning.">
-    <meta property="og:url" content="https://chandakchakma.github.io/notes.html">
-    <meta property="og:image" content="https://chandakchakma.github.io/images/note_selfplay_sq.png">
-    <meta name="twitter:card" content="summary">
-  </head>
-
-  <body>
-    <table style="width:100%;max-width:800px;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
-      <tr style="padding:0px">
-        <td style="padding:0px">
-
-          <!-- ===== Header ===== -->
-          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
-            <tr>
-              <td style="padding:20px 20px 0px 20px;width:100%;vertical-align:middle">
-                <p style="margin:0"><a href="index.html">&larr; Chandak Chakma</a></p>
-                <h2 style="padding-top:18px">Notes</h2>
-                <p>
-                  Notes I write while studying self-play and reinforcement learning for LLM reasoning.
-                  Each one collects the definitions, derivations and worked examples I needed, with exercises and answers.
-                </p>
-              </td>
-            </tr>
-          </tbody></table>
-
-          <table style="width:100%;border:0px;border-spacing:0px 10px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
-
-            <!-- Note 1: self-play foundations -->
-            <tr class="paper-row">
-              <td style="padding:16px;width:30%;vertical-align:middle">
-                <a href="data/selfplay-foundations-notes.pdf"><img src="images/note_selfplay_sq.png" width="100%" alt="First page of the notes: title, purpose and a map of the seven parts" style="border:1px solid #e3e6ea;border-radius:4px"></a>
-              </td>
-              <td style="padding:8px;width:70%;vertical-align:middle">
-                <a href="data/selfplay-foundations-notes.pdf">
-                  <span class="papertitle">Foundations of Self-Play for LLM Reasoning</span>
-                </a>
-                <br>
-                <strong>Chandak Chakma</strong>
-                <br>
-                <em>Study notes</em>, November 2026 &nbsp;&middot;&nbsp; 29 pages
-                <br>
-                <a href="data/selfplay-foundations-notes.pdf">pdf</a>
-                <p></p>
-                <p>
-                  The theory behind Challenger&ndash;Solver self-play: policy gradients, GRPO and PPO; why RL mostly sharpens; pass@<i>k</i>;
-                  proposer rewards; self-play as a game; and where new knowledge can come from without labels: when majority voting finds the truth,
-                  why shared errors defeat it, and how far search with an imperfect check can go.
-                </p>
-              </td>
-            </tr>
-
-          </tbody></table>
-
-        </td>
-      </tr>
-    </table>
-  </body>
+</main>
+<footer class="footer">&copy; 2026 <a href="index.html">Chandak Chakma</a></footer>
+<script>
+  document.getElementById('theme-toggle').addEventListener('click', function () {
+    var dark = document.documentElement.classList.toggle('dark');
+    try { localStorage.setItem('pref-theme', dark ? 'dark' : 'light'); } catch (e) {}
+  });
+</script>
+</body>
 </html>

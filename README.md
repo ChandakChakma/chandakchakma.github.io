@@ -7,7 +7,7 @@ Plain HTML, no build step. Based on [Jon Barron's website](https://github.com/jo
 ## Files
 
 - `index.html` – the main page (bio and papers). Edit the text here.
-- `notes.html` – the Notes page, linked from the box under the papers.
+- `notes.html`, `notes/`, `blog.css` – the Notes blog (list of posts + one page per topic), linked from the box under the papers. Generated from the study notes by a local script; do not edit the post HTML by hand.
 - `stylesheet.css` – fonts and colours.
 - `images/` – profile photo and one thumbnail per paper.
 - `data/` – CV and paper PDFs.

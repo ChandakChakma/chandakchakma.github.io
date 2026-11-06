@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>When Does Voting Find the Truth? Shared Errors in Self-Play | Chandak’s Notes</title>
+<meta name="author" content="Chandak Chakma">
+<meta name="description" content="Majority voting is the default answer key of label-free self-play. Condorcet, plurality margins, three models of correlated errors, the minority-truth zone, an indistinguishability lemma, and the exact condition a new signal must meet to beat the vote.">
+<link rel="canonical" href="https://chandakchakma.github.io/notes/voting-shared-errors.html">
+<link rel="icon" href="../images/favicon.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+<meta property="og:type" content="article">
+<meta property="og:title" content="When Does Voting Find the Truth? Shared Errors in Self-Play | Chandak’s Notes">
+<meta property="og:description" content="Majority voting is the default answer key of label-free self-play. Condorcet, plurality margins, three models of correlated errors, the minority-truth zone, an indistinguishability lemma, and the exact condition a new signal must meet to beat the vote.">
+<meta property="og:url" content="https://chandakchakma.github.io/notes/voting-shared-errors.html">
+<meta property="og:image" content="https://chandakchakma.github.io/images/chandak_photo6.jpg">
+<meta name="twitter:card" content="summary">
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('pref-theme'); } catch (e) {}
+    if (t === 'dark' || (t === null && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+  })();
+</script>
+<link rel="stylesheet" href="../blog.css?v=1">
+<script>
+  MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+              options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+              chtml: { scale: 0.94 } };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<header class="header">
+  <nav class="nav">
+    <div class="logo"><a href="../notes.html">Chandak&rsquo;s Notes</a>
+      <button id="theme-toggle" title="Switch light or dark theme" aria-label="Switch light or dark theme"><svg id="moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg><svg id="sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></button></div>
+    <ul class="menu">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../notes.html">Notes</a></li>
+      <li><a href="../data/selfplay-foundations-notes.pdf">PDF</a></li>
+    </ul>
+  </nav>
+</header>
+<main class="main">
+<article class="post-single">
+<header class="post-header">
+  <div class="breadcrumbs"><a href="../index.html">Home</a>&nbsp;&raquo;&nbsp;<a href="../notes.html">Notes</a></div>
+  <h1 class="post-title">When Does Voting Find the Truth? Shared Errors in Self-Play</h1>
+  <div class="post-meta">Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 20 min&nbsp; | &nbsp;Author: Chandak Chakma</div>
+</header>
+<p class="series-note">Part 6 of 10 in <a href="../notes.html">Foundations of Self-Play for LLM Reasoning</a>. All parts are also in one <a href="../data/selfplay-foundations-notes.pdf">PDF</a>.</p>
+<div class="toc"><details open><summary>Table of Contents</summary><ul>
+<li class="toc-h2"><a href="#s17">17 When does voting find the truth? The theory of shared errors</a></li>
+<li class="toc-h3"><a href="#s17-1">17.1 Independent voters: Condorcet’s theorem and its rate</a></li>
+<li class="toc-h3"><a href="#s17-2">17.2 Many answers: the vote converges to the mode</a></li>
+<li class="toc-h3"><a href="#s17-3">17.3 Three models of correlated errors</a></li>
+<li class="toc-h3"><a href="#s17-4">17.4 The indistinguishability lemma</a></li>
+<li class="toc-h3"><a href="#s17-5">17.5 Where shared errors come from</a></li>
+<li class="toc-h3"><a href="#s17-6">17.6 Classical fixes, and why one model makes them hard</a></li>
+<li class="toc-h3"><a href="#s17-7">17.7 When does a new signal beat the vote?</a></li>
+<li class="toc-h3"><a href="#s17-8">17.8 Channels of new information: a map</a></li>
+<li class="toc-h3"><a href="#s17-9">17.9 A worksheet for a new signal</a></li>
+<li class="toc-h2"><a href="#exercises">Exercises</a></li>
+<li class="toc-h2"><a href="#references">References</a></li>
+</ul></details></div>
+
+<div class="post-content">
+<h2 class="unnumbered" id="s17"><span class="secnum">17</span> When does voting find the truth? The theory of shared errors</h2>
+<p>Majority voting is the default answer key of label-free self-play. This section asks exactly when the vote is right, why it fails, and what any replacement must do better. Together with Section <a href="search-and-correctness.html#s18">18</a>, it is the most important part for finding a new method: it ends with a map of the channels a new signal can use (Section <a href="#s17-8">17.8</a>) and a worksheet for testing one (Section <a href="#s17-9">17.9</a>).</p>
+<h3 class="unnumbered" id="s17-1"><span class="secnum">17.1</span> Independent voters: Condorcet’s theorem and its rate</h3>
+<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> Condorcet’s jury theorem</div><div class="box-body">
+<p><span class="math inline">\(n\)</span> independent voters, each correct with probability <span class="math inline">\(q\)</span> on a two-option question: <span class="math display">\[P_{\mathrm{maj}}(n)=\sum_{k&gt;n/2}\binom nk q^k(1-q)^{n-k}\ \xrightarrow[n\to\infty]{}\ \begin{cases}1,&amp;q&gt;1/2\\0,&amp;q&lt;1/2.\end{cases}\]</span> <strong>How fast.</strong> For <span class="math inline">\(q&gt;1/2\)</span>, Hoeffding’s inequality gives <span class="math inline">\(\Pr[\text{majority wrong}]\le\exp\!\big(-2n(q-\tfrac12)^2\big)\)</span>: the error vanishes exponentially.</p>
+</div></div>
+<div class="box box-ex"><div class="box-title">Worked example <span class="box-sep">|</span> independent voters</div><div class="box-body">
+<p><span class="math inline">\(q=0.6\)</span>, <span class="math inline">\(n=9\)</span>: the terms for <span class="math inline">\(k=5,\dots,9\)</span> are <span class="math inline">\(0.251,\ 0.251,\ 0.161,\ 0.060,\ 0.010\)</span>, so <span class="math inline">\(P_{\mathrm{maj}}=0.733\)</span>. Nine weak voters beat one. With <span class="math inline">\(n=101\)</span> the bound gives an error of at most <span class="math inline">\(0.133\)</span>; the exact error is <span class="math inline">\(0.021\)</span>.</p>
+</div></div>
+<h3 class="unnumbered" id="s17-2"><span class="secnum">17.2</span> Many answers: the vote converges to the mode</h3>
+<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> plurality voting</div><div class="box-body">
+<p>Let <span class="math inline">\(\pi(a\mid x)\)</span> be the Solver’s answer distribution and <span class="math inline">\(t\)</span> the true answer. As <span class="math inline">\(n\to\infty\)</span>, the plurality vote returns the mode <span class="math inline">\(\arg\max_a\pi(a\mid x)\)</span> (when the mode is unique). For each wrong answer <span class="math inline">\(w\)</span> with <span class="math inline">\(\pi(w\mid x)&lt;\pi(t\mid x)\)</span>, <span class="math display">\[\Pr\big[\,w\text{ gets at least as many votes as }t\,\big]\le\exp\!\Big(-\tfrac n2\,\big(\pi(t\mid x)-\pi(w\mid x)\big)^2\Big),\]</span> and a union bound over the wrong answers bounds the chance that the vote misses <span class="math inline">\(t\)</span>.</p>
+</div></div>
+<p><strong>Derivation.</strong> Score each sample <span class="math inline">\(+1\)</span> if it says <span class="math inline">\(t\)</span>, <span class="math inline">\(-1\)</span> if it says <span class="math inline">\(w\)</span>, and <span class="math inline">\(0\)</span> otherwise. The mean score is <span class="math inline">\(\pi(t\mid x)-\pi(w\mid x)\)</span> and each score lies in an interval of length <span class="math inline">\(2\)</span>, so Hoeffding’s inequality bounds the chance that the sum is <span class="math inline">\(\le0\)</span> by <span class="math inline">\(\exp(-2n\Delta^2/2^2)=\exp(-n\Delta^2/2)\)</span>.</p>
+<p><strong>Two consequences.</strong> (i) In the limit, the vote is right exactly when the truth is the mode; more samples only estimate the mode better. (ii) The <em>margin</em> <span class="math inline">\(\Delta=\pi(t\mid x)-\max_{w\neq t}\pi(w\mid x)\)</span> decides how many samples are needed.</p>
+<div class="box box-ex"><div class="box-title">Worked example <span class="box-sep">|</span> a small margin is a coin flip</div><div class="box-body">
+<p>The truth <span class="math inline">\(22\)</span> has <span class="math inline">\(\pi=0.40\)</span>, the wrong answer <span class="math inline">\(20\)</span> has <span class="math inline">\(0.35\)</span>, and five other answers have <span class="math inline">\(0.05\)</span> each. With <span class="math inline">\(10\)</span> votes the plurality picks <span class="math inline">\(22\)</span> only <span class="math inline">\(56\%\)</span> of the time and <span class="math inline">\(20\)</span> in <span class="math inline">\(42\%\)</span> (exact multinomial count, ties split evenly). For this pair, the bound guarantees <span class="math inline">\(90\%\)</span> only after about <span class="math inline">\(1{,}800\)</span> votes. R-Zero’s reward cannot see the danger: it reads only the top answer’s share (<span class="math inline">\(\hat p\approx0.4\)</span>, reward <span class="math inline">\(\approx0.8\)</span>), not how close the runner-up is.</p>
+</div></div>
+<h3 class="unnumbered" id="s17-3"><span class="secnum">17.3</span> Three models of correlated errors</h3>
+<p>Across questions, votes are not independent. Three models describe how they depend on each other; for a single LLM the third one is exact.</p>
+<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> (a) common shock: a shared error caps the vote</div><div class="box-body">
+<p>With probability <span class="math inline">\(\rho\)</span> all voters copy one shared draw (correct with probability <span class="math inline">\(q\)</span>); otherwise they vote independently. Then <span class="math display">\[P=\rho\,q+(1-\rho)\,P_{\mathrm{maj}}(n)\ \xrightarrow[n\to\infty]{}\ \rho\,q+(1-\rho)&lt;1 .\]</span></p>
+</div></div>
+<div class="box box-ex"><div class="box-title">Worked example <span class="box-sep">|</span> correlated voters</div><div class="box-body">
+<p><span class="math inline">\(\rho=0.5\)</span>, <span class="math inline">\(q=0.6\)</span>: <span class="math inline">\(P=0.3+0.5\times0.733=0.667\)</span> at <span class="math inline">\(n=9\)</span>, and never more than <span class="math inline">\(0.80\)</span> however many samples are drawn. More samples cannot remove a shared error.</p>
+</div></div>
+<div class="center">
+<figure><img src="img/fig-3.svg" alt="Figure 3" loading="lazy"></figure>
+<p class="caption">Independent votes climb toward <span class="math inline">\(1\)</span>; votes that share an error stop below the ceiling.</p>
+</div>
+<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> (b) exchangeable voters: the effective number of votes</div><div class="box-body">
+<p>If every pair of correctness indicators has correlation <span class="math inline">\(r&gt;0\)</span>, then <span class="math inline">\(\operatorname{Var}(\text{mean})=\frac{q(1-q)}{n}\big(1+(n-1)r\big)\)</span>, so the vote behaves like <span class="math display">\[n_{\mathrm{eff}}=\frac{n}{1+(n-1)\,r}\ \xrightarrow[n\to\infty]{}\ \frac1r\]</span> independent votes, in the sense of the variance of the vote share (the survey-sampling <em>design effect</em>, Kish 1965; a rough guide, not an exact accuracy formula). With <span class="math inline">\(r=0.2\)</span>, ten samples are worth about <span class="math inline">\(3.6\)</span> independent ones, and a thousand are worth at most five.</p>
+</div></div>
+<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> (c) latent difficulty: the ceiling of voting</div><div class="box-body">
+<p>Samples are independent <em>given the question</em>, but each question <span class="math inline">\(x\)</span> has its own success rate <span class="math inline">\(q(x)\)</span>. Then the vote’s accuracy as <span class="math inline">\(n\to\infty\)</span> is <span class="math display">\[\begin{gathered}\Pr_x\big[q(x)&gt;\tfrac12\big]\ \ \text{(two options)}, \\[4pt] \text{or} \\[4pt] \Pr_x\big[\text{the mode of }\pi(\cdot\mid x)\text{ is the truth}\big]\ \ \text{(in general)}.\end{gathered}\]</span> The share of questions whose mode is right is the hard ceiling of any vote.</p>
+</div></div>
+<div class="box box-ex"><div class="box-title">Worked example <span class="box-sep">|</span> voting lifts easy questions and sinks hard ones</div><div class="box-body">
+<p><span class="math inline">\(60\%\)</span> of questions have <span class="math inline">\(q=0.8\)</span>, <span class="math inline">\(25\%\)</span> have <span class="math inline">\(q=0.45\)</span>, and <span class="math inline">\(15\%\)</span> have <span class="math inline">\(q=0.1\)</span>. One sample is right <span class="math inline">\(0.6\cdot0.8+0.25\cdot0.45+0.15\cdot0.1=60.75\%\)</span> of the time; an infinite vote is right <span class="math inline">\(60\%\)</span> of the time. The vote lifts the easy questions to <span class="math inline">\(100\%\)</span> and drops the other <span class="math inline">\(40\%\)</span> to <span class="math inline">\(0\%\)</span>, even though the model solves them sometimes.</p>
+</div></div>
+<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> (c) explains (b)</div><div class="box-body">
+<p>For one LLM sampled at a fixed prompt, model (c) is exact: samples are independent given the question, so all their correlation runs through the question itself. Averaged over questions, it produces exactly the correlation of model (b): <span class="math display">\[\begin{gathered}r=\frac{\operatorname{Var}_x[q(x)]}{\bar q\,(1-\bar q)}, \\[4pt] \bar q=\mathbb{E}_x[q(x)].\end{gathered}\]</span> In the example above, <span class="math inline">\(r=0.067/0.238=0.28\)</span>.</p>
+</div></div>
+<p><strong>Derivation.</strong> For two samples <span class="math inline">\(i\neq j\)</span> of the same random question, <span class="math inline">\(\operatorname{Cov}(X_i,X_j)=\mathbb{E}[q^2]-\bar q^{\,2}=\operatorname{Var}_x[q]\)</span> and <span class="math inline">\(\operatorname{Var}(X_i)=\bar q(1-\bar q)\)</span>.</p>
+<p>So a “shared error” of one model is not noise between its samples: it is a <em>question whose mode is wrong</em>. Ensembles do not escape it either: Kim et al. (2025) find that larger and more accurate models make highly correlated errors, even across different providers.</p>
+<div class="box box-def"><div class="box-title">Definition <span class="box-sep">|</span> the minority-truth zone</div><div class="box-body">
+<p><span class="math display">\[\mathcal Z=\Big\{x:\ 0&lt;\pi(t\mid x)\le\max_{w\neq t}\pi(w\mid x)\Big\}.\]</span> On <span class="math inline">\(\mathcal Z\)</span> the model can solve the problem, but the vote is wrong (or a coin flip, at a tie). A better label pays <em>only</em> here: outside <span class="math inline">\(\mathcal Z\)</span> the vote is already right, and on never-solved questions a correct label gives an outcome-reward learner no correct sample to reinforce.</p>
+</div></div>
+<div class="center">
+<figure><img src="img/fig-4.svg" alt="Figure 4" loading="lazy"></figure>
+<p class="caption">Every question is a point. R-Zero’s band straddles the tie line, so it can keep questions from <span class="math inline">\(\mathcal Z\)</span>.</p>
+</div>
+<div class="box box-pit"><div class="box-title">Pitfall</div><div class="box-body">
+<p>R-Zero keeps questions whose top answer has <span class="math inline">\(30\)</span>–<span class="math inline">\(70\%\)</span> of the votes, and its Challenger is paid most near <span class="math inline">\(50\%\)</span>. That band crosses the tie line, so the kept set can contain many minority-truth questions, and a better Challenger can find more of them. This is consistent with R-Zero’s label accuracy falling from <span class="math inline">\(79\%\)</span> to <span class="math inline">\(63\%\)</span> over three rounds.</p>
+</div></div>
+<h3 class="unnumbered" id="s17-4"><span class="secnum">17.4</span> The indistinguishability lemma</h3>
+<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> a rule cannot separate what it cannot see</div><div class="box-body">
+<p>Let a labeling rule <span class="math inline">\(L\)</span> read only an observation <span class="math inline">\(O(x)\)</span>, for example the final answers of <span class="math inline">\(n\)</span> samples, their full reasoning traces, or hidden states, plus randomness independent of the truth. If two problems <span class="math inline">\(x\)</span> and <span class="math inline">\(x&#39;\)</span> give <span class="math inline">\(O(x)\)</span> and <span class="math inline">\(O(x&#39;)\)</span> the same distribution, but their truths differ (<span class="math inline">\(t\neq t&#39;\)</span>), then <span class="math display">\[\Pr[L(x)=t]+\Pr[L(x&#39;)=t&#39;]\le1 .\]</span> Majority voting is the case where <span class="math inline">\(O(x)\)</span> is the final answers of samples from <span class="math inline">\(\pi(\cdot\mid x)\)</span>.</p>
+</div></div>
+<p><strong>Proof.</strong> <span class="math inline">\(L(x)\)</span> and <span class="math inline">\(L(x&#39;)\)</span> have the same distribution <span class="math inline">\(D\)</span> over labels, and <span class="math inline">\(D(t)+D(t&#39;)\le1\)</span> because <span class="math inline">\(t\neq t&#39;\)</span>.</p>
+<p><strong>Corollary: the three escape routes.</strong> A label that beats the vote must read something whose distribution <em>differs</em> between such a pair. There are three ways to read more:</p>
+<ol>
+<li><p><strong>The model on other inputs</strong> <span class="math inline">\(\tilde x\)</span>: related problems, perturbations, inverse problems, or <span class="math inline">\(x\)</span> asked in a different way. This helps only if the model behaves differently on <span class="math inline">\(\tilde x\)</span> and <span class="math inline">\(\tilde x&#39;\)</span>.</p></li>
+<li><p><strong>The model’s internal states</strong> <span class="math inline">\(h(x)\)</span>: hidden activations, not just outputs. This helps only if <span class="math inline">\(h(x)\)</span> differs between the pair and carries the truth.</p></li>
+<li><p><strong>Information from outside the model</strong>: execution, an environment, or a program that reads the problem text itself. This differs by design.</p></li>
+</ol>
+<div class="box box-ex"><div class="box-title">Worked example <span class="box-sep">|</span> why every consistency check passes a consistent misreading</div><div class="box-body">
+<p>Suppose the model reads <span class="math inline">\(x\)</span> as a different problem <span class="math inline">\(\hat x\)</span> and solves <span class="math inline">\(\hat x\)</span> well. Then on <span class="math inline">\(x\)</span>, and on every related input (other parameter values, paraphrases that keep the trigger, the inverse problem), it behaves exactly as it would on the correctly read <span class="math inline">\(\hat x\)</span>-versions. Route 1 is closed: each consistency check verifies <span class="math inline">\(\hat x\)</span> perfectly, so votes, regularities across problem families and backward checks all agree with the wrong answer. Only something that compares the model’s written setup with the original text, or an outside solver, can see the difference.</p>
+</div></div>
+<div class="box box-why"><div class="box-title">Why it matters for self-play</div><div class="box-body">
+<p>This is the single most useful test for a new idea. Before any experiment, write down exactly what your signal reads. Then write down two problems on which that looks the same but the truths differ, and ask whether your signal can tell them apart. If it cannot, no tuning will save it.</p>
+</div></div>
+<h3 class="unnumbered" id="s17-5"><span class="secnum">17.5</span> Where shared errors come from</h3>
+<div class="center">
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Source</strong></th>
+<th style="text-align: left;"><strong>Shared through</strong></th>
+<th style="text-align: left;"><strong>Can be exposed by</strong></th>
+<th style="text-align: left;"><strong>Cannot be exposed by</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Misreading the problem</td>
+<td style="text-align: left;">the meaning the model gives the text</td>
+<td style="text-align: left;">a check of the written setup against the original text; an outside solver; internal states, if they encode the reading</td>
+<td style="text-align: left;">votes; checks that reuse the same reading (families, inverse problems)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Wrong method or formula</td>
+<td style="text-align: left;">the learned procedure</td>
+<td style="text-align: left;">execution; a truly different method</td>
+<td style="text-align: left;">votes; checks that use the same method</td>
+</tr>
+<tr>
+<td style="text-align: left;">Missing knowledge</td>
+<td style="text-align: left;">the pretraining data</td>
+<td style="text-align: left;">outside sources (tools, retrieval)</td>
+<td style="text-align: left;">anything inside the model</td>
+</tr>
+<tr>
+<td style="text-align: left;">Consistent arithmetic slip</td>
+<td style="text-align: left;">computation habits</td>
+<td style="text-align: left;">executing the arithmetic</td>
+<td style="text-align: left;">votes</td>
+</tr>
+<tr>
+<td style="text-align: left;">Wording-induced bias</td>
+<td style="text-align: left;">the surface form of the prompt</td>
+<td style="text-align: left;">paraphrase, reordering</td>
+<td style="text-align: left;">–</td>
+</tr>
+<tr>
+<td style="text-align: left;">Answer-extraction artifact</td>
+<td style="text-align: left;">the answer parser</td>
+<td style="text-align: left;">better measurement; counting non-answers apart</td>
+<td style="text-align: left;">–</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<h3 class="unnumbered" id="s17-6"><span class="secnum">17.6</span> Classical fixes, and why one model makes them hard</h3>
+<p><strong>Dawid–Skene (1979).</strong> Model each annotator <span class="math inline">\(j\)</span> by a confusion matrix and assume their errors are independent <em>given the truth</em>: <span class="math inline">\(\Pr(\ell_1,\dots,\ell_m\mid t)=\prod_j\pi_j(\ell_j\mid t)\)</span>. EM then estimates the truth and every annotator’s reliability. When annotators share an error, EM learns the shared error as the truth.</p>
+<p><strong>Surprisingly popular (Prelec, Seung and McCoy, 2017).</strong> Ask each voter for an answer <em>and</em> a prediction of how others will answer, then pick the answer that is more popular than predicted. Asked “Is Philadelphia the capital of Pennsylvania?”, most people say yes (wrong); those who know the answer is Harrisburg also expect most people to say yes, so “no” turns out more popular than predicted, and wins. The Bayesian truth serum (Prelec, 2004) is a closely related scoring rule that pays answers for being surprisingly common.</p>
+<div class="box box-pit"><div class="box-title">Pitfall</div><div class="box-body">
+<p>Both fixes need voters whose errors are not all the same. Recent work adapts them to LLMs: aggregation across <em>several different</em> LLMs with second-order information (2510.01499), and the truth serum as a GRPO reward, used there against sycophancy (2608.25267). For a single model, all samples come from one mind, so its predictions about “other voters” may share its own error. Whether they carry independent information is an open question.</p>
+</div></div>
+<h3 class="unnumbered" id="s17-7"><span class="secnum">17.7</span> When does a new signal beat the vote?</h3>
+<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> the override condition</div><div class="box-body">
+<p>Let <span class="math inline">\(e\)</span> be the vote’s error rate. A new signal <span class="math inline">\(S\)</span> overrides the vote when they disagree. Let <span class="math inline">\(a=\Pr[S\text{ gives the truth}\mid\text{vote wrong}]\)</span> (rescue rate) and <span class="math inline">\(b=\Pr[S\text{ overrides with a wrong answer}\mid\text{vote right}]\)</span> (break rate). Then <span class="math display">\[\begin{gathered}\Delta\text{acc}=e\,a-(1-e)\,b&gt;0\iff\frac ab&gt;\frac{1-e}{e}, \\[4pt] \mathrm{ER}=\frac{\Delta\text{acc}}{e}=a-b\,\frac{1-e}{e}.\end{gathered}\]</span></p>
+</div></div>
+<p><strong>Derivation.</strong> Overriding changes the outcome only where <span class="math inline">\(S\)</span> and the vote disagree: it gains on the wrong votes it rescues (<span class="math inline">\(e\,a\)</span>) and loses on the right votes it breaks (<span class="math inline">\((1-e)\,b\)</span>).</p>
+<div class="box box-ex"><div class="box-title">Worked example <span class="box-sep">|</span> the worse the vote, the easier it is to help</div><div class="box-body">
+<div class="center">
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align: left;">vote error <span class="math inline">\(e\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(0.21\)</span> (R-Zero, round 1)</th>
+<th style="text-align: center;"><span class="math inline">\(0.37\)</span> (round 3)</th>
+<th style="text-align: center;"><span class="math inline">\(0.50\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">needed ratio <span class="math inline">\(a/b\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(3.76\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1.70\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1.00\)</span></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p>A signal too weak to help in round 1 can help by round 3: new signals matter most where the vote is worst.</p>
+</div></div>
+<div class="box box-ex"><div class="box-title">Worked example <span class="box-sep">|</span> unsafe, and safe but weak</div><div class="box-body">
+<p>Suppose the vote is wrong on <span class="math inline">\(e=0.3\)</span> of the questions, so an override needs <span class="math inline">\(a/b&gt;0.7/0.3=2.33\)</span>. A signal that rescues <span class="math inline">\(a=6\%\)</span> of the wrong votes but breaks <span class="math inline">\(b=3.5\%\)</span> of the right ones has <span class="math inline">\(a/b=1.71&lt;2.33\)</span>, and accuracy falls: <span class="math inline">\(\Delta\text{acc}=0.3\times0.06-0.7\times0.035=-0.0065\)</span>. A stricter version that switches only near-ties might rescue the same <span class="math inline">\(a=6\%\)</span> and break only <span class="math inline">\(b=1.8\%\)</span>: now <span class="math inline">\(a/b=3.33\)</span>, above the threshold, yet it gains only <span class="math inline">\(0.54\)</span> points (<span class="math inline">\(\mathrm{ER}=0.018\)</span>). Both numbers matter: the ratio for safety, and the rescue rate inside <span class="math inline">\(\mathcal Z\)</span> for size.</p>
+</div></div>
+<h3 class="unnumbered" id="s17-8"><span class="secnum">17.8</span> Channels of new information: a map</h3>
+<div class="center">
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Channel</strong></th>
+<th style="text-align: left;"><strong>Extra information</strong></th>
+<th style="text-align: left;"><strong>Beats a consistent misreading?</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">More samples, same model</td>
+<td style="text-align: left;">none</td>
+<td style="text-align: left;">no</td>
+</tr>
+<tr>
+<td style="text-align: left;">Other checkpoints or seeds</td>
+<td style="text-align: left;">little (same lineage)</td>
+<td style="text-align: left;">rarely</td>
+</tr>
+<tr>
+<td style="text-align: left;">Training dynamics</td>
+<td style="text-align: left;">how fast an answer is learned</td>
+<td style="text-align: left;">unclear</td>
+</tr>
+<tr>
+<td style="text-align: left;">Perturbations, paraphrases, resampled numbers</td>
+<td style="text-align: left;">the model on related inputs (route 1)</td>
+<td style="text-align: left;">only if the error depends on surface form</td>
+</tr>
+<tr>
+<td style="text-align: left;">Problem families and regularities</td>
+<td style="text-align: left;">the model on related inputs (route 1)</td>
+<td style="text-align: left;">no</td>
+</tr>
+<tr>
+<td style="text-align: left;">Backward or inverse problems</td>
+<td style="text-align: left;">the model on inverse inputs (route 1)</td>
+<td style="text-align: left;">not if the reading is reused</td>
+</tr>
+<tr>
+<td style="text-align: left;">Meta-predictions (surprisingly popular, truth serum)</td>
+<td style="text-align: left;">beliefs about other voters</td>
+<td style="text-align: left;">unclear for one model</td>
+</tr>
+<tr>
+<td style="text-align: left;">Internal states (probes, latent knowledge)</td>
+<td style="text-align: left;">hidden activations (route 2)</td>
+<td style="text-align: left;">possibly: states can differ when outputs agree</td>
+</tr>
+<tr>
+<td style="text-align: left;">Execution (code, proof checkers)</td>
+<td style="text-align: left;">outside the model (route 3)</td>
+<td style="text-align: left;">yes, for what can be executed</td>
+</tr>
+<tr>
+<td style="text-align: left;">Other models (judges, ensembles)</td>
+<td style="text-align: left;">another model</td>
+<td style="text-align: left;">only if their errors differ</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p>Route 2 has real evidence behind it: models’ internal representations often encode whether an answer is correct even when the output is wrong (Orgad et al., 2024), and contrast-consistent search finds truth-like directions without labels (Burns et al., 2022). Two cautions: most probes are trained with labels (contrast-consistent search is the label-free exception), and a Challenger rewarded against a probe may learn to fool it. Any probe should also be compared with the model’s own token probabilities, a free baseline that often carries the same signal.</p>
+<h3 class="unnumbered" id="s17-9"><span class="secnum">17.9</span> A worksheet for a new signal</h3>
+<ol>
+<li><p><strong>Name the shared cause</strong> you want to beat (for example, a consistent misreading).</p></li>
+<li><p><strong>Build the indistinguishable pair</strong> on paper (Section <a href="#s17-4">17.4</a>): two problems on which everything your signal reads looks the same, but the truths differ.</p></li>
+<li><p><strong>Name your channel</strong> (route 1, 2 or 3) and check that it differs on the pair. If not, stop.</p></li>
+<li><p><strong>Check the ceiling</strong>: on vote-wrong questions, count how often the truth appears among the samples at all. An answer key can fix at most that share; if it is low, the problem is finding the answer, not judging it (Section <a href="search-and-correctness.html#s18">18</a>).</p></li>
+<li><p><strong>Measure <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span></strong> on a small labeled pilot, separately on vote-wrong and vote-right questions. Require <span class="math inline">\(a/b&gt;(1-e)/e\)</span> and a useful error reduction, decided before you look.</p></li>
+<li><p><strong>Check it does not decay</strong>: measure <span class="math inline">\(a\)</span> by difficulty bin and by round; it must hold where the vote is worst.</p></li>
+<li><p><strong>Check the costs</strong>: no labels, no judge model, cheap enough to run on every question in every round.</p></li>
+<li><p><strong>Audit novelty</strong> before any training run.</p></li>
+</ol>
+<div class="box box-why"><div class="box-title">Why it matters for self-play</div><div class="box-body">
+<p>Six rules in one place. (1) More samples never fix a wrong mode. (2) New information pays only in the minority-truth zone. (3) A signal cannot separate two problems whose inputs to it look the same. (4) Consistency checks verify the wrong problem perfectly when the reading is wrong. (5) A useful signal needs both a high rescue-to-break ratio and a high rescue rate inside <span class="math inline">\(\mathcal Z\)</span>. (6) No answer key can pick an answer that was never sampled: when the truth is missing, the fix is search, not a better judge.</p>
+</div></div>
+<h2 id="exercises">Exercises</h2>
+<div class="exercise"><p><strong>Exercise 9.</strong> Condorcet with <span class="math inline">\(n=3\)</span> and <span class="math inline">\(q=0.55\)</span>: what is <span class="math inline">\(P_{\mathrm{maj}}\)</span>?</p><details><summary>Show answer</summary><p><span class="math inline">\(q^3+3q^2(1-q)=0.166+0.408=0.575\)</span>.</p></details></div>
+<div class="exercise"><p><strong>Exercise 12.</strong> Samples have pairwise error correlation <span class="math inline">\(r=0.1\)</span>. How many independent votes are <span class="math inline">\(50\)</span> samples worth, and what is the limit for many samples?</p><details><summary>Show answer</summary><p><span class="math inline">\(n_{\mathrm{eff}}=50/(1+49\times0.1)=8.5\)</span>, and the limit is <span class="math inline">\(1/r=10\)</span>.</p></details></div>
+<div class="exercise"><p><strong>Exercise 13.</strong> The vote is wrong on <span class="math inline">\(30\%\)</span> of questions. A new signal rescues <span class="math inline">\(20\%\)</span> of wrong votes and breaks <span class="math inline">\(5\%\)</span> of right ones. Does overriding help? Compute <span class="math inline">\(\Delta\)</span>acc and ER.</p><details><summary>Show answer</summary><p>Needed ratio <span class="math inline">\(0.7/0.3=2.33\)</span>; here <span class="math inline">\(a/b=4\)</span>, so yes. <span class="math inline">\(\Delta\text{acc}=0.3\times0.2-0.7\times0.05=0.025\)</span> (2.5 points); <span class="math inline">\(\mathrm{ER}=0.2-0.05\times2.33=0.083\)</span>.</p></details></div>
+<div class="exercise"><p><strong>Exercise 14.</strong> Half of the questions have <span class="math inline">\(q=0.9\)</span> and half have <span class="math inline">\(q=0.3\)</span>. Compute the single-sample accuracy, the accuracy of an infinite vote, and the between-sample error correlation <span class="math inline">\(r\)</span>.</p><details><summary>Show answer</summary><p>Single sample <span class="math inline">\(\bar q=0.6\)</span>; infinite vote <span class="math inline">\(0.5\)</span> (only the easy half). <span class="math inline">\(\operatorname{Var}[q]=0.45-0.36=0.09\)</span>, so <span class="math inline">\(r=0.09/0.24=0.375\)</span>.</p></details></div>
+
+<h2 id="references">References</h2>
+<ol class="refs">
+<li value="16">C. Huang et al. R-Zero: Self-Evolving Reasoning LLM from Zero Data. arXiv:2508.05004, 2025.</li>
+<li value="31">C. Burns et al. Weak-to-Strong Generalization: Eliciting Strong Capabilities With Weak Supervision. arXiv:2312.09390, 2023.</li>
+<li value="33">W. Hoeffding. Probability inequalities for sums of bounded random variables. <em>J. American Statistical Association</em>, 1963.</li>
+<li value="34">L. Kish. <em>Survey Sampling</em>. Wiley, 1965 (design effect).</li>
+<li value="35">A. P. Dawid and A. M. Skene. Maximum likelihood estimation of observer error-rates using the EM algorithm. <em>Applied Statistics</em>, 1979.</li>
+<li value="36">D. Prelec. A Bayesian truth serum for subjective data. <em>Science</em>, 2004.</li>
+<li value="37">D. Prelec, H. S. Seung and J. McCoy. A solution to the single-question crowd wisdom problem. <em>Nature</em>, 2017.</li>
+<li value="38">E. Kim, A. Garg, K. Peng and N. Garg. Correlated Errors in Large Language Models. arXiv:2506.07962, ICML 2025.</li>
+<li value="39">C. Burns, H. Ye, D. Klein and J. Steinhardt. Discovering Latent Knowledge in Language Models Without Supervision. arXiv:2212.03827, 2022.</li>
+<li value="40">H. Orgad et al. LLMs Know More Than They Show: On the Intrinsic Representation of LLM Hallucinations. arXiv:2410.02707, 2024.</li>
+<li value="41">Beyond Majority Voting: LLM Aggregation by Leveraging Higher-Order Information. arXiv:2510.01499, 2025.</li>
+<li value="42">Mitigating LLM sycophancy with RL-based fine-tuning: Bayesian Truth Serum approach. arXiv:2608.25267, 2026.</li>
+</ol>
+
+<h2 id="citation">Citation</h2>
+<p>Cited as:</p>
+<blockquote>Chakma, Chandak. (Nov 2026). When Does Voting Find the Truth? Shared Errors in Self-Play. Chandak&rsquo;s Notes. https://chandakchakma.github.io/notes/voting-shared-errors.html</blockquote>
+<pre><code>@article{chakma2026votingsharederrors,
+  title   = "When Does Voting Find the Truth? Shared Errors in Self-Play",
+  author  = "Chakma, Chandak",
+  journal = "chandakchakma.github.io",
+  year    = "2026",
+  month   = "Nov",
+  url     = "https://chandakchakma.github.io/notes/voting-shared-errors.html"
+}</code></pre>
+
+</div>
+<nav class="paginav"><a class="prev" href="information-limits.html"><span class="title">&laquo; Prev</span><br><span>Where Can New Knowledge Come From? Data Processing and the Verifier Gap</span></a><a class="next" href="search-and-correctness.html"><span class="title">Next &raquo;</span><br><span>Search and Correctness: Finding and Recognizing Rare Answers</span></a></nav>
+</article>
+</main>
+<footer class="footer">&copy; 2026 <a href="../index.html">Chandak Chakma</a></footer>
+<script>
+  document.getElementById('theme-toggle').addEventListener('click', function () {
+    var dark = document.documentElement.classList.toggle('dark');
+    try { localStorage.setItem('pref-theme', dark ? 'dark' : 'light'); } catch (e) {}
+  });
+</script>
+</body>
+</html>

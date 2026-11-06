@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Where Can New Knowledge Come From? Data Processing and the Verifier Gap | Chandak’s Notes</title>
+<meta name="author" content="Chandak Chakma">
+<meta name="description" content="A loop with no outside information cannot create knowledge, only concentrate it. The data processing inequality draws that line, and the generator-verifier gap says exactly when filtering your own answers helps.">
+<link rel="canonical" href="https://chandakchakma.github.io/notes/information-limits.html">
+<link rel="icon" href="../images/favicon.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Where Can New Knowledge Come From? Data Processing and the Verifier Gap | Chandak’s Notes">
+<meta property="og:description" content="A loop with no outside information cannot create knowledge, only concentrate it. The data processing inequality draws that line, and the generator-verifier gap says exactly when filtering your own answers helps.">
+<meta property="og:url" content="https://chandakchakma.github.io/notes/information-limits.html">
+<meta property="og:image" content="https://chandakchakma.github.io/images/chandak_photo6.jpg">
+<meta name="twitter:card" content="summary">
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('pref-theme'); } catch (e) {}
+    if (t === 'dark' || (t === null && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+  })();
+</script>
+<link rel="stylesheet" href="../blog.css?v=1">
+<script>
+  MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+              options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+              chtml: { scale: 0.94 } };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<header class="header">
+  <nav class="nav">
+    <div class="logo"><a href="../notes.html">Chandak&rsquo;s Notes</a>
+      <button id="theme-toggle" title="Switch light or dark theme" aria-label="Switch light or dark theme"><svg id="moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg><svg id="sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></button></div>
+    <ul class="menu">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../notes.html">Notes</a></li>
+      <li><a href="../data/selfplay-foundations-notes.pdf">PDF</a></li>
+    </ul>
+  </nav>
+</header>
+<main class="main">
+<article class="post-single">
+<header class="post-header">
+  <div class="breadcrumbs"><a href="../index.html">Home</a>&nbsp;&raquo;&nbsp;<a href="../notes.html">Notes</a></div>
+  <h1 class="post-title">Where Can New Knowledge Come From? Data Processing and the Verifier Gap</h1>
+  <div class="post-meta">Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 3 min&nbsp; | &nbsp;Author: Chandak Chakma</div>
+</header>
+<p class="series-note">Part 5 of 10 in <a href="../notes.html">Foundations of Self-Play for LLM Reasoning</a>. All parts are also in one <a href="../data/selfplay-foundations-notes.pdf">PDF</a>.</p>
+<div class="toc"><details open><summary>Table of Contents</summary><ul>
+<li class="toc-h2"><a href="#s15">15 The data processing inequality</a></li>
+<li class="toc-h2"><a href="#s16">16 The generator–verifier gap</a></li>
+<li class="toc-h2"><a href="#exercises">Exercises</a></li>
+<li class="toc-h2"><a href="#references">References</a></li>
+</ul></details></div>
+
+<div class="post-content">
+<h2 class="unnumbered" id="s15"><span class="secnum">15</span> The data processing inequality</h2>
+<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> information cannot be created by processing</div><div class="box-body">
+<p>If <span class="math inline">\(T\to X\to S\)</span> is a Markov chain, meaning the signal <span class="math inline">\(S\)</span> is computed from <span class="math inline">\(X\)</span> alone, then <span class="math display">\[I(T;S)\le I(T;X).\]</span></p>
+</div></div>
+<p>Take <span class="math inline">\(T\)</span> to be the truth, <span class="math inline">\(X\)</span> the problem together with the model, and <span class="math inline">\(S\)</span> any label-free signal built from the model’s own samples: votes, confidence, consistency checks. No such signal carries more information about the truth than the model already holds. Label-free self-play can <em>extract and concentrate</em> that information; it cannot <em>create</em> it. To expand, the loop needs an outside source (an executor, a proof checker, an environment) or an asymmetry such as checking being easier than solving.</p>
+<p><strong>An important nuance.</strong> The inequality bounds information, not usability. A model can “know” an answer at pass@256 and still fail at pass@1. Turning latent knowledge into reliable behavior is real value; it is sharpening, not new knowledge.</p>
+<h2 class="unnumbered" id="s16"><span class="secnum">16</span> The generator–verifier gap</h2>
+<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> filtering helps only if checking beats chance</div><div class="box-body">
+<p>Filter self-generated answers with the model’s own check, with <span class="math inline">\(\mathrm{TPR}=\Pr(\text{accept}\mid\text{correct})\)</span> and <span class="math inline">\(\mathrm{FPR}=\Pr(\text{accept}\mid\text{wrong})\)</span>. By Bayes’ rule, the accuracy among accepted answers is <span class="math display">\[\begin{gathered}\mathrm{prec}=\frac{p\,\mathrm{TPR}}{p\,\mathrm{TPR}+(1-p)\,\mathrm{FPR}}, \\[4pt] \text{and} \\[4pt] \mathrm{prec}&gt;p\iff\mathrm{TPR}&gt;\mathrm{FPR}.\end{gathered}\]</span></p>
+</div></div>
+<p><strong>Proof.</strong> <span class="math inline">\(\mathrm{prec}&gt;p\iff\mathrm{TPR}&gt;p\,\mathrm{TPR}+(1-p)\mathrm{FPR}\iff(1-p)\mathrm{TPR}&gt;(1-p)\mathrm{FPR}\)</span>.</p>
+<div class="box box-ex"><div class="box-title">Worked example <span class="box-sep">|</span> a useful and a useless verifier</div><div class="box-body">
+<p><span class="math inline">\(p=0.3\)</span>, <span class="math inline">\(\mathrm{TPR}=0.9\)</span>, <span class="math inline">\(\mathrm{FPR}=0.2\)</span>: <span class="math inline">\(\mathrm{prec}=0.27/(0.27+0.14)=0.659\)</span>, more than double the base accuracy, so training on accepted answers can help. If <span class="math inline">\(\mathrm{TPR}=\mathrm{FPR}\)</span>, then <span class="math inline">\(\mathrm{prec}=p\)</span> and filtering adds nothing.</p>
+</div></div>
+<p>Song et al. (2025) formalize this generation–verification gap and study how it varies across models and verification methods. It is the cleanest statement of <em>when</em> self-improvement is possible at all.</p>
+<div class="box box-why"><div class="box-title">Why it matters for self-play</div><div class="box-body">
+<p>A majority vote is a verifier too: its TPR and FPR come from how often right and wrong answers become the mode. When errors are shared, a wrong answer becomes the mode as easily as a right one, and the gap closes.</p>
+</div></div>
+<h2 id="exercises">Exercises</h2>
+<div class="exercise"><p><strong>Exercise 10.</strong> A verifier has <span class="math inline">\(\mathrm{TPR}=0.8\)</span> and <span class="math inline">\(\mathrm{FPR}=0.4\)</span> on a problem set with <span class="math inline">\(p=0.2\)</span>. What is the accuracy of the accepted answers?</p><details><summary>Show answer</summary><p><span class="math inline">\(0.16/(0.16+0.32)=0.333\)</span>, above the base <span class="math inline">\(0.2\)</span>, so filtering helps.</p></details></div>
+
+<h2 id="references">References</h2>
+<ol class="refs">
+<li value="28">Y. Song et al. Mind the Gap: Examining the Self-Improvement Capabilities of Large Language Models. arXiv:2412.02674, ICLR 2025.</li>
+</ol>
+
+<h2 id="citation">Citation</h2>
+<p>Cited as:</p>
+<blockquote>Chakma, Chandak. (Nov 2026). Where Can New Knowledge Come From? Data Processing and the Verifier Gap. Chandak&rsquo;s Notes. https://chandakchakma.github.io/notes/information-limits.html</blockquote>
+<pre><code>@article{chakma2026informationlimits,
+  title   = "Where Can New Knowledge Come From? Data Processing and the Verifier Gap",
+  author  = "Chakma, Chandak",
+  journal = "chandakchakma.github.io",
+  year    = "2026",
+  month   = "Nov",
+  url     = "https://chandakchakma.github.io/notes/information-limits.html"
+}</code></pre>
+
+</div>
+<nav class="paginav"><a class="prev" href="self-play-as-a-game.html"><span class="title">&laquo; Prev</span><br><span>Self-Play as a Game: Cycling, Expert Iteration and STaR</span></a><a class="next" href="voting-shared-errors.html"><span class="title">Next &raquo;</span><br><span>When Does Voting Find the Truth? Shared Errors in Self-Play</span></a></nav>
+</article>
+</main>
+<footer class="footer">&copy; 2026 <a href="../index.html">Chandak Chakma</a></footer>
+<script>
+  document.getElementById('theme-toggle').addEventListener('click', function () {
+    var dark = document.documentElement.classList.toggle('dark');
+    try { localStorage.setItem('pref-theme', dark ? 'dark' : 'light'); } catch (e) {}
+  });
+</script>
+</body>
+</html>

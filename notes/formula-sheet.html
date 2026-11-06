@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A One-Page Formula Sheet for Self-Play | Chandak’s Notes</title>
+<meta name="author" content="Chandak Chakma">
+<meta name="description" content="Every key formula of the series in one table, from the policy gradient to the verified-vote condition, each linked to the post that derives it.">
+<link rel="canonical" href="https://chandakchakma.github.io/notes/formula-sheet.html">
+<link rel="icon" href="../images/favicon.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A One-Page Formula Sheet for Self-Play | Chandak’s Notes">
+<meta property="og:description" content="Every key formula of the series in one table, from the policy gradient to the verified-vote condition, each linked to the post that derives it.">
+<meta property="og:url" content="https://chandakchakma.github.io/notes/formula-sheet.html">
+<meta property="og:image" content="https://chandakchakma.github.io/images/chandak_photo6.jpg">
+<meta name="twitter:card" content="summary">
+<script>
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem('pref-theme'); } catch (e) {}
+    if (t === 'dark' || (t === null && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+  })();
+</script>
+<link rel="stylesheet" href="../blog.css?v=1">
+<script>
+  MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+              options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+              chtml: { scale: 0.94 } };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+<header class="header">
+  <nav class="nav">
+    <div class="logo"><a href="../notes.html">Chandak&rsquo;s Notes</a>
+      <button id="theme-toggle" title="Switch light or dark theme" aria-label="Switch light or dark theme"><svg id="moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg><svg id="sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></button></div>
+    <ul class="menu">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../notes.html">Notes</a></li>
+      <li><a href="../data/selfplay-foundations-notes.pdf">PDF</a></li>
+    </ul>
+  </nav>
+</header>
+<main class="main">
+<article class="post-single">
+<header class="post-header">
+  <div class="breadcrumbs"><a href="../index.html">Home</a>&nbsp;&raquo;&nbsp;<a href="../notes.html">Notes</a></div>
+  <h1 class="post-title">A One-Page Formula Sheet for Self-Play</h1>
+  <div class="post-meta">Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 2 min&nbsp; | &nbsp;Author: Chandak Chakma</div>
+</header>
+<p class="series-note">Part 10 of 10 in <a href="../notes.html">Foundations of Self-Play for LLM Reasoning</a>. All parts are also in one <a href="../data/selfplay-foundations-notes.pdf">PDF</a>.</p>
+<div class="toc"><details open><summary>Table of Contents</summary><ul>
+<li class="toc-h2"><a href="#references">References</a></li>
+</ul></details></div>
+
+<div class="post-content">
+<p>The key formulas of the series on one page. The last column links to the post that derives each one.</p>
+<div class="center">
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>Idea</strong></th>
+<th style="text-align: left;"><strong>Formula</strong></th>
+<th style="text-align: left;"><strong>Section</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Policy gradient</td>
+<td style="text-align: left;"><span class="math inline">\(\nabla_\theta J=\mathbb{E}[R\,\nabla_\theta\log\pi_\theta(y\mid x)]\)</span></td>
+<td style="text-align: left;"><a href="rl-engine.html#s2">2</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;"><span class="math inline">\(\mathbb{E}[b(x)\nabla_\theta\log\pi_\theta]=0\)</span>, <span class="math inline">\(\hat A=R-b\)</span></td>
+<td style="text-align: left;"><a href="rl-engine.html#s3">3</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">GRPO</td>
+<td style="text-align: left;"><span class="math inline">\(\hat A_i=(R_i-\operatorname{mean}R)/(\operatorname{std}R+\epsilon)\)</span></td>
+<td style="text-align: left;"><a href="rl-engine.html#s4">4</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">RLOO</td>
+<td style="text-align: left;"><span class="math inline">\(\hat A_i=R_i-\frac1{G-1}\sum_{j\ne i}R_j=\frac{G}{G-1}(R_i-\operatorname{mean}R)\)</span></td>
+<td style="text-align: left;"><a href="rl-engine.html#s4">4</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">PPO clip</td>
+<td style="text-align: left;"><span class="math inline">\(\min\big(\rho\hat A,\ \operatorname{clip}(\rho,1\pm\varepsilon)\hat A\big)\)</span>, <span class="math inline">\(\rho=\pi_\theta/\pi_{\mathrm{old}}\)</span></td>
+<td style="text-align: left;"><a href="rl-engine.html#s5">5</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">KL estimator</td>
+<td style="text-align: left;"><span class="math inline">\(k_3=r-1-\log r\)</span>, <span class="math inline">\(r=\pi_{\mathrm{ref}}/\pi_\theta\)</span></td>
+<td style="text-align: left;"><a href="rl-engine.html#s5">5</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">KL optimum</td>
+<td style="text-align: left;"><span class="math inline">\(\pi^\star\propto\pi_{\mathrm{ref}}\,e^{R/\beta}\)</span>; odds<span class="math inline">\(^\star\)</span> = odds <span class="math inline">\(\cdot\,e^{1/\beta}\)</span></td>
+<td style="text-align: left;"><a href="what-rl-can-do.html#s6">6</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">pass@<span class="math inline">\(k\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(1-(1-p)^k\)</span>; <span class="math inline">\(1-\binom{n-c}{k}/\binom nk\)</span></td>
+<td style="text-align: left;"><a href="what-rl-can-do.html#s7">7</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">Learnability</td>
+<td style="text-align: left;"><span class="math inline">\(\operatorname{Var}R=p(1-p)\)</span>; informative group <span class="math inline">\(1-p^G-(1-p)^G\)</span></td>
+<td style="text-align: left;"><a href="challenger-signals.html#s9">9</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">R-Zero reward</td>
+<td style="text-align: left;"><span class="math inline">\(\max(0,\ 1-2|\hat p-\tfrac12|-\lambda|C_k|/B)\)</span></td>
+<td style="text-align: left;"><a href="challenger-signals.html#s10">10</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">Absolute Zero</td>
+<td style="text-align: left;"><span class="math inline">\(1-\bar r\)</span> if <span class="math inline">\(0&lt;\bar r&lt;1\)</span>, else <span class="math inline">\(0\)</span></td>
+<td style="text-align: left;"><a href="challenger-signals.html#s10">10</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">SOAR</td>
+<td style="text-align: left;"><span class="math inline">\(\mathrm{Perf}_H(\mathrm{Train}(\theta,D_\phi))-\mathrm{Perf}_H(\theta)\)</span></td>
+<td style="text-align: left;"><a href="challenger-signals.html#s10">10</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">PAIRED regret</td>
+<td style="text-align: left;"><span class="math inline">\(U(\pi_{\mathrm{ant}})-U(\pi_{\mathrm{pro}})\)</span></td>
+<td style="text-align: left;"><a href="challenger-signals.html#s10">10</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">Symmetric noise</td>
+<td style="text-align: left;"><span class="math inline">\(\mathbb{E}[\tilde R\,\nabla_\theta\log\pi]=(1-2\eta)\nabla_\theta J\)</span></td>
+<td style="text-align: left;"><a href="challenger-signals.html#s11">11</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">Bilinear spiral</td>
+<td style="text-align: left;"><span class="math inline">\(u^2+v^2\)</span> grows by <span class="math inline">\((1+\eta^2)\)</span> per step</td>
+<td style="text-align: left;"><a href="self-play-as-a-game.html#s12">12</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">Fisher identity</td>
+<td style="text-align: left;"><span class="math inline">\(\nabla_\theta\log p(y^\star\mid x)=\mathbb{E}_{p(z\mid x,y^\star)}[\nabla_\theta\log p(z,y^\star\mid x)]\)</span></td>
+<td style="text-align: left;"><a href="self-play-as-a-game.html#s14">14</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">RL vs likelihood</td>
+<td style="text-align: left;"><span class="math inline">\(\nabla_\theta p=p\,\nabla_\theta\log p\)</span></td>
+<td style="text-align: left;"><a href="self-play-as-a-game.html#s14">14</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">Data processing</td>
+<td style="text-align: left;"><span class="math inline">\(I(T;S)\le I(T;X)\)</span> for <span class="math inline">\(T\to X\to S\)</span></td>
+<td style="text-align: left;"><a href="information-limits.html#s15">15</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">Verifier gap</td>
+<td style="text-align: left;">prec <span class="math inline">\(=\frac{p\mathrm{TPR}}{p\mathrm{TPR}+(1-p)\mathrm{FPR}}\)</span>; prec <span class="math inline">\(&gt;p\iff\mathrm{TPR}&gt;\mathrm{FPR}\)</span></td>
+<td style="text-align: left;"><a href="information-limits.html#s16">16</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">Condorcet</td>
+<td style="text-align: left;"><span class="math inline">\(\sum_{k&gt;n/2}\binom nk q^k(1-q)^{n-k}\)</span>; error <span class="math inline">\(\le e^{-2n(q-1/2)^2}\)</span></td>
+<td style="text-align: left;"><a href="voting-shared-errors.html#s17-1">17.1</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">Plurality margin</td>
+<td style="text-align: left;"><span class="math inline">\(\Pr[w\text{ ties or beats }t]\le e^{-n(\pi_t-\pi_w)^2/2}\)</span></td>
+<td style="text-align: left;"><a href="voting-shared-errors.html#s17-2">17.2</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">Shared-error cap</td>
+<td style="text-align: left;"><span class="math inline">\(\rho q+(1-\rho)P_{\mathrm{maj}}(n)\to\rho q+1-\rho\)</span></td>
+<td style="text-align: left;"><a href="voting-shared-errors.html#s17-3">17.3</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">Effective votes</td>
+<td style="text-align: left;"><span class="math inline">\(n_{\mathrm{eff}}=n/(1+(n-1)r)\to1/r\)</span></td>
+<td style="text-align: left;"><a href="voting-shared-errors.html#s17-3">17.3</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">Voting ceiling</td>
+<td style="text-align: left;"><span class="math inline">\(\Pr_x[\text{mode of }\pi(\cdot\mid x)\text{ is the truth}]\)</span></td>
+<td style="text-align: left;"><a href="voting-shared-errors.html#s17-3">17.3</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">Indistinguishability</td>
+<td style="text-align: left;"><span class="math inline">\(O(x)\overset{d}{=}O(x&#39;),\ t\ne t&#39;\Rightarrow\Pr[L(x){=}t]+\Pr[L(x&#39;){=}t&#39;]\le1\)</span></td>
+<td style="text-align: left;"><a href="voting-shared-errors.html#s17-4">17.4</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">Correlation from difficulty</td>
+<td style="text-align: left;"><span class="math inline">\(r=\operatorname{Var}_x[q(x)]/\big(\bar q(1-\bar q)\big)\)</span></td>
+<td style="text-align: left;"><a href="voting-shared-errors.html#s17-3">17.3</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">Override gain</td>
+<td style="text-align: left;"><span class="math inline">\(\Delta\text{acc}=ea-(1-e)b&gt;0\iff a/b&gt;(1-e)/e\)</span></td>
+<td style="text-align: left;"><a href="voting-shared-errors.html#s17-7">17.7</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">Samples to find</td>
+<td style="text-align: left;"><span class="math inline">\(1-(1-p)^k\)</span>; <span class="math inline">\(k_{90\%}=\ln10/(-\ln(1-p))\approx2.3/p\)</span></td>
+<td style="text-align: left;"><a href="search-and-correctness.html#s18">18</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">Strict check</td>
+<td style="text-align: left;">prec <span class="math inline">\(\ge\tfrac12\iff\mathrm{FPR}\le\frac{p}{1-p}\mathrm{TPR}\)</span></td>
+<td style="text-align: left;"><a href="search-and-correctness.html#s18-1">18.1</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">Verified vote</td>
+<td style="text-align: left;">truth wins <span class="math inline">\(\iff\pi_t\,\mathrm{TPR}&gt;\max_w\pi_w\,\mathrm{FPR}_w\)</span></td>
+<td style="text-align: left;"><a href="search-and-correctness.html#s18-2">18.2</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">Coverage law</td>
+<td style="text-align: left;"><span class="math inline">\(C\approx\exp(a\,k^{b})\)</span>,  <span class="math inline">\(b&lt;0\)</span></td>
+<td style="text-align: left;"><a href="search-and-correctness.html#s18-3">18.3</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">Resampling ceiling</td>
+<td style="text-align: left;">accuracy <span class="math inline">\(\le\)</span> prec (<a href="information-limits.html#s16">16</a>), for any budget <span class="math inline">\(K\)</span></td>
+<td style="text-align: left;"><a href="search-and-correctness.html#s18-4">18.4</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">FOBAR</td>
+<td style="text-align: left;"><span class="math inline">\(\mathbb P\propto\mathbb P_F^{\,\alpha}\,\mathbb P_B^{\,1-\alpha}\)</span>,  <span class="math inline">\(\alpha=\tfrac12\)</span></td>
+<td style="text-align: left;"><a href="search-and-correctness.html#s18-6">18.6</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">Model collapse</td>
+<td style="text-align: left;"><span class="math inline">\(\mathbb{E}[\sigma_t^2]=((N-1)/N)^t\sigma_0^2\)</span></td>
+<td style="text-align: left;"><a href="collapse-and-weak-to-strong.html#s19">19</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">Weak-to-strong</td>
+<td style="text-align: left;">PGR <span class="math inline">\(=\frac{\text{w2s}-\text{weak}}{\text{ceiling}-\text{weak}}\)</span></td>
+<td style="text-align: left;"><a href="collapse-and-weak-to-strong.html#s20">20</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">Standard error</td>
+<td style="text-align: left;"><span class="math inline">\(\sqrt{p(1-p)/N}\)</span></td>
+<td style="text-align: left;"><a href="evidence-and-open-problems.html#s21">21</a></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+
+<h2 id="references">References</h2>
+<ol class="refs">
+<li value="5">A. Ahmadian et al. Back to Basics: Revisiting REINFORCE Style Optimization for Learning from Human Feedback in LLMs (RLOO). arXiv:2402.14740, 2024.</li>
+<li value="12">M. Dennis et al. Emergent Complexity and Zero-shot Transfer via Unsupervised Environment Design (PAIRED). arXiv:2012.02096, 2020.</li>
+<li value="15">A. Zhao et al. Absolute Zero: Reinforced Self-play Reasoning with Zero Data. arXiv:2505.03335, 2025.</li>
+<li value="16">C. Huang et al. R-Zero: Self-Evolving Reasoning LLM from Zero Data. arXiv:2508.05004, 2025.</li>
+<li value="17">S. Sundaram, J. Kempe and Y. Ollivier. Teaching Models to Teach Themselves: Reasoning at the Edge of Learnability (SOAR). arXiv:2601.18778, ICML 2026.</li>
+<li value="45">W. Jiang et al. Forward-Backward Reasoning in Large Language Models for Mathematical Verification (FOBAR). arXiv:2308.07758, 2023.</li>
+</ol>
+
+<h2 id="citation">Citation</h2>
+<p>Cited as:</p>
+<blockquote>Chakma, Chandak. (Nov 2026). A One-Page Formula Sheet for Self-Play. Chandak&rsquo;s Notes. https://chandakchakma.github.io/notes/formula-sheet.html</blockquote>
+<pre><code>@article{chakma2026formulasheet,
+  title   = "A One-Page Formula Sheet for Self-Play",
+  author  = "Chakma, Chandak",
+  journal = "chandakchakma.github.io",
+  year    = "2026",
+  month   = "Nov",
+  url     = "https://chandakchakma.github.io/notes/formula-sheet.html"
+}</code></pre>
+
+</div>
+<nav class="paginav"><a class="prev" href="evidence-and-open-problems.html"><span class="title">&laquo; Prev</span><br><span>Evidence Reviewers Trust, and Open Problems</span></a><span></span></nav>
+</article>
+</main>
+<footer class="footer">&copy; 2026 <a href="../index.html">Chandak Chakma</a></footer>
+<script>
+  document.getElementById('theme-toggle').addEventListener('click', function () {
+    var dark = document.documentElement.classList.toggle('dark');
+    try { localStorage.setItem('pref-theme', dark ? 'dark' : 'light'); } catch (e) {}
+  });
+</script>
+</body>
+</html>
