@@ -5,17 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>A One-Page Formula Sheet for Self-Play | Chandak’s Notes</title>
 <meta name="author" content="Chandak Chakma">
-<meta name="description" content="Every key formula of the series in one table, from the policy gradient to the verified-vote condition, each linked to the post that derives it.">
+<meta name="description" content="The key formulas of the series on a single page, from the policy gradient to the verified-vote condition, each linked to the post that derives it.">
 <link rel="canonical" href="https://chandakchakma.github.io/notes/formula-sheet.html">
 <link rel="icon" href="../images/favicon.png" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
 <meta property="og:type" content="article">
 <meta property="og:title" content="A One-Page Formula Sheet for Self-Play | Chandak’s Notes">
-<meta property="og:description" content="Every key formula of the series in one table, from the policy gradient to the verified-vote condition, each linked to the post that derives it.">
+<meta property="og:description" content="The key formulas of the series on a single page, from the policy gradient to the verified-vote condition, each linked to the post that derives it.">
 <meta property="og:url" content="https://chandakchakma.github.io/notes/formula-sheet.html">
 <meta property="og:image" content="https://chandakchakma.github.io/images/chandak_photo6.jpg">
 <meta name="twitter:card" content="summary">
-<link rel="stylesheet" href="../blog.css?v=20261106152929">
+<link rel="stylesheet" href="../blog.css?v=20261106155635">
 <script>
   MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
               options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
@@ -40,15 +40,15 @@
   <div class="breadcrumbs"><a href="../index.html">Home</a>&nbsp;&raquo;&nbsp;<a href="../index.html#notes">Notes</a></div>
   <h1 class="post-title">A One-Page Formula Sheet for Self-Play</h1>
   <div class="post-meta">Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 2 min&nbsp; | &nbsp;Author: Chandak Chakma</div>
-  <p class="lede">Every key formula of the series in one table, from the policy gradient to the verified-vote condition, each linked to the post that derives it.</p>
+  <p class="lede">The key formulas of the series on a single page, from the policy gradient to the verified-vote condition, each linked to the post that derives it.</p>
 </header>
-<p class="series-note">Part 10 of 10 in <a href="../index.html#notes">Foundations of Self-Play for LLM Reasoning</a>. All parts are also in one <a href="../data/selfplay-foundations-notes.pdf">PDF</a>.</p>
+<p class="series-note">Part 10 of 10 in <a href="../index.html#notes">Foundations of Self-Play for LLM Reasoning</a>. The complete series is also available as a <a href="../data/selfplay-foundations-notes.pdf">single PDF</a>.</p>
 <div class="toc"><details open><summary>Contents</summary><ul>
 <li class="toc-h2"><a href="#references">References</a></li>
 </ul></details></div>
 
 <div class="post-content">
-<p>The key formulas of the series on one page. The last column links to the post that derives each one.</p>
+<p>The key formulas of the series on a single page. The last column links to the post in which each result is derived.</p>
 <div class="center">
 <div class="table-wrap"><table>
 <thead>
@@ -125,7 +125,7 @@
 <td style="text-align: left;"><a href="challenger-signals.html#s10">10</a></td>
 </tr>
 <tr>
-<td style="text-align: left;">Symmetric noise</td>
+<td style="text-align: left;">Symmetric label noise</td>
 <td style="text-align: left;"><span class="math inline">\(\mathbb{E}[\tilde R\,\nabla_\theta\log\pi]=(1-2\eta)\nabla_\theta J\)</span></td>
 <td style="text-align: left;"><a href="challenger-signals.html#s11">11</a></td>
 </tr>
@@ -140,7 +140,7 @@
 <td style="text-align: left;"><a href="self-play-as-a-game.html#s14">14</a></td>
 </tr>
 <tr>
-<td style="text-align: left;">RL vs likelihood</td>
+<td style="text-align: left;">RL vs. likelihood</td>
 <td style="text-align: left;"><span class="math inline">\(\nabla_\theta p=p\,\nabla_\theta\log p\)</span></td>
 <td style="text-align: left;"><a href="self-play-as-a-game.html#s14">14</a></td>
 </tr>
@@ -185,7 +185,7 @@
 <td style="text-align: left;"><a href="voting-shared-errors.html#s17-4">17.4</a></td>
 </tr>
 <tr>
-<td style="text-align: left;">Correlation from difficulty</td>
+<td style="text-align: left;">Difficulty-induced correlation</td>
 <td style="text-align: left;"><span class="math inline">\(r=\operatorname{Var}_x[q(x)]/\big(\bar q(1-\bar q)\big)\)</span></td>
 <td style="text-align: left;"><a href="voting-shared-errors.html#s17-3">17.3</a></td>
 </tr>
@@ -195,7 +195,7 @@
 <td style="text-align: left;"><a href="voting-shared-errors.html#s17-7">17.7</a></td>
 </tr>
 <tr>
-<td style="text-align: left;">Samples to find</td>
+<td style="text-align: left;">Samples needed to find</td>
 <td style="text-align: left;"><span class="math inline">\(1-(1-p)^k\)</span>; <span class="math inline">\(k_{90\%}=\ln10/(-\ln(1-p))\approx2.3/p\)</span></td>
 <td style="text-align: left;"><a href="search-and-correctness.html#s18">18</a></td>
 </tr>

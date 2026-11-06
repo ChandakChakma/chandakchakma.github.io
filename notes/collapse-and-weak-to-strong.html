@@ -5,17 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Model Collapse and Weak-to-Strong Generalization | Chandak’s Notes</title>
 <meta name="author" content="Chandak Chakma">
-<meta name="description" content="Training only on your own outputs loses the tails; labels weaker than the student can still teach it. Two results that frame how far self-labels can go.">
+<meta name="description" content="Training exclusively on self-generated data erodes the tails of the distribution, whereas labels from a weaker supervisor can still teach a stronger student. Two results that bound what self-generated labels can achieve.">
 <link rel="canonical" href="https://chandakchakma.github.io/notes/collapse-and-weak-to-strong.html">
 <link rel="icon" href="../images/favicon.png" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Model Collapse and Weak-to-Strong Generalization | Chandak’s Notes">
-<meta property="og:description" content="Training only on your own outputs loses the tails; labels weaker than the student can still teach it. Two results that frame how far self-labels can go.">
+<meta property="og:description" content="Training exclusively on self-generated data erodes the tails of the distribution, whereas labels from a weaker supervisor can still teach a stronger student. Two results that bound what self-generated labels can achieve.">
 <meta property="og:url" content="https://chandakchakma.github.io/notes/collapse-and-weak-to-strong.html">
 <meta property="og:image" content="https://chandakchakma.github.io/images/chandak_photo6.jpg">
 <meta name="twitter:card" content="summary">
-<link rel="stylesheet" href="../blog.css?v=20261106152929">
+<link rel="stylesheet" href="../blog.css?v=20261106155635">
 <script>
   MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
               options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
@@ -40,9 +40,9 @@
   <div class="breadcrumbs"><a href="../index.html">Home</a>&nbsp;&raquo;&nbsp;<a href="../index.html#notes">Notes</a></div>
   <h1 class="post-title">Model Collapse and Weak-to-Strong Generalization</h1>
   <div class="post-meta">Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 3 min&nbsp; | &nbsp;Author: Chandak Chakma</div>
-  <p class="lede">Training only on your own outputs loses the tails; labels weaker than the student can still teach it. Two results that frame how far self-labels can go.</p>
+  <p class="lede">Training exclusively on self-generated data erodes the tails of the distribution, whereas labels from a weaker supervisor can still teach a stronger student. Two results that bound what self-generated labels can achieve.</p>
 </header>
-<p class="series-note">Part 8 of 10 in <a href="../index.html#notes">Foundations of Self-Play for LLM Reasoning</a>. All parts are also in one <a href="../data/selfplay-foundations-notes.pdf">PDF</a>.</p>
+<p class="series-note">Part 8 of 10 in <a href="../index.html#notes">Foundations of Self-Play for LLM Reasoning</a>. The complete series is also available as a <a href="../data/selfplay-foundations-notes.pdf">single PDF</a>.</p>
 <div class="toc"><details open><summary>Contents</summary><ul>
 <li class="toc-h2"><a href="#s19">19 Model collapse</a></li>
 <li class="toc-h2"><a href="#s20">20 Weak-to-strong generalization</a></li>
@@ -52,26 +52,26 @@
 
 <div class="post-content">
 <h2 class="unnumbered" id="s19"><span class="secnum">19</span> Model collapse</h2>
-<div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">recursive training loses the tails</span></div><div class="box-body">
-<p>Fit a Gaussian by maximum likelihood to <span class="math inline">\(N\)</span> samples drawn from the previous generation’s fit. Since <span class="math inline">\(\mathbb{E}[\hat\sigma^2]=\frac{N-1}{N}\sigma^2\)</span> for the maximum-likelihood variance, iterating gives <span class="math display">\[\mathbb{E}[\sigma_t^2]=\Big(\frac{N-1}{N}\Big)^{t}\sigma_0^2\ \longrightarrow\ 0 .\]</span></p>
+<div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">recursive training erodes the tails</span></div><div class="box-body">
+<p>Suppose each generation fits a Gaussian by maximum likelihood to <span class="math inline">\(N\)</span> samples drawn from the previous generation’s fit. Since <span class="math inline">\(\mathbb{E}[\hat\sigma^2]=\frac{N-1}{N}\sigma^2\)</span> for the maximum-likelihood variance estimate, iterating gives <span class="math display">\[\mathbb{E}[\sigma_t^2]=\Big(\frac{N-1}{N}\Big)^{t}\sigma_0^2\ \longrightarrow\ 0 .\]</span></p>
 </div></div>
-<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">how fast</span></div><div class="box-body">
-<p><span class="math inline">\(N=100\)</span>, <span class="math inline">\(t=100\)</span>: <span class="math inline">\((0.99)^{100}=0.366\)</span>. Two thirds of the variance is gone, and the rare cases (the tails) go first.</p>
+<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">the rate of collapse</span></div><div class="box-body">
+<p>With <span class="math inline">\(N=100\)</span> and <span class="math inline">\(t=100\)</span>, <span class="math inline">\((0.99)^{100}=0.366\)</span>: two thirds of the variance has been lost, and the rare cases (the tails) are the first to disappear.</p>
 </div></div>
-<p>Shumailov et al. (2024) show the same tail loss for language models trained recursively on their own outputs. Gerstgrasser et al. (2024) show that <em>accumulating</em> real and synthetic data, instead of replacing old data, keeps the error bounded.</p>
+<p>Shumailov et al. (2024) demonstrate the same loss of tails in language models trained recursively on their own outputs. Gerstgrasser et al. (2024) show that <em>accumulating</em> real and synthetic data, rather than replacing earlier data, keeps the error bounded.</p>
 <div class="box box-why"><div class="box-title"><span class="box-label">Why it matters</span></div><div class="box-body">
-<p>R-Zero’s Solver trains only on labels it made itself: the pure “replace” regime. Keeping earlier data, anchoring to the base model, and adding outside data are the known fixes.</p>
+<p>R-Zero’s Solver trains exclusively on labels it produced itself, which places it in the pure “replace” regime. The known remedies are retaining earlier data, anchoring to the base model, and incorporating external data.</p>
 </div></div>
 <h2 class="unnumbered" id="s20"><span class="secnum">20</span> Weak-to-strong generalization</h2>
 <div class="box box-def"><div class="box-title"><span class="box-label">Definition</span><span class="box-name">performance gap recovered (Burns et al., 2023)</span></div><div class="box-body">
 <p><span class="math display">\[\mathrm{PGR}=\frac{\mathrm{Perf}_{\text{weak}\to\text{strong}}-\mathrm{Perf}_{\text{weak}}}{\mathrm{Perf}_{\text{strong ceiling}}-\mathrm{Perf}_{\text{weak}}}.\]</span></p>
 </div></div>
-<p>Strong models trained on a weaker model’s labels often recover a substantial part of the gap to their ceiling: labels worse than the student can still teach it. This is the optimistic counterpart of model collapse.</p>
+<p>Strong models trained on a weaker model’s labels often recover a substantial fraction of the gap to their ceiling performance: labels less accurate than the student can still teach it. This result is the optimistic counterpart to model collapse.</p>
 <div class="box box-why"><div class="box-title"><span class="box-label">Why it matters</span></div><div class="box-body">
-<p>Noisy self-labels can still teach, as long as their errors are not the ones the student already believes. Self-labels are risky because their errors are, by construction, the student’s own beliefs.</p>
+<p>Noisy self-labels can still teach, provided that their errors are not ones the student already believes. Self-labels are risky precisely because their errors are, by construction, the student’s own beliefs.</p>
 </div></div>
 <h2 id="exercises">Exercises</h2>
-<div class="exercise"><p><strong>Exercise 11.</strong> In the Gaussian collapse model with <span class="math inline">\(N=50\)</span>, what fraction of the variance remains after <span class="math inline">\(50\)</span> generations?</p><details><summary>Show answer</summary><p><span class="math inline">\((49/50)^{50}=e^{50\ln0.98}=0.364\)</span>.</p></details></div>
+<div class="exercise"><p><strong>Exercise 11.</strong> In the Gaussian collapse model with <span class="math inline">\(N=50\)</span>, what fraction of the variance remains after <span class="math inline">\(50\)</span> generations?</p><details><summary>Show solution</summary><p><span class="math inline">\((49/50)^{50}=e^{50\ln0.98}=0.364\)</span>.</p></details></div>
 
 <h2 id="references">References</h2>
 <ul class="refs">

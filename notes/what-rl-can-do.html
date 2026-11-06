@@ -5,17 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>What RL Can and Cannot Do: Sharpening, pass@k and Entropy | Chandak’s Notes</title>
 <meta name="author" content="Chandak Chakma">
-<meta name="description" content="The KL-regularized optimum multiplies the odds of what the base model already says, so RL mostly sharpens. We derive it, read the sharpening signature in pass@k curves, and look at entropy collapse.">
+<meta name="description" content="The KL-regularized optimum rescales the odds of answers the base model already produces, which is why RL predominantly sharpens. We derive this result, identify its signature in pass@k curves, and discuss entropy collapse.">
 <link rel="canonical" href="https://chandakchakma.github.io/notes/what-rl-can-do.html">
 <link rel="icon" href="../images/favicon.png" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
 <meta property="og:type" content="article">
 <meta property="og:title" content="What RL Can and Cannot Do: Sharpening, pass@k and Entropy | Chandak’s Notes">
-<meta property="og:description" content="The KL-regularized optimum multiplies the odds of what the base model already says, so RL mostly sharpens. We derive it, read the sharpening signature in pass@k curves, and look at entropy collapse.">
+<meta property="og:description" content="The KL-regularized optimum rescales the odds of answers the base model already produces, which is why RL predominantly sharpens. We derive this result, identify its signature in pass@k curves, and discuss entropy collapse.">
 <meta property="og:url" content="https://chandakchakma.github.io/notes/what-rl-can-do.html">
 <meta property="og:image" content="https://chandakchakma.github.io/images/chandak_photo6.jpg">
 <meta name="twitter:card" content="summary">
-<link rel="stylesheet" href="../blog.css?v=20261106152929">
+<link rel="stylesheet" href="../blog.css?v=20261106155635">
 <script>
   MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
               options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
@@ -40,11 +40,11 @@
   <div class="breadcrumbs"><a href="../index.html">Home</a>&nbsp;&raquo;&nbsp;<a href="../index.html#notes">Notes</a></div>
   <h1 class="post-title">What RL Can and Cannot Do: Sharpening, pass@k and Entropy</h1>
   <div class="post-meta">Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 6 min&nbsp; | &nbsp;Author: Chandak Chakma</div>
-  <p class="lede">The KL-regularized optimum multiplies the odds of what the base model already says, so RL mostly sharpens. We derive it, read the sharpening signature in pass@k curves, and look at entropy collapse.</p>
+  <p class="lede">The KL-regularized optimum rescales the odds of answers the base model already produces, which is why RL predominantly sharpens. We derive this result, identify its signature in pass@k curves, and discuss entropy collapse.</p>
 </header>
-<p class="series-note">Part 2 of 10 in <a href="../index.html#notes">Foundations of Self-Play for LLM Reasoning</a>. All parts are also in one <a href="../data/selfplay-foundations-notes.pdf">PDF</a>.</p>
+<p class="series-note">Part 2 of 10 in <a href="../index.html#notes">Foundations of Self-Play for LLM Reasoning</a>. The complete series is also available as a <a href="../data/selfplay-foundations-notes.pdf">single PDF</a>.</p>
 <div class="toc"><details open><summary>Contents</summary><ul>
-<li class="toc-h2"><a href="#s6">6 The KL-regularized optimum: why RL mostly sharpens</a></li>
+<li class="toc-h2"><a href="#s6">6 The KL-regularized optimum: why RL primarily sharpens</a></li>
 <li class="toc-h2"><a href="#s7">7 pass@\(k\), coverage and the sharpening signature</a></li>
 <li class="toc-h2"><a href="#s8">8 Entropy and exploration</a></li>
 <li class="toc-h2"><a href="#exercises">Exercises</a></li>
@@ -52,21 +52,21 @@
 </ul></details></div>
 
 <div class="post-content">
-<h2 class="unnumbered" id="s6"><span class="secnum">6</span> The KL-regularized optimum: why RL mostly sharpens</h2>
+<h2 class="unnumbered" id="s6"><span class="secnum">6</span> The KL-regularized optimum: why RL primarily sharpens</h2>
 <div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">the tilted distribution</span></div><div class="box-body">
 <p><span class="math display">\[\max_{\pi}\ \mathbb{E}_{y\sim\pi}[R(x,y)]-\beta\,D_{\mathrm{KL}}\big(\pi\,\|\,\pi_{\mathrm{ref}}\big)
 \quad\Longrightarrow\quad
 \pi^\star(y\mid x)=\frac{\pi_{\mathrm{ref}}(y\mid x)\,e^{R(x,y)/\beta}}{Z(x)},\]</span> <span class="math display">\[\text{where}\quad Z(x)=\sum_y\pi_{\mathrm{ref}}(y\mid x)\,e^{R(x,y)/\beta}\ \text{ makes the probabilities sum to one.}\]</span></p>
 </div></div>
-<p><strong>Derivation (Gibbs variational identity).</strong> Expand <span class="math inline">\(D_{\mathrm{KL}}(\pi\|\pi^\star)=\sum_y\pi\log\frac{\pi}{\pi^\star}=D_{\mathrm{KL}}(\pi\|\pi_{\mathrm{ref}})-\frac1\beta\mathbb{E}_\pi[R]+\log Z\)</span>. Multiplying by <span class="math inline">\(-\beta\)</span>: <span class="math display">\[\mathbb{E}_\pi[R]-\beta D_{\mathrm{KL}}(\pi\|\pi_{\mathrm{ref}})=\beta\log Z-\beta\,D_{\mathrm{KL}}(\pi\|\pi^\star).\]</span> The left side is our objective; the right side is largest when <span class="math inline">\(D_{\mathrm{KL}}(\pi\|\pi^\star)=0\)</span>, that is <span class="math inline">\(\pi=\pi^\star\)</span>. The same identity gives DPO its closed form (Rafailov et al., 2023).</p>
-<p><strong>Two consequences.</strong> (i) <em>Support is kept:</em> if <span class="math inline">\(\pi_{\mathrm{ref}}(y\mid x)=0\)</span>, then <span class="math inline">\(\pi^\star(y\mid x)=0\)</span>. RL re-weights what the base model can already say. (ii) <em>Binary rewards multiply the odds:</em> with success probability <span class="math inline">\(p\)</span> under <span class="math inline">\(\pi_{\mathrm{ref}}\)</span>, <span class="math display">\[\frac{p^\star}{1-p^\star}=\frac{p}{1-p}\,e^{1/\beta}.\]</span></p>
-<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">amplification, and its limit</span></div><div class="box-body">
+<p><strong>Derivation (Gibbs variational identity).</strong> The divergence from the optimum expands as <span class="math inline">\(D_{\mathrm{KL}}(\pi\|\pi^\star)=\sum_y\pi\log\frac{\pi}{\pi^\star}=D_{\mathrm{KL}}(\pi\|\pi_{\mathrm{ref}})-\frac1\beta\mathbb{E}_\pi[R]+\log Z\)</span>. Multiplying by <span class="math inline">\(-\beta\)</span> yields <span class="math display">\[\mathbb{E}_\pi[R]-\beta D_{\mathrm{KL}}(\pi\|\pi_{\mathrm{ref}})=\beta\log Z-\beta\,D_{\mathrm{KL}}(\pi\|\pi^\star).\]</span> The left-hand side is the objective, and the right-hand side is maximized when <span class="math inline">\(D_{\mathrm{KL}}(\pi\|\pi^\star)=0\)</span>, that is, when <span class="math inline">\(\pi=\pi^\star\)</span>. The same identity provides the closed form on which DPO is built (Rafailov et al., 2023).</p>
+<p><strong>Two consequences.</strong> (i) <em>Support is preserved:</em> if <span class="math inline">\(\pi_{\mathrm{ref}}(y\mid x)=0\)</span>, then <span class="math inline">\(\pi^\star(y\mid x)=0\)</span>. RL therefore re-weights only those responses that the base model can already produce. (ii) <em>Binary rewards multiply the odds:</em> given success probability <span class="math inline">\(p\)</span> under <span class="math inline">\(\pi_{\mathrm{ref}}\)</span>, the optimal policy satisfies <span class="math display">\[\frac{p^\star}{1-p^\star}=\frac{p}{1-p}\,e^{1/\beta}.\]</span></p>
+<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">amplification and its limits</span></div><div class="box-body">
 <p>With <span class="math inline">\(\beta=0.1\)</span>, <span class="math inline">\(e^{1/\beta}=e^{10}\approx 22{,}026\)</span>.</p>
 <div class="center">
 <div class="table-wrap"><table>
 <thead>
 <tr>
-<th style="text-align: left;">base success <span class="math inline">\(p\)</span></th>
+<th style="text-align: left;">base success probability <span class="math inline">\(p\)</span></th>
 <th style="text-align: center;"><span class="math inline">\(0.1\)</span></th>
 <th style="text-align: center;"><span class="math inline">\(10^{-3}\)</span></th>
 <th style="text-align: center;"><span class="math inline">\(10^{-6}\)</span></th>
@@ -74,7 +74,7 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">optimum <span class="math inline">\(p^\star\)</span></td>
+<td style="text-align: left;">optimal <span class="math inline">\(p^\star\)</span></td>
 <td style="text-align: center;"><span class="math inline">\(0.9996\)</span></td>
 <td style="text-align: center;"><span class="math inline">\(0.957\)</span></td>
 <td style="text-align: center;"><span class="math inline">\(0.022\)</span></td>
@@ -82,20 +82,20 @@
 </tbody>
 </table></div>
 </div>
-<p>The optimum can turn a <span class="math inline">\(1\)</span>-in-<span class="math inline">\(1000\)</span> answer into a <span class="math inline">\(96\%\)</span> answer. But the optimum is not the training run: with <span class="math inline">\(G\)</span> samples per problem, the chance of seeing even one success is <span class="math inline">\(1-(1-p)^G\)</span>. For <span class="math inline">\(G=8\)</span> and <span class="math inline">\(p=10^{-3}\)</span> this is <span class="math inline">\(0.008\)</span>. In practice RL mostly amplifies what the base model already produces often.</p>
+<p>At the optimum, a <span class="math inline">\(1\)</span>-in-<span class="math inline">\(1000\)</span> success rate under the base model rises to <span class="math inline">\(96\%\)</span>. The optimum, however, is not what a training run reaches: with <span class="math inline">\(G\)</span> samples per problem, the probability of observing even a single success is <span class="math inline">\(1-(1-p)^G\)</span>, which for <span class="math inline">\(G=8\)</span> and <span class="math inline">\(p=10^{-3}\)</span> is only <span class="math inline">\(0.008\)</span>. In practice, RL therefore mainly amplifies behavior that the base model already produces frequently.</p>
 </div></div>
 <div class="box box-why"><div class="box-title"><span class="box-label">Why it matters</span></div><div class="box-body">
-<p>This formula is the “sharpen versus expand” debate in one line. Self-play’s real lever is different: the Challenger changes the <em>problems</em> <span class="math inline">\(x\)</span>, building stepping stones on which <span class="math inline">\(p(x)\)</span> is not tiny. Re-weighting <span class="math inline">\(y\)</span> alone cannot do that.</p>
+<p>This formula condenses the “sharpen versus expand” debate into a single expression. Self-play operates through a different lever: the Challenger changes the <em>problems</em> <span class="math inline">\(x\)</span>, constructing stepping stones on which <span class="math inline">\(p(x)\)</span> is not vanishingly small. Re-weighting the responses <span class="math inline">\(y\)</span> alone cannot achieve this.</p>
 </div></div>
 <h2 class="unnumbered" id="s7"><span class="secnum">7</span> pass@<span class="math inline">\(k\)</span>, coverage and the sharpening signature</h2>
 <div class="box box-def"><div class="box-title"><span class="box-label">Definition</span><span class="box-name">pass@<span class="math inline">\(k\)</span> and its unbiased estimator (Chen et al., 2021)</span></div><div class="box-body">
-<p>For one problem, <span class="math inline">\(\mathrm{pass@}k=1-(1-p)^k\)</span>. From <span class="math inline">\(n\ge k\)</span> samples with <span class="math inline">\(c\)</span> correct, <span class="math display">\[\widehat{\mathrm{pass@}k}=1-\binom{n-c}{k}\Big/\binom{n}{k}.\]</span> <strong>Why:</strong> pick <span class="math inline">\(k\)</span> of the <span class="math inline">\(n\)</span> samples at random; the pick fails only if all <span class="math inline">\(k\)</span> are wrong, which happens with probability <span class="math inline">\(\binom{n-c}{k}/\binom nk\)</span>.</p>
+<p>For a single problem, <span class="math inline">\(\mathrm{pass@}k=1-(1-p)^k\)</span>. Given <span class="math inline">\(n\ge k\)</span> samples of which <span class="math inline">\(c\)</span> are correct, the unbiased estimator is <span class="math display">\[\widehat{\mathrm{pass@}k}=1-\binom{n-c}{k}\Big/\binom{n}{k}.\]</span> <strong>Justification.</strong> If a random subset of <span class="math inline">\(k\)</span> of the <span class="math inline">\(n\)</span> samples is drawn, the subset fails only if all <span class="math inline">\(k\)</span> of its members are incorrect, which occurs with probability <span class="math inline">\(\binom{n-c}{k}/\binom nk\)</span>.</p>
 </div></div>
-<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">estimator</span></div><div class="box-body">
-<p><span class="math inline">\(n=10\)</span>, <span class="math inline">\(c=2\)</span>, <span class="math inline">\(k=5\)</span>: <span class="math inline">\(\binom85/\binom{10}5=56/252=0.222\)</span>, so pass@5 <span class="math inline">\(=0.778\)</span>. The plug-in value <span class="math inline">\(1-(1-0.2)^5=0.672\)</span> is biased low on average, because <span class="math inline">\((1-\hat p)^k\)</span> is convex in <span class="math inline">\(\hat p\)</span> (Jensen’s inequality).</p>
+<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">computing the estimator</span></div><div class="box-body">
+<p>Let <span class="math inline">\(n=10\)</span>, <span class="math inline">\(c=2\)</span> and <span class="math inline">\(k=5\)</span>. Then <span class="math inline">\(\binom85/\binom{10}5=56/252=0.222\)</span>, so pass@5 <span class="math inline">\(=0.778\)</span>. The plug-in estimate <span class="math inline">\(1-(1-0.2)^5=0.672\)</span> is biased downward in expectation, because <span class="math inline">\((1-\hat p)^k\)</span> is convex in <span class="math inline">\(\hat p\)</span> (by Jensen’s inequality).</p>
 </div></div>
 <div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">the sharpening signature</span></div><div class="box-body">
-<p>Two problems. Training moves A from <span class="math inline">\(p=0.60\)</span> to <span class="math inline">\(0.95\)</span> and B from <span class="math inline">\(p=0.02\)</span> to <span class="math inline">\(0\)</span>.</p>
+<p>Consider two problems. Training raises problem A from <span class="math inline">\(p=0.60\)</span> to <span class="math inline">\(0.95\)</span> and lowers problem B from <span class="math inline">\(p=0.02\)</span> to <span class="math inline">\(0\)</span>.</p>
 <div class="table-wrap"><table>
 <thead>
 <tr>
@@ -117,18 +117,18 @@
 </tr>
 </tbody>
 </table></div>
-<p class="caption">mean over problems A and B</p>
-<figure><img src="img/fig-2.svg?v=20261106152929" alt="Figure 2" loading="lazy"></figure>
-<p>For B before training, <span class="math inline">\(1-0.98^{256}=1-e^{256\ln 0.98}=1-e^{-5.17}=0.994\)</span>. pass@1 rises while pass@256 falls: the model became more reliable on what it knew and lost what it could only sometimes do. The curves cross between <span class="math inline">\(k=3\)</span> and <span class="math inline">\(k=4\)</span>. Yue et al. (2025) report this pattern for RLVR at large <span class="math inline">\(k\)</span>.</p>
+<p class="caption">averaged over problems A and B</p>
+<figure><img src="img/fig-2.svg?v=20261106155635" alt="Figure 2" loading="lazy"></figure>
+<p>For problem B before training, <span class="math inline">\(1-0.98^{256}=1-e^{256\ln 0.98}=1-e^{-5.17}=0.994\)</span>. Thus pass@1 rises while pass@256 falls: the model has become more reliable on problems it already solved, and has lost the ability to solve problems it previously solved only occasionally. The two curves cross between <span class="math inline">\(k=3\)</span> and <span class="math inline">\(k=4\)</span>. Yue et al. (2025) report this pattern for RLVR at large <span class="math inline">\(k\)</span>.</p>
 </div></div>
 <div class="box box-why"><div class="box-title"><span class="box-label">Why it matters</span></div><div class="box-body">
-<p>Report pass@<span class="math inline">\(k\)</span> up to large <span class="math inline">\(k\)</span> (256 or more), and count <em>newly solved</em> problems: problems with base pass@256 <span class="math inline">\(=0\)</span> that the trained model solves. Only those support the word “expand”.</p>
+<p>Evaluations should report pass@<span class="math inline">\(k\)</span> up to large <span class="math inline">\(k\)</span> (256 or more) and should count <em>newly solved</em> problems, that is, problems with base pass@256 <span class="math inline">\(=0\)</span> that the trained model solves. Only such problems justify the word “expand”.</p>
 </div></div>
 <h2 class="unnumbered" id="s8"><span class="secnum">8</span> Entropy and exploration</h2>
-<p>The policy entropy <span class="math inline">\(H(\pi(\cdot\mid x))=-\sum_y\pi(y\mid x)\log\pi(y\mid x)\)</span> measures how varied the samples are. As RL sharpens, entropy falls; groups become uniform; advantages become <span class="math inline">\(0\)</span>; learning stops. This is <em>entropy collapse</em>. Common remedies are a larger upper clip range (“clip-higher”, <span class="math inline">\(\varepsilon_{\mathrm{high}}&gt;\varepsilon_{\mathrm{low}}\)</span>, in DAPO), an entropy bonus, higher sampling temperature, and dropping zero-variance groups. Section <a href="challenger-signals.html#s11">11</a> shows that a majority-vote reward is itself an entropy-minimizing objective.</p>
+<p>The policy entropy <span class="math inline">\(H(\pi(\cdot\mid x))=-\sum_y\pi(y\mid x)\log\pi(y\mid x)\)</span> measures the diversity of the sampled responses. As RL sharpens the policy, entropy decreases: the samples within each group become homogeneous, the advantages become <span class="math inline">\(0\)</span>, and learning stops. This failure mode is known as <em>entropy collapse</em>. Common remedies include a larger upper clipping range (“clip-higher” in DAPO, with <span class="math inline">\(\varepsilon_{\mathrm{high}}&gt;\varepsilon_{\mathrm{low}}\)</span>), an entropy bonus, a higher sampling temperature, and discarding zero-variance groups. Section <a href="challenger-signals.html#s11">11</a> shows that a majority-vote reward is itself an entropy-minimizing objective.</p>
 <h2 id="exercises">Exercises</h2>
-<div class="exercise"><p><strong>Exercise 3.</strong> With <span class="math inline">\(\beta=0.2\)</span> and base success <span class="math inline">\(p=0.01\)</span>, what is <span class="math inline">\(p^\star\)</span> at the KL-regularized optimum?</p><details><summary>Show answer</summary><p>Odds <span class="math inline">\(0.0101\times e^{5}=0.0101\times148.4=1.50\)</span>, so <span class="math inline">\(p^\star=1.50/2.50=0.60\)</span>.</p></details></div>
-<div class="exercise"><p><strong>Exercise 4.</strong> Use the estimator with <span class="math inline">\(n=16\)</span>, <span class="math inline">\(c=1\)</span>, <span class="math inline">\(k=8\)</span>. Then show that with a single correct sample (<span class="math inline">\(c=1\)</span>) the estimate is always <span class="math inline">\(k/n\)</span>.</p><details><summary>Show answer</summary><p><span class="math inline">\(1-\binom{15}{8}/\binom{16}{8}=1-6435/12870=0.5\)</span>. In general, <span class="math inline">\(\binom{n-1}{k}/\binom nk=(n-k)/n\)</span>, so the estimate is <span class="math inline">\(k/n\)</span>.</p></details></div>
+<div class="exercise"><p><strong>Exercise 3.</strong> With <span class="math inline">\(\beta=0.2\)</span> and base success probability <span class="math inline">\(p=0.01\)</span>, what is <span class="math inline">\(p^\star\)</span> at the KL-regularized optimum?</p><details><summary>Show solution</summary><p>The odds are <span class="math inline">\(0.0101\times e^{5}=0.0101\times148.4=1.50\)</span>, so <span class="math inline">\(p^\star=1.50/2.50=0.60\)</span>.</p></details></div>
+<div class="exercise"><p><strong>Exercise 4.</strong> Evaluate the unbiased estimator for <span class="math inline">\(n=16\)</span>, <span class="math inline">\(c=1\)</span> and <span class="math inline">\(k=8\)</span>. Then show that with a single correct sample (<span class="math inline">\(c=1\)</span>) the estimate always equals <span class="math inline">\(k/n\)</span>.</p><details><summary>Show solution</summary><p><span class="math inline">\(1-\binom{15}{8}/\binom{16}{8}=1-6435/12870=0.5\)</span>. In general, <span class="math inline">\(\binom{n-1}{k}/\binom nk=(n-k)/n\)</span>, so the estimate reduces to <span class="math inline">\(k/n\)</span>.</p></details></div>
 
 <h2 id="references">References</h2>
 <ul class="refs">
