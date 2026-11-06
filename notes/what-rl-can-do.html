@@ -15,7 +15,7 @@
 <meta property="og:url" content="https://chandakchakma.github.io/notes/what-rl-can-do.html">
 <meta property="og:image" content="https://chandakchakma.github.io/images/chandak_photo6.jpg">
 <meta name="twitter:card" content="summary">
-<link rel="stylesheet" href="../blog.css?v=1">
+<link rel="stylesheet" href="../blog.css?v=20261106152217">
 <script>
   MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
               options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
@@ -117,7 +117,7 @@
 </tbody>
 </table></div>
 <p class="caption">mean over problems A and B</p>
-<figure><img src="img/fig-2.svg" alt="Figure 2" loading="lazy"></figure>
+<figure><img src="img/fig-2.svg?v=20261106152217" alt="Figure 2" loading="lazy"></figure>
 <p>For B before training, <span class="math inline">\(1-0.98^{256}=1-e^{256\ln 0.98}=1-e^{-5.17}=0.994\)</span>. pass@1 rises while pass@256 falls: the model became more reliable on what it knew and lost what it could only sometimes do. The curves cross between <span class="math inline">\(k=3\)</span> and <span class="math inline">\(k=4\)</span>. Yue et al. (2025) report this pattern for RLVR at large <span class="math inline">\(k\)</span>.</p>
 </div></div>
 <div class="box box-why"><div class="box-title"><span class="box-label">Why it matters</span></div><div class="box-body">
