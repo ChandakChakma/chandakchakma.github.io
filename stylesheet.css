@@ -161,3 +161,28 @@ span.highlight {
   tr.paper-row > td:first-child { text-align: center; padding-bottom: 0 !important; }
   tr.paper-row > td:first-child img { width: 60% !important; max-width: 260px; }
 }
+
+/* Notes: one box on the main page that links to notes.html. */
+a.notes-box {
+  display: inline-block;
+  border: 1px solid #d6dbe1;
+  border-radius: 10px;
+  padding: 12px 18px;
+  color: #000000;
+  transition: border-color .15s ease-in-out, background-color .15s ease-in-out;
+}
+a.notes-box:hover,
+a.notes-box:focus {
+  border-color: #1772d0;
+  background-color: #f5f9ff;
+  color: #000000;
+}
+.notes-box-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1772d0;
+}
+.notes-box-sub {
+  font-size: 13px;
+  color: #666666;
+}
