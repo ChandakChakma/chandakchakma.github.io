@@ -52,10 +52,10 @@
 
 <div class="post-content">
 <h2 class="unnumbered" id="s9"><span class="secnum">9</span> Learnability</h2>
-<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> the <span class="math inline">\(p(1-p)\)</span> law</div><div class="box-body">
+<div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">the <span class="math inline">\(p(1-p)\)</span> law</span></div><div class="box-body">
 <p>For a binary reward with success probability <span class="math inline">\(p\)</span>, <span class="math inline">\(\operatorname{Var}[R]=p(1-p)\)</span>, largest (<span class="math inline">\(1/4\)</span>) at <span class="math inline">\(p=1/2\)</span>. A GRPO group of size <span class="math inline">\(G\)</span> carries a signal only if its rewards are not all equal: <span class="math display">\[\Pr[\text{informative group}]=1-p^G-(1-p)^G .\]</span></p>
 </div></div>
-<div class="box box-ex"><div class="box-title">Worked example <span class="box-sep">|</span> <span class="math inline">\(G=8\)</span></div><div class="box-body">
+<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name"><span class="math inline">\(G=8\)</span></span></div><div class="box-body">
 <div class="center">
 <div class="table-wrap"><table>
 <thead>
@@ -78,7 +78,7 @@
 </div>
 <p>A problem solved <span class="math inline">\(99\%\)</span> of the time gives a signal in only <span class="math inline">\(1\)</span> group out of <span class="math inline">\(13\)</span>. This is the arithmetic behind “make problems at the edge of the Solver’s ability”. R-Zero motivates the same target with a lower bound on the Solver’s remaining learning potential that grows with <span class="math inline">\(\hat p(1-\hat p)\)</span>.</p>
 </div></div>
-<div class="box box-pit"><div class="box-title">Pitfall</div><div class="box-body">
+<div class="box box-pit"><div class="box-title"><span class="box-label">Pitfall</span></div><div class="box-body">
 <p>The law needs the <em>true</em> success rate. In label-free self-play we only measure agreement <span class="math inline">\(\hat p\)</span> with a pseudo-label, which equals <span class="math inline">\(p\)</span> only when the label is right.</p>
 </div></div>
 <h2 class="unnumbered" id="s10"><span class="secnum">10</span> Proposer rewards: a comparison</h2>
@@ -133,23 +133,23 @@
 </table></div>
 </div>
 <p><strong>SOAR</strong> (Sundaram, Kempe and Ollivier, ICML 2026) is the current accepted frontier. It is bilevel: the teacher writes a problem set <span class="math inline">\(D_\phi\)</span>, the student trains on it briefly, and the teacher is paid by the student’s real gain on hard problems it could not solve (<span class="math inline">\(0\)</span> of <span class="math inline">\(128\)</span> samples). Grounded rewards beat learnability rewards, and well-posed questions matter more than correct answers. Its gap is the labeled hard set <span class="math inline">\(H\)</span>. <strong>PowerPlay</strong> (Schmidhuber, 2011) is the conceptual root: keep searching for the simplest problem the current solver cannot yet solve.</p>
-<div class="box box-ex"><div class="box-title">Worked example <span class="box-sep">|</span> what R-Zero’s reward cannot see</div><div class="box-body">
+<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">what R-Zero’s reward cannot see</span></div><div class="box-body">
 <p>Ten Solver answers: four say <span class="math inline">\(20\)</span>, four say <span class="math inline">\(22\)</span>, two have no boxed answer. Then <span class="math inline">\(\hat p=4/10\)</span> and <span class="math inline">\(r_{\mathrm{unc}}=1-2|0.4-0.5|=0.8\)</span>, a high reward, and the question passes the <span class="math inline">\(3\)</span>–<span class="math inline">\(7\)</span> filter. In the released code the label is whichever of <span class="math inline">\(20\)</span> and <span class="math inline">\(22\)</span> appeared first (Python’s <code>max</code> returns the first maximal key), and each unboxed answer counts as a vote for the string <code>"None"</code> (the question is dropped later only if <code>"None"</code> wins the vote). The reward cannot tell a two-way split from scattered guessing, and the label is a coin flip. Always read the code.</p>
 </div></div>
-<div class="box box-why"><div class="box-title">Why it matters for self-play</div><div class="box-body">
+<div class="box box-why"><div class="box-title"><span class="box-label">Why it matters</span></div><div class="box-body">
 <p>Rewards built only from the Solver’s agreement measure difficulty, not truth. Rewards grounded in real progress (SOAR, PAIRED) need a source of truth. A grounded signal <em>without</em> labels is the open problem.</p>
 </div></div>
 <h2 class="unnumbered" id="s11"><span class="secnum">11</span> Learning from noisy labels</h2>
-<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> random noise only shrinks the signal</div><div class="box-body">
+<div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">random noise only shrinks the signal</span></div><div class="box-body">
 <p>Suppose the observed reward <span class="math inline">\(\tilde R\)</span> flips the true reward with probability <span class="math inline">\(\eta\)</span>, independently of which response was sampled. Then <span class="math inline">\(\mathbb{E}[\tilde R\mid y]=\eta+(1-2\eta)R(y)\)</span> and, because <span class="math inline">\(\mathbb{E}[\nabla_\theta\log\pi_\theta]=0\)</span>, <span class="math display">\[\mathbb{E}\big[\tilde R\,\nabla_\theta\log\pi_\theta\big]=(1-2\eta)\,\nabla_\theta J .\]</span> The gradient keeps its direction whenever <span class="math inline">\(\eta&lt;1/2\)</span>; only its size shrinks.</p>
 </div></div>
-<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> correlated noise biases the signal</div><div class="box-body">
+<div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">correlated noise biases the signal</span></div><div class="box-body">
 <p>If the label error depends on the response, write <span class="math inline">\(\tilde R=R+\delta(x,y)\)</span>. Then <span class="math inline">\(\mathbb{E}[\tilde R\,\nabla_\theta\log\pi_\theta]=\nabla_\theta J+\mathbb{E}\big[\delta\,\nabla_\theta\log\pi_\theta\big]\)</span>: an extra push toward whatever responses <span class="math inline">\(\delta\)</span> favors.</p>
 </div></div>
-<div class="box box-ex"><div class="box-title">Worked example <span class="box-sep">|</span> the majority-vote reward</div><div class="box-body">
+<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">the majority-vote reward</span></div><div class="box-body">
 <p>The pseudo-label is the mode <span class="math inline">\(m(x)\)</span> of the Solver’s own samples, and the reward is <span class="math inline">\(\mathbf{1}[\text{answer}(y)=m(x)]\)</span>. Its expected value is <span class="math inline">\(\pi_\theta(m\mid x)\)</span>, which is maximized by putting all mass on <span class="math inline">\(m\)</span>, whether or not <span class="math inline">\(m\)</span> is correct. Example: <span class="math inline">\(\pi(20)=0.40\)</span>, <span class="math inline">\(\pi(22)=0.35\)</span>, other answers <span class="math inline">\(0.25\)</span>, and the truth is <span class="math inline">\(22\)</span>. The vote makes <span class="math inline">\(20\)</span> the label and training pushes <span class="math inline">\(\pi(20)\)</span> toward <span class="math inline">\(1\)</span>: the model becomes confidently wrong.</p>
 </div></div>
-<div class="box box-why"><div class="box-title">Why it matters for self-play</div><div class="box-body">
+<div class="box box-why"><div class="box-title"><span class="box-label">Why it matters</span></div><div class="box-body">
 <p>This is the mechanism behind “rise, then fall”. Early on the mode is usually right (R-Zero’s labels are <span class="math inline">\(79\%\)</span> correct in round 1), so sharpening helps. As the Challenger writes harder questions, the mode is wrong more often (<span class="math inline">\(63\%\)</span> correct by round 3), and the same sharpening now teaches errors.</p>
 </div></div>
 <h2 id="exercises">Exercises</h2>

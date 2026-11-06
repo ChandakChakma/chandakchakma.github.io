@@ -52,14 +52,14 @@
 
 <div class="post-content">
 <h2 class="unnumbered" id="s6"><span class="secnum">6</span> The KL-regularized optimum: why RL mostly sharpens</h2>
-<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> the tilted distribution</div><div class="box-body">
+<div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">the tilted distribution</span></div><div class="box-body">
 <p><span class="math display">\[\max_{\pi}\ \mathbb{E}_{y\sim\pi}[R(x,y)]-\beta\,D_{\mathrm{KL}}\big(\pi\,\|\,\pi_{\mathrm{ref}}\big)
 \quad\Longrightarrow\quad
 \pi^\star(y\mid x)=\frac{\pi_{\mathrm{ref}}(y\mid x)\,e^{R(x,y)/\beta}}{Z(x)},\]</span> <span class="math display">\[\text{where}\quad Z(x)=\sum_y\pi_{\mathrm{ref}}(y\mid x)\,e^{R(x,y)/\beta}\ \text{ makes the probabilities sum to one.}\]</span></p>
 </div></div>
 <p><strong>Derivation (Gibbs variational identity).</strong> Expand <span class="math inline">\(D_{\mathrm{KL}}(\pi\|\pi^\star)=\sum_y\pi\log\frac{\pi}{\pi^\star}=D_{\mathrm{KL}}(\pi\|\pi_{\mathrm{ref}})-\frac1\beta\mathbb{E}_\pi[R]+\log Z\)</span>. Multiplying by <span class="math inline">\(-\beta\)</span>: <span class="math display">\[\mathbb{E}_\pi[R]-\beta D_{\mathrm{KL}}(\pi\|\pi_{\mathrm{ref}})=\beta\log Z-\beta\,D_{\mathrm{KL}}(\pi\|\pi^\star).\]</span> The left side is our objective; the right side is largest when <span class="math inline">\(D_{\mathrm{KL}}(\pi\|\pi^\star)=0\)</span>, that is <span class="math inline">\(\pi=\pi^\star\)</span>. The same identity gives DPO its closed form (Rafailov et al., 2023).</p>
 <p><strong>Two consequences.</strong> (i) <em>Support is kept:</em> if <span class="math inline">\(\pi_{\mathrm{ref}}(y\mid x)=0\)</span>, then <span class="math inline">\(\pi^\star(y\mid x)=0\)</span>. RL re-weights what the base model can already say. (ii) <em>Binary rewards multiply the odds:</em> with success probability <span class="math inline">\(p\)</span> under <span class="math inline">\(\pi_{\mathrm{ref}}\)</span>, <span class="math display">\[\frac{p^\star}{1-p^\star}=\frac{p}{1-p}\,e^{1/\beta}.\]</span></p>
-<div class="box box-ex"><div class="box-title">Worked example <span class="box-sep">|</span> amplification, and its limit</div><div class="box-body">
+<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">amplification, and its limit</span></div><div class="box-body">
 <p>With <span class="math inline">\(\beta=0.1\)</span>, <span class="math inline">\(e^{1/\beta}=e^{10}\approx 22{,}026\)</span>.</p>
 <div class="center">
 <div class="table-wrap"><table>
@@ -83,17 +83,17 @@
 </div>
 <p>The optimum can turn a <span class="math inline">\(1\)</span>-in-<span class="math inline">\(1000\)</span> answer into a <span class="math inline">\(96\%\)</span> answer. But the optimum is not the training run: with <span class="math inline">\(G\)</span> samples per problem, the chance of seeing even one success is <span class="math inline">\(1-(1-p)^G\)</span>. For <span class="math inline">\(G=8\)</span> and <span class="math inline">\(p=10^{-3}\)</span> this is <span class="math inline">\(0.008\)</span>. In practice RL mostly amplifies what the base model already produces often.</p>
 </div></div>
-<div class="box box-why"><div class="box-title">Why it matters for self-play</div><div class="box-body">
+<div class="box box-why"><div class="box-title"><span class="box-label">Why it matters</span></div><div class="box-body">
 <p>This formula is the “sharpen versus expand” debate in one line. Self-play’s real lever is different: the Challenger changes the <em>problems</em> <span class="math inline">\(x\)</span>, building stepping stones on which <span class="math inline">\(p(x)\)</span> is not tiny. Re-weighting <span class="math inline">\(y\)</span> alone cannot do that.</p>
 </div></div>
 <h2 class="unnumbered" id="s7"><span class="secnum">7</span> pass@<span class="math inline">\(k\)</span>, coverage and the sharpening signature</h2>
-<div class="box box-def"><div class="box-title">Definition <span class="box-sep">|</span> pass@<span class="math inline">\(k\)</span> and its unbiased estimator (Chen et al., 2021)</div><div class="box-body">
+<div class="box box-def"><div class="box-title"><span class="box-label">Definition</span><span class="box-name">pass@<span class="math inline">\(k\)</span> and its unbiased estimator (Chen et al., 2021)</span></div><div class="box-body">
 <p>For one problem, <span class="math inline">\(\mathrm{pass@}k=1-(1-p)^k\)</span>. From <span class="math inline">\(n\ge k\)</span> samples with <span class="math inline">\(c\)</span> correct, <span class="math display">\[\widehat{\mathrm{pass@}k}=1-\binom{n-c}{k}\Big/\binom{n}{k}.\]</span> <strong>Why:</strong> pick <span class="math inline">\(k\)</span> of the <span class="math inline">\(n\)</span> samples at random; the pick fails only if all <span class="math inline">\(k\)</span> are wrong, which happens with probability <span class="math inline">\(\binom{n-c}{k}/\binom nk\)</span>.</p>
 </div></div>
-<div class="box box-ex"><div class="box-title">Worked example <span class="box-sep">|</span> estimator</div><div class="box-body">
+<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">estimator</span></div><div class="box-body">
 <p><span class="math inline">\(n=10\)</span>, <span class="math inline">\(c=2\)</span>, <span class="math inline">\(k=5\)</span>: <span class="math inline">\(\binom85/\binom{10}5=56/252=0.222\)</span>, so pass@5 <span class="math inline">\(=0.778\)</span>. The plug-in value <span class="math inline">\(1-(1-0.2)^5=0.672\)</span> is biased low on average, because <span class="math inline">\((1-\hat p)^k\)</span> is convex in <span class="math inline">\(\hat p\)</span> (Jensen’s inequality).</p>
 </div></div>
-<div class="box box-ex"><div class="box-title">Worked example <span class="box-sep">|</span> the sharpening signature</div><div class="box-body">
+<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">the sharpening signature</span></div><div class="box-body">
 <p>Two problems. Training moves A from <span class="math inline">\(p=0.60\)</span> to <span class="math inline">\(0.95\)</span> and B from <span class="math inline">\(p=0.02\)</span> to <span class="math inline">\(0\)</span>.</p>
 <div class="table-wrap"><table>
 <thead>
@@ -120,7 +120,7 @@
 <figure><img src="img/fig-2.svg" alt="Figure 2" loading="lazy"></figure>
 <p>For B before training, <span class="math inline">\(1-0.98^{256}=1-e^{256\ln 0.98}=1-e^{-5.17}=0.994\)</span>. pass@1 rises while pass@256 falls: the model became more reliable on what it knew and lost what it could only sometimes do. The curves cross between <span class="math inline">\(k=3\)</span> and <span class="math inline">\(k=4\)</span>. Yue et al. (2025) report this pattern for RLVR at large <span class="math inline">\(k\)</span>.</p>
 </div></div>
-<div class="box box-why"><div class="box-title">Why it matters for self-play</div><div class="box-body">
+<div class="box box-why"><div class="box-title"><span class="box-label">Why it matters</span></div><div class="box-body">
 <p>Report pass@<span class="math inline">\(k\)</span> up to large <span class="math inline">\(k\)</span> (256 or more), and count <em>newly solved</em> problems: problems with base pass@256 <span class="math inline">\(=0\)</span> that the trained model solves. Only those support the word “expand”.</p>
 </div></div>
 <h2 class="unnumbered" id="s8"><span class="secnum">8</span> Entropy and exploration</h2>

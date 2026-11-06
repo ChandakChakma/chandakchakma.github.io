@@ -56,7 +56,7 @@
 <p>This series collects the theory behind Challenger&ndash;Solver self-play, where one model writes its own problems, solves them, and judges its own answers. Every topic comes with a definition, a short derivation, a worked example with real numbers, and the reason it matters for self-play.</p>
 <figure><img src="img/fig-1.svg" alt="Figure 1" loading="lazy"></figure>
 <p class="caption">The seven parts of the series.</p>
-<div class="box box-def"><div class="box-title">Notation used in this series</div><div class="box-body">
+<div class="box box-def"><div class="box-title"><span class="box-label">Notation</span><span class="box-name">used in this series</span></div><div class="box-body">
 <div class="table-wrap"><table>
 <tbody>
 <tr>
@@ -101,37 +101,37 @@
 <h2 class="unnumbered" id="s1"><span class="secnum">1</span> LLM generation as reinforcement learning</h2>
 <p>A problem <span class="math inline">\(x\)</span> is the state and the whole response <span class="math inline">\(y\)</span> is the action; a verifier, or a pseudo-label in self-play, returns one scalar reward at the end. This <em>bandit view</em> is the one used by GRPO, R-Zero and SOAR. The policy factorizes over tokens: <span class="math display">\[\begin{gathered}\pi_\theta(y\mid x)=\prod_{t=1}^{|y|}\pi_\theta(y_t\mid x,y_{&lt;t}), \\[4pt] J(\theta)=\mathbb{E}_{x\sim\mathcal D}\,\mathbb{E}_{y\sim\pi_\theta(\cdot\mid x)}\big[R(x,y)\big].\end{gathered}\]</span> With a binary reward, <span class="math inline">\(J(\theta)=\mathbb{E}_x[p_\theta(x)]\)</span>: training maximizes the average success probability.</p>
 <h2 class="unnumbered" id="s2"><span class="secnum">2</span> The policy gradient</h2>
-<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> log-derivative trick</div><div class="box-body">
+<div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">log-derivative trick</span></div><div class="box-body">
 <p><span class="math display">\[\begin{gathered}\nabla_\theta J(\theta)=\mathbb{E}_{x,\;y\sim\pi_\theta}\Big[R(x,y)\,\nabla_\theta\log\pi_\theta(y\mid x)\Big], \\[4pt] \nabla_\theta\log\pi_\theta(y\mid x)=\sum_{t}\nabla_\theta\log\pi_\theta(y_t\mid x,y_{&lt;t}).\end{gathered}\]</span></p>
 </div></div>
 <p><strong>Derivation.</strong> For a fixed <span class="math inline">\(x\)</span>, <span class="math display">\[\nabla_\theta\sum_y \pi_\theta(y\mid x)R(x,y)=\sum_y \pi_\theta(y\mid x)\,R(x,y)\,\frac{\nabla_\theta\pi_\theta(y\mid x)}{\pi_\theta(y\mid x)}=\mathbb{E}_{y\sim\pi_\theta}\!\big[R\,\nabla_\theta\log\pi_\theta(y\mid x)\big].\]</span> The expectation can be estimated from samples, so we never need the sum over all responses.</p>
-<div class="box box-why"><div class="box-title">Why it matters for self-play</div><div class="box-body">
+<div class="box box-why"><div class="box-title"><span class="box-label">Why it matters</span></div><div class="box-body">
 <p>Every method in this guide (PPO, GRPO, RLOO, R-Zero, Absolute Zero, SOAR) estimates this one expectation. They differ only in how they weight each sample, and in where <span class="math inline">\(R\)</span> comes from.</p>
 </div></div>
 <h2 class="unnumbered" id="s3"><span class="secnum">3</span> Baselines and advantages</h2>
-<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> a baseline adds no bias</div><div class="box-body">
+<div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">a baseline adds no bias</span></div><div class="box-body">
 <p>For any <span class="math inline">\(b(x)\)</span> that does not depend on the sampled <span class="math inline">\(y\)</span>: <span class="math display">\[\mathbb{E}_{y\sim\pi_\theta}\big[b(x)\,\nabla_\theta\log\pi_\theta(y\mid x)\big]=b(x)\sum_y\nabla_\theta\pi_\theta(y\mid x)=b(x)\,\nabla_\theta\!\sum_y\pi_\theta(y\mid x)=b(x)\,\nabla_\theta 1=0,\]</span> so <span class="math inline">\(\nabla_\theta J=\mathbb{E}\big[(R-b(x))\,\nabla_\theta\log\pi_\theta\big]\)</span>. The term <span class="math inline">\(\hat A=R-b\)</span> is the <em>advantage</em>. A good baseline, close to <span class="math inline">\(\mathbb{E}[R\mid x]\)</span>, lowers the variance a lot.</p>
 </div></div>
-<div class="box box-ex"><div class="box-title">Worked example <span class="box-sep">|</span> why the baseline matters</div><div class="box-body">
+<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">why the baseline matters</span></div><div class="box-body">
 <p>Four samples get rewards <span class="math inline">\((1,1,1,0)\)</span>. Without a baseline, the three correct samples are pushed up by <span class="math inline">\(1\)</span> and the wrong one gets weight <span class="math inline">\(0\)</span>: it is never pushed down. With <span class="math inline">\(b=0.75\)</span> the weights become <span class="math inline">\((+0.25,+0.25,+0.25,-0.75)\)</span>. Now the single failure carries the largest signal, which is what we want on an easy problem.</p>
 </div></div>
-<div class="box box-pit"><div class="box-title">Pitfall</div><div class="box-body">
+<div class="box box-pit"><div class="box-title"><span class="box-label">Pitfall</span></div><div class="box-body">
 <p>A baseline that uses the sample’s <em>own</em> reward, such as the group mean including <span class="math inline">\(R_i\)</span>, is no longer independent of <span class="math inline">\(y_i\)</span>. The leave-one-out baseline below fixes this.</p>
 </div></div>
 <h2 class="unnumbered" id="s4"><span class="secnum">4</span> Group-relative advantages: GRPO and RLOO</h2>
-<div class="box box-def"><div class="box-title">Definition <span class="box-sep">|</span> GRPO (Shao et al., 2024)</div><div class="box-body">
+<div class="box box-def"><div class="box-title"><span class="box-label">Definition</span><span class="box-name">GRPO (Shao et al., 2024)</span></div><div class="box-body">
 <p>Sample <span class="math inline">\(G\)</span> responses for one problem. The advantage of response <span class="math inline">\(i\)</span>, shared by all its tokens, is <span class="math display">\[\hat A_i=\frac{R_i-\operatorname{mean}(R_1,\dots,R_G)}{\operatorname{std}(R_1,\dots,R_G)+\epsilon_{\mathrm{std}}} .\]</span> The loss combines a PPO-style clipped ratio (Section <a href="#s5">5</a>) with a KL penalty to <span class="math inline">\(\pi_{\mathrm{ref}}\)</span>: <span class="math display">\[\mathcal J_{\mathrm{GRPO}}=\mathbb{E}\Bigg[\frac1G\sum_{i=1}^G\frac1{|y_i|}\sum_{t}\min\!\Big(\rho_{i,t}\hat A_i,\ \operatorname{clip}(\rho_{i,t},1-\varepsilon,1+\varepsilon)\hat A_i\Big)\Bigg]-\beta\,D_{\mathrm{KL}}(\pi_\theta\,\|\,\pi_{\mathrm{ref}}).\]</span></p>
 </div></div>
-<div class="box box-def"><div class="box-title">Definition <span class="box-sep">|</span> RLOO (Ahmadian et al., 2024)</div><div class="box-body">
+<div class="box box-def"><div class="box-title"><span class="box-label">Definition</span><span class="box-name">RLOO (Ahmadian et al., 2024)</span></div><div class="box-body">
 <p><span class="math display">\[\hat A_i=R_i-\frac{1}{G-1}\sum_{j\neq i}R_j .\]</span> The baseline uses only the <em>other</em> samples, so it is independent of <span class="math inline">\(y_i\)</span> and the estimator is unbiased.</p>
 </div></div>
-<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> the two are almost the same</div><div class="box-body">
+<div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">the two are almost the same</span></div><div class="box-body">
 <p><span class="math inline">\(\displaystyle R_i-\frac{1}{G-1}\sum_{j\neq i}R_j=\frac{G R_i-\sum_j R_j}{G-1}=\frac{G}{G-1}\Big(R_i-\operatorname{mean}_j R_j\Big).\)</span> Mean-centering is RLOO times the constant <span class="math inline">\((G-1)/G\)</span>: the direction is unbiased and only the scale changes. GRPO’s real difference is the division by the standard deviation.</p>
 </div></div>
-<div class="box box-ex"><div class="box-title">Worked example <span class="box-sep">|</span> one success in four</div><div class="box-body">
+<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">one success in four</span></div><div class="box-body">
 <p>Rewards <span class="math inline">\((1,0,0,0)\)</span>. Mean <span class="math inline">\(0.25\)</span>; standard deviation <span class="math inline">\(\sqrt{0.25\cdot0.75}=0.433\)</span>. GRPO: <span class="math inline">\(\hat A=(+1.73,\,-0.58,\,-0.58,\,-0.58)\)</span>. RLOO: <span class="math inline">\(\hat A=(1-0,\ 0-\tfrac13,\ 0-\tfrac13,\ 0-\tfrac13)=(+1,\,-0.33,\,-0.33,\,-0.33)\)</span>, which is exactly <span class="math inline">\(\tfrac43\times(0.75,-0.25,-0.25,-0.25)\)</span>.</p>
 </div></div>
-<div class="box box-pit"><div class="box-title">Pitfall</div><div class="box-body">
+<div class="box box-pit"><div class="box-title"><span class="box-label">Pitfall</span></div><div class="box-body">
 <p>Three traps hide in this formula.</p>
 <ul>
 <li><p>If all <span class="math inline">\(G\)</span> rewards are equal, every advantage is <span class="math inline">\(0\)</span> and the problem teaches nothing. DAPO’s <em>dynamic sampling</em> drops such groups (Yu et al., 2025).</p></li>
@@ -140,14 +140,14 @@
 </ul>
 </div></div>
 <h2 class="unnumbered" id="s5"><span class="secnum">5</span> Trust regions: PPO clipping and the KL penalty</h2>
-<div class="box box-def"><div class="box-title">Definition <span class="box-sep">|</span> clipped surrogate (Schulman et al., 2017)</div><div class="box-body">
+<div class="box box-def"><div class="box-title"><span class="box-label">Definition</span><span class="box-name">clipped surrogate (Schulman et al., 2017)</span></div><div class="box-body">
 <p>With the per-token ratio <span class="math inline">\(\rho_t=\pi_\theta(y_t\mid x,y_{&lt;t})/\pi_{\mathrm{old}}(y_t\mid x,y_{&lt;t})\)</span>, <span class="math display">\[L^{\mathrm{CLIP}}=\mathbb{E}\Big[\min\big(\rho_t\hat A,\ \operatorname{clip}(\rho_t,1-\varepsilon,1+\varepsilon)\,\hat A\big)\Big].\]</span></p>
 </div></div>
-<div class="box box-ex"><div class="box-title">Worked example <span class="box-sep">|</span> what clipping does</div><div class="box-body">
+<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">what clipping does</span></div><div class="box-body">
 <p>Take <span class="math inline">\(\varepsilon=0.2\)</span>. If <span class="math inline">\(\hat A=+1\)</span> and a token’s probability already rose by <span class="math inline">\(30\%\)</span> (<span class="math inline">\(\rho=1.3\)</span>): <span class="math inline">\(\min(1.3,1.2)=1.2\)</span>, a constant, so the gradient is zero and the update stops pushing that token. If <span class="math inline">\(\hat A=-1\)</span> and <span class="math inline">\(\rho=0.7\)</span>: <span class="math inline">\(\min(-0.7,-0.8)=-0.8\)</span>, again constant. Clipping keeps each update inside a small trust region around <span class="math inline">\(\pi_{\mathrm{old}}\)</span>.</p>
 </div></div>
 <p><strong>The KL term.</strong> GRPO estimates <span class="math inline">\(D_{\mathrm{KL}}(\pi_\theta\|\pi_{\mathrm{ref}})\)</span> per token with <span class="math inline">\(k_3=r-1-\log r\)</span>, where <span class="math inline">\(r=\pi_{\mathrm{ref}}/\pi_\theta\)</span> and the token is sampled from <span class="math inline">\(\pi_\theta\)</span>. Since <span class="math inline">\(\mathbb{E}_{\pi_\theta}[r]=1\)</span>, we get <span class="math inline">\(\mathbb{E}[k_3]=\mathbb{E}[-\log r]=D_{\mathrm{KL}}(\pi_\theta\|\pi_{\mathrm{ref}})\)</span>: the estimate is unbiased and never negative.</p>
-<div class="box box-why"><div class="box-title">Why it matters for self-play</div><div class="box-body">
+<div class="box box-why"><div class="box-title"><span class="box-label">Why it matters</span></div><div class="box-body">
 <p>R-Zero keeps a KL anchor (<span class="math inline">\(\beta=0.01\)</span>); Absolute Zero drops it. The anchor slows drift and collapse, but it also ties the policy to the base model, the very thing self-play hopes to go beyond (Section <a href="what-rl-can-do.html#s6">6</a>). Whether to anchor is a real design decision, not a detail.</p>
 </div></div>
 <h2 id="exercises">Exercises</h2>

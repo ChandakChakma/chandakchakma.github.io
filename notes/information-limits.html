@@ -51,21 +51,21 @@
 
 <div class="post-content">
 <h2 class="unnumbered" id="s15"><span class="secnum">15</span> The data processing inequality</h2>
-<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> information cannot be created by processing</div><div class="box-body">
+<div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">information cannot be created by processing</span></div><div class="box-body">
 <p>If <span class="math inline">\(T\to X\to S\)</span> is a Markov chain, meaning the signal <span class="math inline">\(S\)</span> is computed from <span class="math inline">\(X\)</span> alone, then <span class="math display">\[I(T;S)\le I(T;X).\]</span></p>
 </div></div>
 <p>Take <span class="math inline">\(T\)</span> to be the truth, <span class="math inline">\(X\)</span> the problem together with the model, and <span class="math inline">\(S\)</span> any label-free signal built from the model’s own samples: votes, confidence, consistency checks. No such signal carries more information about the truth than the model already holds. Label-free self-play can <em>extract and concentrate</em> that information; it cannot <em>create</em> it. To expand, the loop needs an outside source (an executor, a proof checker, an environment) or an asymmetry such as checking being easier than solving.</p>
 <p><strong>An important nuance.</strong> The inequality bounds information, not usability. A model can “know” an answer at pass@256 and still fail at pass@1. Turning latent knowledge into reliable behavior is real value; it is sharpening, not new knowledge.</p>
 <h2 class="unnumbered" id="s16"><span class="secnum">16</span> The generator–verifier gap</h2>
-<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> filtering helps only if checking beats chance</div><div class="box-body">
+<div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">filtering helps only if checking beats chance</span></div><div class="box-body">
 <p>Filter self-generated answers with the model’s own check, with <span class="math inline">\(\mathrm{TPR}=\Pr(\text{accept}\mid\text{correct})\)</span> and <span class="math inline">\(\mathrm{FPR}=\Pr(\text{accept}\mid\text{wrong})\)</span>. By Bayes’ rule, the accuracy among accepted answers is <span class="math display">\[\begin{gathered}\mathrm{prec}=\frac{p\,\mathrm{TPR}}{p\,\mathrm{TPR}+(1-p)\,\mathrm{FPR}}, \\[4pt] \text{and} \\[4pt] \mathrm{prec}&gt;p\iff\mathrm{TPR}&gt;\mathrm{FPR}.\end{gathered}\]</span></p>
 </div></div>
 <p><strong>Proof.</strong> <span class="math inline">\(\mathrm{prec}&gt;p\iff\mathrm{TPR}&gt;p\,\mathrm{TPR}+(1-p)\mathrm{FPR}\iff(1-p)\mathrm{TPR}&gt;(1-p)\mathrm{FPR}\)</span>.</p>
-<div class="box box-ex"><div class="box-title">Worked example <span class="box-sep">|</span> a useful and a useless verifier</div><div class="box-body">
+<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">a useful and a useless verifier</span></div><div class="box-body">
 <p><span class="math inline">\(p=0.3\)</span>, <span class="math inline">\(\mathrm{TPR}=0.9\)</span>, <span class="math inline">\(\mathrm{FPR}=0.2\)</span>: <span class="math inline">\(\mathrm{prec}=0.27/(0.27+0.14)=0.659\)</span>, more than double the base accuracy, so training on accepted answers can help. If <span class="math inline">\(\mathrm{TPR}=\mathrm{FPR}\)</span>, then <span class="math inline">\(\mathrm{prec}=p\)</span> and filtering adds nothing.</p>
 </div></div>
 <p>Song et al. (2025) formalize this generation–verification gap and study how it varies across models and verification methods. It is the cleanest statement of <em>when</em> self-improvement is possible at all.</p>
-<div class="box box-why"><div class="box-title">Why it matters for self-play</div><div class="box-body">
+<div class="box box-why"><div class="box-title"><span class="box-label">Why it matters</span></div><div class="box-body">
 <p>A majority vote is a verifier too: its TPR and FPR come from how often right and wrong answers become the mode. When errors are shared, a wrong answer becomes the mode as easily as a right one, and the gap closes.</p>
 </div></div>
 <h2 id="exercises">Exercises</h2>

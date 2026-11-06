@@ -51,22 +51,22 @@
 
 <div class="post-content">
 <h2 class="unnumbered" id="s19"><span class="secnum">19</span> Model collapse</h2>
-<div class="box box-key"><div class="box-title">Key result <span class="box-sep">|</span> recursive training loses the tails</div><div class="box-body">
+<div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">recursive training loses the tails</span></div><div class="box-body">
 <p>Fit a Gaussian by maximum likelihood to <span class="math inline">\(N\)</span> samples drawn from the previous generation’s fit. Since <span class="math inline">\(\mathbb{E}[\hat\sigma^2]=\frac{N-1}{N}\sigma^2\)</span> for the maximum-likelihood variance, iterating gives <span class="math display">\[\mathbb{E}[\sigma_t^2]=\Big(\frac{N-1}{N}\Big)^{t}\sigma_0^2\ \longrightarrow\ 0 .\]</span></p>
 </div></div>
-<div class="box box-ex"><div class="box-title">Worked example <span class="box-sep">|</span> how fast</div><div class="box-body">
+<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">how fast</span></div><div class="box-body">
 <p><span class="math inline">\(N=100\)</span>, <span class="math inline">\(t=100\)</span>: <span class="math inline">\((0.99)^{100}=0.366\)</span>. Two thirds of the variance is gone, and the rare cases (the tails) go first.</p>
 </div></div>
 <p>Shumailov et al. (2024) show the same tail loss for language models trained recursively on their own outputs. Gerstgrasser et al. (2024) show that <em>accumulating</em> real and synthetic data, instead of replacing old data, keeps the error bounded.</p>
-<div class="box box-why"><div class="box-title">Why it matters for self-play</div><div class="box-body">
+<div class="box box-why"><div class="box-title"><span class="box-label">Why it matters</span></div><div class="box-body">
 <p>R-Zero’s Solver trains only on labels it made itself: the pure “replace” regime. Keeping earlier data, anchoring to the base model, and adding outside data are the known fixes.</p>
 </div></div>
 <h2 class="unnumbered" id="s20"><span class="secnum">20</span> Weak-to-strong generalization</h2>
-<div class="box box-def"><div class="box-title">Definition <span class="box-sep">|</span> performance gap recovered (Burns et al., 2023)</div><div class="box-body">
+<div class="box box-def"><div class="box-title"><span class="box-label">Definition</span><span class="box-name">performance gap recovered (Burns et al., 2023)</span></div><div class="box-body">
 <p><span class="math display">\[\mathrm{PGR}=\frac{\mathrm{Perf}_{\text{weak}\to\text{strong}}-\mathrm{Perf}_{\text{weak}}}{\mathrm{Perf}_{\text{strong ceiling}}-\mathrm{Perf}_{\text{weak}}}.\]</span></p>
 </div></div>
 <p>Strong models trained on a weaker model’s labels often recover a substantial part of the gap to their ceiling: labels worse than the student can still teach it. This is the optimistic counterpart of model collapse.</p>
-<div class="box box-why"><div class="box-title">Why it matters for self-play</div><div class="box-body">
+<div class="box box-why"><div class="box-title"><span class="box-label">Why it matters</span></div><div class="box-body">
 <p>Noisy self-labels can still teach, as long as their errors are not the ones the student already believes. Self-labels are risky because their errors are, by construction, the student’s own beliefs.</p>
 </div></div>
 <h2 id="exercises">Exercises</h2>
