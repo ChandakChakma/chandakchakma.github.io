@@ -204,3 +204,11 @@ a.note-link {
   inset: 0;
   z-index: 1;
 }
+
+/* Justified body paragraphs on the home page (bio, research intro, paper summaries, notes intro) */
+p.justify,
+h2#notes + p {
+  text-align: justify;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
