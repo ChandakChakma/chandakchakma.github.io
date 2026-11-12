@@ -39,24 +39,34 @@
                   Chandak Chakma
                 </p>
                 <p>
-                  I recently completed my B.Sc. in Robotics and Mechatronics Engineering at the
-                  <a href="https://www.du.ac.bd/">University of Dhaka</a> (class of 2026).
-                  I am a research assistant at the <a href="https://cortexairg.com/">Cortex AI Lab</a>, where I work with
-                  <a href="https://scholar.google.com/citations?user=9IRPbVkAAAAJ&amp;hl=en">Shifat E. Arman</a> (now a DPhil student at Oxford),
-                  and I completed my undergraduate thesis in the Robotics Lab with
-                  <a href="https://scholar.google.com/citations?user=j8XhiIEAAAAJ&amp;hl=en">Dr. Sejuti Rahman</a>.
+                  I recently completed my B.Sc. in <strong>Robotics and Mechatronics Engineering</strong> at the
+                  <a href="https://www.du.ac.bd/"><strong>University of Dhaka</strong></a> (class of 2026), with research interests in
+                  <strong>self-evolving LLM reasoning, reinforcement learning for LLMs, and probabilistic evaluation of world models</strong>.
+                  I am a Research Assistant at the <a href="https://cortexairg.com/">Cortex AI Lab</a>, working with
+                  <a href="https://scholar.google.com/citations?user=9IRPbVkAAAAJ&amp;hl=en">Shifat E. Arman</a> (now a DPhil student at Oxford)
+                  on reinforcement learning for LLM reasoning and video world models.
+                  I completed my undergraduate thesis in the Robotics Lab with
+                  <a href="https://scholar.google.com/citations?user=j8XhiIEAAAAJ&amp;hl=en">Dr. Sejuti Rahman</a>,
+                  on reinforcement learning for Mars rover recovery.
                   <strong>I am applying to PhD programs for Fall 2027.</strong>
                 </p>
                 <p>
-                  My research asks how a model can learn to reason when no one gives it the answers.
-                  I work on <strong>self-play for LLM reasoning</strong>, where a model writes its own problems and learns to solve them, with no human labels and no external verifier.
-                  Here the training signal comes from the model itself, so I study when that signal carries real information and how to keep it reliable as problems get harder.
-                  My current work shows one failure: the reward for a self-made question cannot tell a hard question from a broken one.
+                  My research has focused on <strong>whether the signals we use to train and judge models measure what we think they measure</strong>.
+                  In <a href="https://arxiv.org/abs/2609.40115"><em>Unlearnable, or Unmeasured?</em></a> (<strong>NeurIPS 2026 workshop</strong>),
+                  we show that the set of &ldquo;unlearnable&rdquo; prompts in RL with verifiable rewards depends heavily on how difficulty is measured,
+                  and that such prompts do learn, only about three times more slowly.
+                  In <em>Best-of-K Can Misrank Video World Models</em> (<strong>under review at CVPR 2027</strong>),
+                  we show that best-of-<i>K</i>, the standard score for one-pass video world models, can rank the worse model first,
+                  and we propose a fine-tuning that trains every sample with a proper scoring rule.
+                  I have also co-authored three more <strong>CVPR 2027 submissions</strong>, on long-horizon and contingency planning with latent world models
+                  and on counterfactual surgical video generation. My thesis work appeared as an <strong>IROS 2026 workshop paper</strong>.
                 </p>
                 <p>
-                  This question grew out of my earlier work on how models use their own samples.
-                  In <strong>RL with verifiable rewards</strong>, I showed that the set of &ldquo;unlearnable&rdquo; prompts depends heavily on how difficulty is measured, even though such prompts do learn about three times more slowly.
-                  In <strong>video world models</strong>, I showed that best-of-<i>K</i> evaluation favors a tight core of samples plus far outliers, and that training every sample with a proper scoring rule yields futures that cover the truth.
+                  Currently, I am working on <strong>self-evolving LLM reasoning</strong>, where a model writes its own problems and learns to solve them,
+                  with no human labels and no external verifier. I found that the reward for a self-made question cannot tell a hard question
+                  from a broken one: about half of the questions it selects are invalid. My method, <strong>Valid-Zero</strong>, reads each question
+                  before rewarding it, and cuts invalid questions in the training data from 37% to 10% at equal accuracy.
+                  Broadly, I am interested in building models that can <strong>keep learning to reason when no one gives them the answers</strong>.
                 </p>
                 <p style="text-align:center">
                   <a href="mailto:chandakchakma2398@gmail.com">Email</a> &nbsp;/&nbsp;
