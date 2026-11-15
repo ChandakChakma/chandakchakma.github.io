@@ -58,8 +58,10 @@
                 </p>
                 <p class="justify">
                   Currently, I study <strong>self-play for LLM reasoning</strong>, where a model writes its own problems and learns to solve them
-                  without human labels or an external verifier. I found that the usual reward cannot tell a hard question from an invalid one,
-                  and I am developing <strong>Valid-Zero</strong>, which checks each question before rewarding it.
+                  without human labels or answer checkers. I am building <strong>Valid-Zero</strong>, which asks a fixed off-the-shelf model
+                  whether each new problem is well-posed before rewarding it, using no teacher labels.
+                  I found that this check works better inside the reward than as a filter on the training data,
+                  and that over training the model learns to fool a quick check but not a careful one.
                   In the long term, I want to build models that <strong>keep learning to reason when no one gives them the answers</strong>.
                 </p>
                 <p style="text-align:center">
