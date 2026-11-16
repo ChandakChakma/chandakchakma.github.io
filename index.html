@@ -63,6 +63,9 @@
                   whether each new problem is well-posed before rewarding it, using no teacher labels.
                   I found that this check works better inside the reward than as a filter on the training data,
                   and that over training the model learns to fool a quick check but not a careful one.
+                  I am now testing a second idea: building harder problems whose answers are known in advance,
+                  by hiding a number in a problem the model already solves.
+                  On problems the model finds hard, these answers are correct far more often than a majority vote.
                   In the long term, I want to build models that <strong>keep learning to reason when no one gives them the answers</strong>.
                 </p>
                 <p style="text-align:center">
