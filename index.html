@@ -117,7 +117,7 @@
                 <!-- TODO: add code link if released -->
                 <p></p>
                 <p class="justify">
-                  Which RLVR prompts count as "unlearnable" depends on how difficulty is measured (the same data yields 74 to 228 of them), but the effect itself is real: these prompts learn about three times slower.
+                  Which RLVR prompts count as "unlearnable" depends on how difficulty is measured, but the effect itself is real: these prompts learn about three times slower.
                 </p>
               </td>
             </tr>
@@ -143,7 +143,7 @@
                 <span style="color:#888">project page</span> / <span style="color:#888">arXiv</span> <span style="color:#888">(coming soon)</span>
                 <p></p>
                 <p class="justify">
-                  Best-of-<i>K</i>, a common score for one-pass video world models, can rank the worse model first. A matched-noise test separates good candidates from a good set of futures, and ALE-WI, which trains every sample with a proper score, beats simply widening the samples at the same architecture and sampling cost.
+                  Best-of-<i>K</i> can rank the worse video world model first, and ALE-WI, which trains every sample with a proper score, beats simply widening the samples.
                 </p>
               </td>
             </tr>
@@ -171,7 +171,7 @@
                 <span style="color:#888">project page</span> / <span style="color:#888">arXiv</span> <span style="color:#888">(coming soon)</span>
                 <p></p>
                 <p class="justify">
-                  Latent world-model planners judge a plan by its latent distance to the goal image, which fails for distant goals and at contact. Graph Anchors, a training-free planner for frozen world models, aims each planning step at a nearby node on a graph of the model's own training data, raising LeWM's success at 200 steps on PointMaze-Medium from 13% to 85%.
+                  Aiming a frozen latent world-model planner at nearby nodes on a graph of its training data lifts success on distant PointMaze-Medium goals from 13% to 85%.
                 </p>
               </td>
             </tr>
@@ -198,7 +198,7 @@
                 <span style="color:#888">project page</span> / <span style="color:#888">arXiv</span> <span style="color:#888">(coming soon)</span>
                 <p></p>
                 <p class="justify">
-                  Latent world-model planners score a plan by one deterministic rollout, which hides irreversible outcomes when the environment is stochastic. CoLaP keeps the world model frozen, samples several futures for each plan, scores them with a learned asymmetric time-to-goal, and lets the plan branch on what the agent will observe; it achieves the highest average success rate on nine stochastic tasks.
+                  Sampling several futures, scoring them by a learned time-to-goal, and branching on observations lets a frozen latent world model plan under irreversible outcomes.
                 </p>
               </td>
             </tr>
@@ -227,7 +227,7 @@
                 <span style="color:#888">project page</span> / <span style="color:#888">arXiv</span> <span style="color:#888">(coming soon)</span>
                 <p></p>
                 <p class="justify">
-                  What-IF-Surg re-imagines a real laparoscopic scene with a different instrument performing the same motion, together with the tissue response of that instrument (a clip, a cut or a burn). Its two-stage video diffusion model controls the instrument, its motion and its tissue effect separately; in instrument swaps, the requested instrument is recognised in 65% of frames, against at most 41% for current video generators.
+                  Controlling the instrument, its motion and its tissue response separately lets a video diffusion model re-imagine a real surgical clip with a different instrument.
                 </p>
               </td>
             </tr>
@@ -253,7 +253,7 @@
                 <!-- TODO: add arXiv / code links if available -->
                 <p></p>
                 <p class="justify">
-                  A recurrent policy trained in a grain-level simulator frees a stuck rover without any scripted maneuver, escaping 62.5% of verified traps where the best of ten scripted controllers manages 7 of 32.
+                  A recurrent policy trained in a grain-level simulator frees a stuck rover without any scripted maneuver, escaping 62.5% of verified traps.
                 </p>
               </td>
             </tr>
