@@ -15,7 +15,7 @@
 <meta property="og:url" content="https://chandakchakma.github.io/notes/information-limits.html">
 <meta property="og:image" content="https://chandakchakma.github.io/images/chandak_photo6.jpg">
 <meta name="twitter:card" content="summary">
-<link rel="stylesheet" href="../blog.css?v=20261106155635">
+<link rel="stylesheet" href="../blog.css?v=20261121034306">
 <script>
   MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
               options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
@@ -35,64 +35,63 @@
   </nav>
 </header>
 <main class="main">
-<article class="post-single">
+<article class="post-single" id="top">
 <header class="post-header">
-  <div class="breadcrumbs"><a href="../index.html">Home</a>&nbsp;&raquo;&nbsp;<a href="../index.html#notes">Notes</a></div>
+  <div class="kicker"><a href="../index.html#notes">Foundations of Self-Play for LLM Reasoning</a><span class="sep">/</span>Part&nbsp;5&nbsp;of&nbsp;10</div>
   <h1 class="post-title">Where Can New Knowledge Come From? Data Processing and the Verifier Gap</h1>
-  <div class="post-meta">Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 3 min&nbsp; | &nbsp;Author: Chandak Chakma</div>
   <p class="lede">A closed loop without external information cannot create knowledge, only concentrate it. The data processing inequality formalizes this limit, and the generator–verifier gap specifies when filtering one’s own outputs helps.</p>
+  <div class="byline"><span class="who">Chandak Chakma</span><span class="dot">&middot;</span>November 2026<span class="dot">&middot;</span>3 min read</div>
 </header>
-<p class="series-note">Part 5 of 10 in <a href="../index.html#notes">Foundations of Self-Play for LLM Reasoning</a>. The complete series is also available as a <a href="../data/selfplay-foundations-notes.pdf">single PDF</a>.</p>
-<div class="toc"><details open><summary>Contents</summary><ul>
-<li class="toc-h2"><a href="#s15">15 The data processing inequality</a></li>
-<li class="toc-h2"><a href="#s16">16 The generator–verifier gap</a></li>
-<li class="toc-h2"><a href="#exercises">Exercises</a></li>
-<li class="toc-h2"><a href="#references">References</a></li>
-</ul></details></div>
+<nav class="toc" aria-label="Contents"><details open><summary>Contents</summary><ul>
+<li class="toc-h2"><a href="#s15"><span class="secnum">5.1</span><span class="toc-t">The data processing inequality</span></a></li>
+<li class="toc-h2"><a href="#s16"><span class="secnum">5.2</span><span class="toc-t">The generator–verifier gap</span></a></li>
+<li class="toc-h2"><a href="#exercises"><span class="secnum"></span><span class="toc-t">Exercises</span></a></li>
+<li class="toc-h2"><a href="#references"><span class="secnum"></span><span class="toc-t">References</span></a></li>
+</ul></details></nav>
 
 <div class="post-content">
-<h2 class="unnumbered" id="s15"><span class="secnum">15</span> The data processing inequality</h2>
-<div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">processing cannot create information</span></div><div class="box-body">
+<h2 class="unnumbered" id="s15"><span class="secnum">5.1</span> The data processing inequality<a class="anchor" href="#s15" aria-label="Link to this section">#</a></h2>
+<div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">Processing cannot create information</span></div><div class="box-body">
 <p>If <span class="math inline">\(T\to X\to S\)</span> forms a Markov chain, that is, if the signal <span class="math inline">\(S\)</span> is computed from <span class="math inline">\(X\)</span> alone, then <span class="math display">\[I(T;S)\le I(T;X).\]</span></p>
 </div></div>
 <p>Let <span class="math inline">\(T\)</span> denote the truth, <span class="math inline">\(X\)</span> the problem together with the model, and <span class="math inline">\(S\)</span> any label-free signal computed from the model’s own samples, such as votes, confidence scores, or consistency checks. The inequality states that no such signal carries more information about the truth than the model already holds. Label-free self-play can therefore <em>extract and concentrate</em> this information, but it cannot <em>create</em> it. For the loop to expand what the model knows, it requires an external source of information (an executor, a proof checker, or an environment) or an asymmetry, for instance a task on which checking is easier than solving.</p>
 <p><strong>An important qualification.</strong> The inequality bounds information, not usability. A model may “know” an answer in the sense of pass@256 and still fail at pass@1. Converting such latent knowledge into reliable behavior has genuine value, but it constitutes sharpening rather than the acquisition of new knowledge.</p>
-<h2 class="unnumbered" id="s16"><span class="secnum">16</span> The generator–verifier gap</h2>
-<div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">filtering helps only if the check is informative</span></div><div class="box-body">
+<h2 class="unnumbered" id="s16"><span class="secnum">5.2</span> The generator–verifier gap<a class="anchor" href="#s16" aria-label="Link to this section">#</a></h2>
+<div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">Filtering helps only if the check is informative</span></div><div class="box-body">
 <p>Suppose self-generated answers are filtered by the model’s own check, with true positive rate <span class="math inline">\(\mathrm{TPR}=\Pr(\text{accept}\mid\text{correct})\)</span> and false positive rate <span class="math inline">\(\mathrm{FPR}=\Pr(\text{accept}\mid\text{wrong})\)</span>. By Bayes’ rule, the precision, that is, the accuracy among accepted answers, is <span class="math display">\[\begin{gathered}\mathrm{prec}=\frac{p\,\mathrm{TPR}}{p\,\mathrm{TPR}+(1-p)\,\mathrm{FPR}}, \\[4pt] \text{and} \\[4pt] \mathrm{prec}&gt;p\iff\mathrm{TPR}&gt;\mathrm{FPR}.\end{gathered}\]</span></p>
 </div></div>
 <p><strong>Proof.</strong> A direct rearrangement gives <span class="math inline">\(\mathrm{prec}&gt;p\iff\mathrm{TPR}&gt;p\,\mathrm{TPR}+(1-p)\mathrm{FPR}\iff(1-p)\mathrm{TPR}&gt;(1-p)\mathrm{FPR}\)</span>.</p>
-<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">an informative and an uninformative verifier</span></div><div class="box-body">
+<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">An informative and an uninformative verifier</span></div><div class="box-body">
 <p>With <span class="math inline">\(p=0.3\)</span>, <span class="math inline">\(\mathrm{TPR}=0.9\)</span>, and <span class="math inline">\(\mathrm{FPR}=0.2\)</span>, we obtain <span class="math inline">\(\mathrm{prec}=0.27/(0.27+0.14)=0.659\)</span>, more than double the base accuracy, so training on the accepted answers can help. If instead <span class="math inline">\(\mathrm{TPR}=\mathrm{FPR}\)</span>, then <span class="math inline">\(\mathrm{prec}=p\)</span> and filtering provides no benefit.</p>
 </div></div>
 <p>Song et al. (2025) formalize this generation–verification gap and study how it varies across models and verification methods. Their analysis offers the cleanest characterization of <em>when</em> self-improvement is possible at all.</p>
 <div class="box box-why"><div class="box-title"><span class="box-label">Why it matters</span></div><div class="box-body">
 <p>A majority vote is itself a verifier: its TPR and FPR are determined by how often correct and incorrect answers become the mode. When errors are shared, a wrong answer becomes the mode as readily as a correct one, and the gap closes.</p>
 </div></div>
-<h2 id="exercises">Exercises</h2>
-<div class="exercise"><p><strong>Exercise 10.</strong> A verifier has <span class="math inline">\(\mathrm{TPR}=0.8\)</span> and <span class="math inline">\(\mathrm{FPR}=0.4\)</span> on a problem set with <span class="math inline">\(p=0.2\)</span>. What is the accuracy of the answers it accepts?</p><details><summary>Show solution</summary><p><span class="math inline">\(0.16/(0.16+0.32)=0.333\)</span>, which exceeds the base rate of <span class="math inline">\(0.2\)</span>; filtering therefore helps.</p></details></div>
+<h2 id="exercises">Exercises<a class="anchor" href="#exercises" aria-label="Link to this section">#</a></h2>
+<div class="exercise"><p><strong>Exercise 1.</strong> A verifier has <span class="math inline">\(\mathrm{TPR}=0.8\)</span> and <span class="math inline">\(\mathrm{FPR}=0.4\)</span> on a problem set with <span class="math inline">\(p=0.2\)</span>. What is the accuracy of the answers it accepts?</p><details><summary>Show solution</summary><div class="solution"><p><span class="math inline">\(0.16/(0.16+0.32)=0.333\)</span>, which exceeds the base rate of <span class="math inline">\(0.2\)</span>; filtering therefore helps.</p></div></details></div>
 
-<h2 id="references">References</h2>
-<ul class="refs">
-<li>Y. Song et al. Mind the Gap: Examining the Self-Improvement Capabilities of Large Language Models. arXiv:2412.02674, ICLR 2025.</li>
-</ul>
+<h2 id="references">References<a class="anchor" href="#references" aria-label="Link to this section">#</a></h2>
+<ol class="refs">
+<li id="ref-1">Y. Song et al. Mind the Gap: Examining the Self-Improvement Capabilities of Large Language Models. <a href="https://arxiv.org/abs/2412.02674">arXiv:2412.02674</a>, ICLR 2025.</li>
+</ol>
 
-<h2 id="citation">Citation</h2>
-<p>Cited as:</p>
-<blockquote>Chakma, Chandak. (Nov 2026). Where Can New Knowledge Come From? Data Processing and the Verifier Gap. Chandak&rsquo;s Notes. https://chandakchakma.github.io/notes/information-limits.html</blockquote>
-<pre><code>@article{chakma2026informationlimits,
-  title   = "Where Can New Knowledge Come From? Data Processing and the Verifier Gap",
-  author  = "Chakma, Chandak",
-  journal = "chandakchakma.github.io",
-  year    = "2026",
-  month   = "Nov",
-  url     = "https://chandakchakma.github.io/notes/information-limits.html"
+<details class="cite"><summary>Cite this part</summary>
+<p>Chakma, Chandak. Where Can New Knowledge Come From? Data Processing and the Verifier Gap. Part 5 of <em>Foundations of Self-Play for LLM Reasoning</em>, November 2026. <a href="https://chandakchakma.github.io/notes/information-limits.html">https://chandakchakma.github.io/notes/information-limits.html</a></p>
+<pre><code>@misc{chakma2026informationlimits,
+  author = {Chakma, Chandak},
+  title  = {Where Can New Knowledge Come From? Data Processing and the Verifier Gap},
+  note   = {Part 5 of Foundations of Self-Play for LLM Reasoning},
+  year   = {2026},
+  month  = nov,
+  url    = {https://chandakchakma.github.io/notes/information-limits.html}
 }</code></pre>
+</details>
 
 </div>
-<nav class="paginav"><a class="prev" href="self-play-as-a-game.html"><span class="title">&laquo; Prev</span><br><span>Self-Play as a Game: Cycling, Expert Iteration and STaR</span></a><a class="next" href="voting-shared-errors.html"><span class="title">Next &raquo;</span><br><span>When Does Voting Find the Truth? Shared Errors in Self-Play</span></a></nav>
+<nav class="paginav" aria-label="Other parts"><a class="prev" href="self-play-as-a-game.html"><span class="title">&larr; Part 4</span><span class="name">Self-Play as a Game: Cycling, Expert Iteration and STaR</span></a><a class="next" href="voting-shared-errors.html"><span class="title">Part 6 &rarr;</span><span class="name">When Does Voting Find the Truth? Shared Errors in Self-Play</span></a></nav>
 </article>
 </main>
-<footer class="footer">&copy; 2026 <a href="../index.html">Chandak Chakma</a></footer>
+<footer class="footer">&copy; 2026 <a href="../index.html">Chandak Chakma</a><span class="dot">&middot;</span>Found an error? <a href="mailto:chandakchakma2398@gmail.com?subject=Notes%3A%20Where%20Can%20New%20Knowledge%20Come%20From%3F%20Data%20Processing%20and%20the%20Verifier%20Gap">Email me</a>.</footer>
 </body>
 </html>

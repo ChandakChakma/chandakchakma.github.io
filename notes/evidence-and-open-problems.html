@@ -3,19 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Evidence Reviewers Trust, and Open Problems | Chandak’s Notes</title>
+<title>What Counts as Evidence? Benchmark Noise and Open Problems | Chandak’s Notes</title>
 <meta name="author" content="Chandak Chakma">
-<meta name="description" content="How large benchmark noise is in practice, a checklist for credible claims, five open problems from which a research thread can start, and a four-week study plan.">
+<meta name="description" content="How large benchmark noise is in practice, a checklist for credible claims, six open problems from which a research thread can start, and a four-week study plan.">
 <link rel="canonical" href="https://chandakchakma.github.io/notes/evidence-and-open-problems.html">
 <link rel="icon" href="../images/favicon.png" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Evidence Reviewers Trust, and Open Problems | Chandak’s Notes">
-<meta property="og:description" content="How large benchmark noise is in practice, a checklist for credible claims, five open problems from which a research thread can start, and a four-week study plan.">
+<meta property="og:title" content="What Counts as Evidence? Benchmark Noise and Open Problems | Chandak’s Notes">
+<meta property="og:description" content="How large benchmark noise is in practice, a checklist for credible claims, six open problems from which a research thread can start, and a four-week study plan.">
 <meta property="og:url" content="https://chandakchakma.github.io/notes/evidence-and-open-problems.html">
 <meta property="og:image" content="https://chandakchakma.github.io/images/chandak_photo6.jpg">
 <meta name="twitter:card" content="summary">
-<link rel="stylesheet" href="../blog.css?v=20261106155635">
+<link rel="stylesheet" href="../blog.css?v=20261121034306">
 <script>
   MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
               options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
@@ -35,25 +35,24 @@
   </nav>
 </header>
 <main class="main">
-<article class="post-single">
+<article class="post-single" id="top">
 <header class="post-header">
-  <div class="breadcrumbs"><a href="../index.html">Home</a>&nbsp;&raquo;&nbsp;<a href="../index.html#notes">Notes</a></div>
-  <h1 class="post-title">Evidence Reviewers Trust, and Open Problems</h1>
-  <div class="post-meta">Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 4 min&nbsp; | &nbsp;Author: Chandak Chakma</div>
-  <p class="lede">How large benchmark noise is in practice, a checklist for credible claims, five open problems from which a research thread can start, and a four-week study plan.</p>
+  <div class="kicker"><a href="../index.html#notes">Foundations of Self-Play for LLM Reasoning</a><span class="sep">/</span>Part&nbsp;9&nbsp;of&nbsp;10</div>
+  <h1 class="post-title">What Counts as Evidence? Benchmark Noise and Open Problems</h1>
+  <p class="lede">How large benchmark noise is in practice, a checklist for credible claims, six open problems from which a research thread can start, and a four-week study plan.</p>
+  <div class="byline"><span class="who">Chandak Chakma</span><span class="dot">&middot;</span>November 2026<span class="dot">&middot;</span>4 min read</div>
 </header>
-<p class="series-note">Part 9 of 10 in <a href="../index.html#notes">Foundations of Self-Play for LLM Reasoning</a>. The complete series is also available as a <a href="../data/selfplay-foundations-notes.pdf">single PDF</a>.</p>
-<div class="toc"><details open><summary>Contents</summary><ul>
-<li class="toc-h2"><a href="#s21">21 How large is benchmark noise?</a></li>
-<li class="toc-h2"><a href="#s22">22 A checklist before claiming results</a></li>
-<li class="toc-h2"><a href="#s-open">Open problems: where a new thread can lead</a></li>
-<li class="toc-h2"><a href="#s-plan">A four-week study plan</a></li>
-<li class="toc-h2"><a href="#references">References</a></li>
-</ul></details></div>
+<nav class="toc" aria-label="Contents"><details open><summary>Contents</summary><ul>
+<li class="toc-h2"><a href="#s21"><span class="secnum">9.1</span><span class="toc-t">How large is benchmark noise?</span></a></li>
+<li class="toc-h2"><a href="#s22"><span class="secnum">9.2</span><span class="toc-t">A checklist before claiming results</span></a></li>
+<li class="toc-h2"><a href="#s-open"><span class="secnum">9.3</span><span class="toc-t">Open problems: where a new thread can lead</span></a></li>
+<li class="toc-h2"><a href="#s-plan"><span class="secnum">9.4</span><span class="toc-t">A four-week study plan</span></a></li>
+<li class="toc-h2"><a href="#references"><span class="secnum"></span><span class="toc-t">References</span></a></li>
+</ul></details></nav>
 
 <div class="post-content">
-<h2 class="unnumbered" id="s21"><span class="secnum">21</span> How large is benchmark noise?</h2>
-<div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">benchmark uncertainty</span></div><div class="box-body">
+<h2 class="unnumbered" id="s21"><span class="secnum">9.1</span> How large is benchmark noise?<a class="anchor" href="#s21" aria-label="Link to this section">#</a></h2>
+<div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">Benchmark uncertainty</span></div><div class="box-body">
 <p>For a benchmark of <span class="math inline">\(N\)</span> problems with accuracy near <span class="math inline">\(p\)</span>, the standard error is <span class="math inline">\(\sqrt{p(1-p)/N}\)</span>, and a <span class="math inline">\(95\%\)</span> confidence interval extends approximately <span class="math inline">\(\pm1.96\)</span> standard errors around the estimate.</p>
 </div></div>
 <div class="center">
@@ -89,7 +88,7 @@
 </table></div>
 </div>
 <p>Averaging <span class="math inline">\(k\)</span> samples per problem (avg@<span class="math inline">\(k\)</span>) averages out sampling noise, but it does not address the variance that arises from which problems happen to be included in the benchmark. Two methods should therefore be compared with a <em>paired</em> bootstrap over the same set of problems.</p>
-<h2 class="unnumbered" id="s22"><span class="secnum">22</span> A checklist before claiming results</h2>
+<h2 class="unnumbered" id="s22"><span class="secnum">9.2</span> A checklist before claiming results<a class="anchor" href="#s22" aria-label="Link to this section">#</a></h2>
 <ul>
 <li><p><strong>Same compute:</strong> match the number of rollouts, tokens and optimizer steps for every baseline.</p></li>
 <li><p><strong>Seeds:</strong> use at least three seeds for training curves; a “rise, then fall” claim requires the decline to exceed the spread across seeds.</p></li>
@@ -97,86 +96,95 @@
 <li><p><strong>Novelty:</strong> report the base model’s pass@256 and count the problems that the base model never solves.</p></li>
 <li><p><strong>Contamination:</strong> check for exact and <span class="math inline">\(13\)</span>-gram overlap between generated problems and every evaluation benchmark.</p></li>
 <li><p><strong>Decision rules first:</strong> specify the pass/fail criterion before the run, and never select checkpoints on test sets.</p></li>
-<li><p><strong>Read the code:</strong> published numbers are produced by code, not by equations (Section <a href="challenger-signals.html#s10">10</a>).</p></li>
+<li><p><strong>Read the code:</strong> published numbers are produced by code, not by equations (Section <a href="challenger-signals.html#s10">3.2</a>).</p></li>
 </ul>
-<h2 class="unnumbered" id="s-open">Open problems: where a new thread can lead</h2>
+<h2 class="unnumbered" id="s-open"><span class="secnum">9.3</span> Open problems: where a new thread can lead<a class="anchor" href="#s-open" aria-label="Link to this section">#</a></h2>
 <ol>
 <li><p><strong>Sustained growth.</strong> Pure self-play peaks after roughly three to five rounds, and later Challengers are no more instructive than earlier ones (<em>What Actually Evolves in Self-Evolving RL?</em>, ICLR 2027 submission). Collapse mitigations such as R-Diverse and data gating (Survive or Collapse) prevent the decline but not the plateau. <em>Goal:</em> a loop that continues to improve.</p></li>
-<li><p><strong>Answer keys under shared errors.</strong> The goal is a label-free signal that outperforms majority vote in the minority-truth zone (Section <a href="voting-shared-errors.html#s17">17</a>) by drawing on a channel that a shared misreading does not control (Sections <a href="voting-shared-errors.html#s17-4">17.4</a> and <a href="voting-shared-errors.html#s17-8">17.8</a>).</p></li>
-<li><p><strong>Search with a strict check.</strong> The aim is to find rare correct answers and to recognize them without labels. The check’s false-acceptance rate on the majority vote’s incorrect answer must remain below the share of samples that carry the correct answer (Section <a href="search-and-correctness.html#s18">18</a>).</p></li>
-<li><p><strong>Measured expansion.</strong> Progress should be demonstrated as newly solved problems at large <span class="math inline">\(k\)</span>, beyond the base model’s pass@256 (Section <a href="what-rl-can-do.html#s7">7</a>), rather than as pass@1 gains that may reflect only sharpening.</p></li>
-<li><p><strong>Grounded teacher rewards without labels.</strong> SOAR shows that rewarding actual student progress is effective, but it requires a labeled set of hard problems (Section <a href="challenger-signals.html#s10">10</a>).</p></li>
-<li><p><strong>A theory of closed-loop improvement.</strong> Under what conditions can a loop with no external information improve, and by how much? The data processing inequality (Section <a href="information-limits.html#s15">15</a>) and the verifier gap (Section <a href="information-limits.html#s16">16</a>) delineate the boundary.</p></li>
+<li><p><strong>Answer keys under shared errors.</strong> The goal is a label-free signal that outperforms majority vote in the minority-truth zone (<a href="voting-shared-errors.html">Part 6</a>) by drawing on a channel that a shared misreading does not control (Sections <a href="voting-shared-errors.html#s17-4">6.4</a> and <a href="voting-shared-errors.html#s17-8">6.8</a>).</p></li>
+<li><p><strong>Search with a strict check.</strong> The aim is to find rare correct answers and to recognize them without labels. The check’s false-acceptance rate on the majority vote’s incorrect answer must remain below the share of samples that carry the correct answer (<a href="search-and-correctness.html">Part 7</a>).</p></li>
+<li><p><strong>Measured expansion.</strong> Progress should be demonstrated as newly solved problems at large <span class="math inline">\(k\)</span>, beyond the base model’s pass@256 (Section <a href="what-rl-can-do.html#s7">2.2</a>), rather than as pass@1 gains that may reflect only sharpening.</p></li>
+<li><p><strong>Grounded teacher rewards without labels.</strong> SOAR shows that rewarding actual student progress is effective, but it requires a labeled set of hard problems (Section <a href="challenger-signals.html#s10">3.2</a>).</p></li>
+<li><p><strong>A theory of closed-loop improvement.</strong> Under what conditions can a loop with no external information improve, and by how much? The data processing inequality (Section <a href="information-limits.html#s15">5.1</a>) and the verifier gap (Section <a href="information-limits.html#s16">5.2</a>) delineate the boundary.</p></li>
 </ol>
-<h2 class="unnumbered" id="s-plan">A four-week study plan</h2>
+<h2 class="unnumbered" id="s-plan"><span class="secnum">9.4</span> A four-week study plan<a class="anchor" href="#s-plan" aria-label="Link to this section">#</a></h2>
 <div class="center">
 <div class="table-wrap"><table>
 <thead>
 <tr>
 <th style="text-align: left;"><strong>Week</strong></th>
-<th style="text-align: left;"><strong>Study in this guide and derive by hand</strong></th>
+<th style="text-align: left;"><strong>Study in these notes and derive by hand</strong></th>
 <th style="text-align: left;"><strong>Primary readings</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align: left;">1</td>
-<td style="text-align: left;">Part I: policy gradient, baselines, the RLOO identity, PPO clipping</td>
-<td style="text-align: left;">Sutton and Barto, ch. 13 [2]; PPO [3]; GRPO [4]; RLOO [5]</td>
+<td style="text-align: left;">Part 1: policy gradient, baselines, the RLOO identity, PPO clipping</td>
+<td style="text-align: left;">Sutton and Barto, ch. 13 [<a href="#ref-1">1</a>]; PPO [<a href="#ref-2">2</a>]; GRPO [<a href="#ref-3">3</a>]; RLOO [<a href="#ref-4">4</a>]</td>
 </tr>
 <tr>
 <td style="text-align: left;">2</td>
-<td style="text-align: left;">Part II: the tilted optimum, pass@<span class="math inline">\(k\)</span> and its estimator</td>
-<td style="text-align: left;">DPO derivation [8]; pass@<span class="math inline">\(k\)</span> [9]; Yue et al. [10]; Dr. GRPO [7]</td>
+<td style="text-align: left;">Part 2: the tilted optimum, pass@<span class="math inline">\(k\)</span> and its estimator</td>
+<td style="text-align: left;">DPO derivation [<a href="#ref-6">6</a>]; pass@<span class="math inline">\(k\)</span> [<a href="#ref-7">7</a>]; Yue et al. [<a href="#ref-8">8</a>]; Dr. GRPO [<a href="#ref-5">5</a>]</td>
 </tr>
 <tr>
 <td style="text-align: left;">3</td>
-<td style="text-align: left;">Part III: learnability, proposer rewards, noisy labels</td>
-<td style="text-align: left;">Absolute Zero [15]; R-Zero [16]; SOAR [17]; PAIRED [12]</td>
+<td style="text-align: left;">Part 3: learnability, proposer rewards, noisy labels</td>
+<td style="text-align: left;">Absolute Zero [<a href="#ref-10">10</a>]; R-Zero [<a href="#ref-11">11</a>]; SOAR [<a href="#ref-12">12</a>]; PAIRED [<a href="#ref-9">9</a>]</td>
 </tr>
 <tr>
 <td style="text-align: left;">4</td>
-<td style="text-align: left;">Parts IV–V: games, STaR, information limits, voting, search with a check, collapse</td>
-<td style="text-align: left;">STaR [24]; Mind the Gap [28]; Large Language Monkeys [43]; resampling limits [44]; FOBAR [45]; model collapse [29, 30]; weak-to-strong [31]</td>
+<td style="text-align: left;">Parts 4–8: games, STaR, information limits, voting, search with a check, collapse</td>
+<td style="text-align: left;">STaR [<a href="#ref-15">15</a>]; Mind the Gap [<a href="#ref-16">16</a>]; Large Language Monkeys [<a href="#ref-20">20</a>]; resampling limits [<a href="#ref-21">21</a>]; FOBAR [<a href="#ref-22">22</a>]; model collapse [<a href="#ref-17">17</a>, <a href="#ref-18">18</a>]; weak-to-strong [<a href="#ref-19">19</a>]</td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <p><strong>A test of understanding.</strong> For each key result, the reader should be able to (1) derive it on a blank page, (2) reproduce its worked example without notes, and (3) state in one sentence its implication for a Challenger–Solver loop.</p>
 
-<h2 id="references">References</h2>
-<ul class="refs">
-<li>R. S. Sutton and A. G. Barto. <em>Reinforcement Learning: An Introduction</em>, 2nd ed. MIT Press, 2018.</li>
-<li>A. Ahmadian et al. Back to Basics: Revisiting REINFORCE Style Optimization for Learning from Human Feedback in LLMs (RLOO). arXiv:2402.14740, 2024.</li>
-<li>Y. Yue et al. Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model? arXiv:2504.13837, 2025.</li>
-<li>M. Dennis et al. Emergent Complexity and Zero-shot Transfer via Unsupervised Environment Design (PAIRED). arXiv:2012.02096, 2020.</li>
-<li>A. Zhao et al. Absolute Zero: Reinforced Self-play Reasoning with Zero Data. arXiv:2505.03335, 2025.</li>
-<li>C. Huang et al. R-Zero: Self-Evolving Reasoning LLM from Zero Data. arXiv:2508.05004, 2025.</li>
-<li>S. Sundaram, J. Kempe and Y. Ollivier. Teaching Models to Teach Themselves: Reasoning at the Edge of Learnability (SOAR). arXiv:2601.18778, ICML 2026.</li>
-<li>R-Diverse: Mitigating Diversity Illusion in Self-Play LLM Training. arXiv:2602.13103, 2026.</li>
-<li>Survive or Collapse: The Asymmetric Roles of Data Gating and Reward Grounding in Self-Play RL. arXiv:2605.22217, 2026.</li>
-<li>E. Zelikman et al. STaR: Bootstrapping Reasoning With Reasoning. arXiv:2203.14465, 2022.</li>
-<li>Y. Song et al. Mind the Gap: Examining the Self-Improvement Capabilities of Large Language Models. arXiv:2412.02674, ICLR 2025.</li>
-<li>B. Brown et al. Large Language Monkeys: Scaling Inference Compute with Repeated Sampling. arXiv:2407.21787, 2024.</li>
-<li>W. Jiang et al. Forward-Backward Reasoning in Large Language Models for Mathematical Verification (FOBAR). arXiv:2308.07758, 2023.</li>
-</ul>
+<h2 id="references">References<a class="anchor" href="#references" aria-label="Link to this section">#</a></h2>
+<ol class="refs">
+<li id="ref-1">R. S. Sutton and A. G. Barto. <em>Reinforcement Learning: An Introduction</em>, 2nd ed. MIT Press, 2018.</li>
+<li id="ref-2">J. Schulman et al. Proximal Policy Optimization Algorithms. <a href="https://arxiv.org/abs/1707.06347">arXiv:1707.06347</a>, 2017.</li>
+<li id="ref-3">Z. Shao et al. DeepSeekMath (introduces GRPO). <a href="https://arxiv.org/abs/2402.03300">arXiv:2402.03300</a>, 2024.</li>
+<li id="ref-4">A. Ahmadian et al. Back to Basics: Revisiting REINFORCE Style Optimization for Learning from Human Feedback in LLMs (RLOO). <a href="https://arxiv.org/abs/2402.14740">arXiv:2402.14740</a>, 2024.</li>
+<li id="ref-5">Z. Liu et al. Understanding R1-Zero-Like Training: A Critical Perspective (Dr. GRPO). <a href="https://arxiv.org/abs/2503.20783">arXiv:2503.20783</a>, 2025.</li>
+<li id="ref-6">R. Rafailov et al. Direct Preference Optimization. <a href="https://arxiv.org/abs/2305.18290">arXiv:2305.18290</a>, 2023.</li>
+<li id="ref-7">M. Chen et al. Evaluating Large Language Models Trained on Code (unbiased pass@<span class="math inline">\(k\)</span>). <a href="https://arxiv.org/abs/2107.03374">arXiv:2107.03374</a>, 2021.</li>
+<li id="ref-8">Y. Yue et al. Does Reinforcement Learning Really Incentivize Reasoning Capacity in LLMs Beyond the Base Model? <a href="https://arxiv.org/abs/2504.13837">arXiv:2504.13837</a>, 2025.</li>
+<li id="ref-9">M. Dennis et al. Emergent Complexity and Zero-shot Transfer via Unsupervised Environment Design (PAIRED). <a href="https://arxiv.org/abs/2012.02096">arXiv:2012.02096</a>, 2020.</li>
+<li id="ref-10">A. Zhao et al. Absolute Zero: Reinforced Self-play Reasoning with Zero Data. <a href="https://arxiv.org/abs/2505.03335">arXiv:2505.03335</a>, 2025.</li>
+<li id="ref-11">C. Huang et al. R-Zero: Self-Evolving Reasoning LLM from Zero Data. <a href="https://arxiv.org/abs/2508.05004">arXiv:2508.05004</a>, 2025.</li>
+<li id="ref-12">S. Sundaram, J. Kempe and Y. Ollivier. Teaching Models to Teach Themselves: Reasoning at the Edge of Learnability (SOAR). <a href="https://arxiv.org/abs/2601.18778">arXiv:2601.18778</a>, ICML 2026.</li>
+<li id="ref-13">R-Diverse: Mitigating Diversity Illusion in Self-Play LLM Training. <a href="https://arxiv.org/abs/2602.13103">arXiv:2602.13103</a>, 2026.</li>
+<li id="ref-14">Survive or Collapse: The Asymmetric Roles of Data Gating and Reward Grounding in Self-Play RL. <a href="https://arxiv.org/abs/2605.22217">arXiv:2605.22217</a>, 2026.</li>
+<li id="ref-15">E. Zelikman et al. STaR: Bootstrapping Reasoning With Reasoning. <a href="https://arxiv.org/abs/2203.14465">arXiv:2203.14465</a>, 2022.</li>
+<li id="ref-16">Y. Song et al. Mind the Gap: Examining the Self-Improvement Capabilities of Large Language Models. <a href="https://arxiv.org/abs/2412.02674">arXiv:2412.02674</a>, ICLR 2025.</li>
+<li id="ref-17">I. Shumailov et al. AI models collapse when trained on recursively generated data. <em>Nature</em>, 2024 (<a href="https://arxiv.org/abs/2305.17493">arXiv:2305.17493</a>).</li>
+<li id="ref-18">M. Gerstgrasser et al. Is Model Collapse Inevitable? Breaking the Curse of Recursion by Accumulating Real and Synthetic Data. <a href="https://arxiv.org/abs/2404.01413">arXiv:2404.01413</a>, 2024.</li>
+<li id="ref-19">C. Burns et al. Weak-to-Strong Generalization: Eliciting Strong Capabilities With Weak Supervision. <a href="https://arxiv.org/abs/2312.09390">arXiv:2312.09390</a>, 2023.</li>
+<li id="ref-20">B. Brown et al. Large Language Monkeys: Scaling Inference Compute with Repeated Sampling. <a href="https://arxiv.org/abs/2407.21787">arXiv:2407.21787</a>, 2024.</li>
+<li id="ref-21">B. Stroebl, S. Kapoor and A. Narayanan. The Limits of Inference Scaling Through Resampling. <a href="https://arxiv.org/abs/2411.17501">arXiv:2411.17501</a>, 2024.</li>
+<li id="ref-22">W. Jiang et al. Forward-Backward Reasoning in Large Language Models for Mathematical Verification (FOBAR). <a href="https://arxiv.org/abs/2308.07758">arXiv:2308.07758</a>, 2023.</li>
+</ol>
 
-<h2 id="citation">Citation</h2>
-<p>Cited as:</p>
-<blockquote>Chakma, Chandak. (Nov 2026). Evidence Reviewers Trust, and Open Problems. Chandak&rsquo;s Notes. https://chandakchakma.github.io/notes/evidence-and-open-problems.html</blockquote>
-<pre><code>@article{chakma2026evidenceandopenproblems,
-  title   = "Evidence Reviewers Trust, and Open Problems",
-  author  = "Chakma, Chandak",
-  journal = "chandakchakma.github.io",
-  year    = "2026",
-  month   = "Nov",
-  url     = "https://chandakchakma.github.io/notes/evidence-and-open-problems.html"
+<details class="cite"><summary>Cite this part</summary>
+<p>Chakma, Chandak. What Counts as Evidence? Benchmark Noise and Open Problems. Part 9 of <em>Foundations of Self-Play for LLM Reasoning</em>, November 2026. <a href="https://chandakchakma.github.io/notes/evidence-and-open-problems.html">https://chandakchakma.github.io/notes/evidence-and-open-problems.html</a></p>
+<pre><code>@misc{chakma2026evidenceandopenproblems,
+  author = {Chakma, Chandak},
+  title  = {What Counts as Evidence? Benchmark Noise and Open Problems},
+  note   = {Part 9 of Foundations of Self-Play for LLM Reasoning},
+  year   = {2026},
+  month  = nov,
+  url    = {https://chandakchakma.github.io/notes/evidence-and-open-problems.html}
 }</code></pre>
+</details>
 
 </div>
-<nav class="paginav"><a class="prev" href="collapse-and-weak-to-strong.html"><span class="title">&laquo; Prev</span><br><span>Model Collapse and Weak-to-Strong Generalization</span></a><a class="next" href="formula-sheet.html"><span class="title">Next &raquo;</span><br><span>A One-Page Formula Sheet for Self-Play</span></a></nav>
+<nav class="paginav" aria-label="Other parts"><a class="prev" href="collapse-and-weak-to-strong.html"><span class="title">&larr; Part 8</span><span class="name">Model Collapse and Weak-to-Strong Generalization</span></a><a class="next" href="formula-sheet.html"><span class="title">Part 10 &rarr;</span><span class="name">A One-Page Formula Sheet for Self-Play</span></a></nav>
 </article>
 </main>
-<footer class="footer">&copy; 2026 <a href="../index.html">Chandak Chakma</a></footer>
+<footer class="footer">&copy; 2026 <a href="../index.html">Chandak Chakma</a><span class="dot">&middot;</span>Found an error? <a href="mailto:chandakchakma2398@gmail.com?subject=Notes%3A%20What%20Counts%20as%20Evidence%3F%20Benchmark%20Noise%20and%20Open%20Problems">Email me</a>.</footer>
 </body>
 </html>

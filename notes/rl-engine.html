@@ -15,7 +15,7 @@
 <meta property="og:url" content="https://chandakchakma.github.io/notes/rl-engine.html">
 <meta property="og:image" content="https://chandakchakma.github.io/images/chandak_photo6.jpg">
 <meta name="twitter:card" content="summary">
-<link rel="stylesheet" href="../blog.css?v=20261106155635">
+<link rel="stylesheet" href="../blog.css?v=20261121034306">
 <script>
   MathJax = { tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
               options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
@@ -35,28 +35,27 @@
   </nav>
 </header>
 <main class="main">
-<article class="post-single">
+<article class="post-single" id="top">
 <header class="post-header">
-  <div class="breadcrumbs"><a href="../index.html">Home</a>&nbsp;&raquo;&nbsp;<a href="../index.html#notes">Notes</a></div>
+  <div class="kicker"><a href="../index.html#notes">Foundations of Self-Play for LLM Reasoning</a><span class="sep">/</span>Part&nbsp;1&nbsp;of&nbsp;10</div>
   <h1 class="post-title">The RL Engine Behind LLM Reasoning</h1>
-  <div class="post-meta">Date: November 6, 2026&nbsp; | &nbsp;Estimated Reading Time: 10 min&nbsp; | &nbsp;Author: Chandak Chakma</div>
   <p class="lede">Every method for training LLM reasoners, from PPO and GRPO to self-play, estimates the same policy gradient. We derive it, show why a baseline introduces no bias, relate GRPO to RLOO, and examine what PPO clipping and the KL penalty actually control.</p>
+  <div class="byline"><span class="who">Chandak Chakma</span><span class="dot">&middot;</span>November 2026<span class="dot">&middot;</span>10 min read</div>
 </header>
-<p class="series-note">Part 1 of 10 in <a href="../index.html#notes">Foundations of Self-Play for LLM Reasoning</a>. The complete series is also available as a <a href="../data/selfplay-foundations-notes.pdf">single PDF</a>.</p>
-<div class="toc"><details open><summary>Contents</summary><ul>
-<li class="toc-h2"><a href="#s1">1 LLM generation as reinforcement learning</a></li>
-<li class="toc-h2"><a href="#s2">2 The policy gradient</a></li>
-<li class="toc-h2"><a href="#s3">3 Baselines and advantages</a></li>
-<li class="toc-h2"><a href="#s4">4 Group-relative advantages: GRPO and RLOO</a></li>
-<li class="toc-h2"><a href="#s5">5 Trust regions: PPO clipping and the KL penalty</a></li>
-<li class="toc-h2"><a href="#exercises">Exercises</a></li>
-<li class="toc-h2"><a href="#references">References</a></li>
-</ul></details></div>
+<nav class="toc" aria-label="Contents"><details open><summary>Contents</summary><ul>
+<li class="toc-h2"><a href="#s1"><span class="secnum">1.1</span><span class="toc-t">LLM generation as reinforcement learning</span></a></li>
+<li class="toc-h2"><a href="#s2"><span class="secnum">1.2</span><span class="toc-t">The policy gradient</span></a></li>
+<li class="toc-h2"><a href="#s3"><span class="secnum">1.3</span><span class="toc-t">Baselines and advantages</span></a></li>
+<li class="toc-h2"><a href="#s4"><span class="secnum">1.4</span><span class="toc-t">Group-relative advantages: GRPO and RLOO</span></a></li>
+<li class="toc-h2"><a href="#s5"><span class="secnum">1.5</span><span class="toc-t">Trust regions: PPO clipping and the KL penalty</span></a></li>
+<li class="toc-h2"><a href="#exercises"><span class="secnum"></span><span class="toc-t">Exercises</span></a></li>
+<li class="toc-h2"><a href="#references"><span class="secnum"></span><span class="toc-t">References</span></a></li>
+</ul></details></nav>
 
 <div class="post-content">
 <p>This series develops the theory behind Challenger&ndash;Solver self-play, in which a single model writes its own problems, solves them, and evaluates its own answers. Each topic is presented with a definition, a short derivation, a worked numerical example, and its implications for self-play.</p>
-<figure><img src="img/fig-1.svg?v=20261106155635" alt="Figure 1" loading="lazy"><figcaption><span class="fig-label">Figure 1.</span> The seven parts of the series and how they build on one another.</figcaption></figure>
-<div class="box box-def"><div class="box-title"><span class="box-label">Notation</span><span class="box-name">used in this series</span></div><div class="box-body">
+<figure><img src="img/fig-1.svg?v=20261121034306" alt="Figure 1" loading="lazy"><figcaption><span class="fig-label">Figure 1.</span> The seven themes of the series and how they build on one another.</figcaption></figure>
+<div class="box box-def box-notation"><div class="box-title"><span class="box-label">Notation</span><span class="box-name">Used in this series</span></div><div class="box-body">
 <div class="table-wrap"><table>
 <tbody>
 <tr>
@@ -98,37 +97,37 @@
 </tbody>
 </table></div>
 </div></div>
-<h2 class="unnumbered" id="s1"><span class="secnum">1</span> LLM generation as reinforcement learning</h2>
+<h2 class="unnumbered" id="s1"><span class="secnum">1.1</span> LLM generation as reinforcement learning<a class="anchor" href="#s1" aria-label="Link to this section">#</a></h2>
 <p>We treat a problem <span class="math inline">\(x\)</span> as the state and the complete response <span class="math inline">\(y\)</span> as a single action. A verifier (or, in self-play, a pseudo-label) assigns one scalar reward at the end of the response. This <em>bandit view</em> is the formulation adopted by GRPO, R-Zero and SOAR. The policy factorizes over tokens: <span class="math display">\[\begin{gathered}\pi_\theta(y\mid x)=\prod_{t=1}^{|y|}\pi_\theta(y_t\mid x,y_{&lt;t}), \\[4pt] J(\theta)=\mathbb{E}_{x\sim\mathcal D}\,\mathbb{E}_{y\sim\pi_\theta(\cdot\mid x)}\big[R(x,y)\big].\end{gathered}\]</span> With a binary reward, <span class="math inline">\(J(\theta)=\mathbb{E}_x[p_\theta(x)]\)</span>, so training maximizes the success probability averaged over problems.</p>
-<h2 class="unnumbered" id="s2"><span class="secnum">2</span> The policy gradient</h2>
-<div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">the log-derivative trick</span></div><div class="box-body">
+<h2 class="unnumbered" id="s2"><span class="secnum">1.2</span> The policy gradient<a class="anchor" href="#s2" aria-label="Link to this section">#</a></h2>
+<div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">The log-derivative trick</span></div><div class="box-body">
 <p><span class="math display">\[\begin{gathered}\nabla_\theta J(\theta)=\mathbb{E}_{x,\;y\sim\pi_\theta}\Big[R(x,y)\,\nabla_\theta\log\pi_\theta(y\mid x)\Big], \\[4pt] \nabla_\theta\log\pi_\theta(y\mid x)=\sum_{t}\nabla_\theta\log\pi_\theta(y_t\mid x,y_{&lt;t}).\end{gathered}\]</span></p>
 </div></div>
 <p><strong>Derivation.</strong> For a fixed <span class="math inline">\(x\)</span>, <span class="math display">\[\nabla_\theta\sum_y \pi_\theta(y\mid x)R(x,y)=\sum_y \pi_\theta(y\mid x)\,R(x,y)\,\frac{\nabla_\theta\pi_\theta(y\mid x)}{\pi_\theta(y\mid x)}=\mathbb{E}_{y\sim\pi_\theta}\!\big[R\,\nabla_\theta\log\pi_\theta(y\mid x)\big].\]</span> Because the result is an expectation under the policy, it can be estimated from samples, and the intractable sum over all possible responses never has to be computed.</p>
 <div class="box box-why"><div class="box-title"><span class="box-label">Why it matters</span></div><div class="box-body">
 <p>Every method discussed in these notes (PPO, GRPO, RLOO, R-Zero, Absolute Zero, SOAR) estimates this same expectation. The methods differ only in how they weight each sample and in the source of the reward <span class="math inline">\(R\)</span>.</p>
 </div></div>
-<h2 class="unnumbered" id="s3"><span class="secnum">3</span> Baselines and advantages</h2>
-<div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">baselines introduce no bias</span></div><div class="box-body">
+<h2 class="unnumbered" id="s3"><span class="secnum">1.3</span> Baselines and advantages<a class="anchor" href="#s3" aria-label="Link to this section">#</a></h2>
+<div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">Baselines introduce no bias</span></div><div class="box-body">
 <p>For any baseline <span class="math inline">\(b(x)\)</span> that does not depend on the sampled <span class="math inline">\(y\)</span>, <span class="math display">\[\mathbb{E}_{y\sim\pi_\theta}\big[b(x)\,\nabla_\theta\log\pi_\theta(y\mid x)\big]=b(x)\sum_y\nabla_\theta\pi_\theta(y\mid x)=b(x)\,\nabla_\theta\!\sum_y\pi_\theta(y\mid x)=b(x)\,\nabla_\theta 1=0,\]</span> and therefore <span class="math inline">\(\nabla_\theta J=\mathbb{E}\big[(R-b(x))\,\nabla_\theta\log\pi_\theta\big]\)</span>. The quantity <span class="math inline">\(\hat A=R-b\)</span> is called the <em>advantage</em>. A well-chosen baseline, close to <span class="math inline">\(\mathbb{E}[R\mid x]\)</span>, substantially reduces the variance of the gradient estimate.</p>
 </div></div>
-<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">why the baseline matters</span></div><div class="box-body">
+<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">Why the baseline matters</span></div><div class="box-body">
 <p>Suppose four samples receive rewards <span class="math inline">\((1,1,1,0)\)</span>. Without a baseline, the three correct samples are reinforced with weight <span class="math inline">\(1\)</span>, while the incorrect one receives weight <span class="math inline">\(0\)</span> and is therefore never penalized. With <span class="math inline">\(b=0.75\)</span>, the weights become <span class="math inline">\((+0.25,+0.25,+0.25,-0.75)\)</span>. The single failure now carries the largest signal, which is the desired behavior on an easy problem.</p>
 </div></div>
 <div class="box box-pit"><div class="box-title"><span class="box-label">Pitfall</span></div><div class="box-body">
 <p>A baseline that incorporates the sample’s <em>own</em> reward, such as a group mean that includes <span class="math inline">\(R_i\)</span>, is no longer independent of <span class="math inline">\(y_i\)</span>. The leave-one-out baseline introduced below resolves this issue.</p>
 </div></div>
-<h2 class="unnumbered" id="s4"><span class="secnum">4</span> Group-relative advantages: GRPO and RLOO</h2>
+<h2 class="unnumbered" id="s4"><span class="secnum">1.4</span> Group-relative advantages: GRPO and RLOO<a class="anchor" href="#s4" aria-label="Link to this section">#</a></h2>
 <div class="box box-def"><div class="box-title"><span class="box-label">Definition</span><span class="box-name">GRPO (Shao et al., 2024)</span></div><div class="box-body">
-<p>For each problem, <span class="math inline">\(G\)</span> responses are sampled. The advantage of response <span class="math inline">\(i\)</span>, which is shared by all of its tokens, is <span class="math display">\[\hat A_i=\frac{R_i-\operatorname{mean}(R_1,\dots,R_G)}{\operatorname{std}(R_1,\dots,R_G)+\epsilon_{\mathrm{std}}} .\]</span> The objective combines a PPO-style clipped ratio (Section <a href="#s5">5</a>) with a KL penalty toward <span class="math inline">\(\pi_{\mathrm{ref}}\)</span>: <span class="math display">\[\mathcal J_{\mathrm{GRPO}}=\mathbb{E}\Bigg[\frac1G\sum_{i=1}^G\frac1{|y_i|}\sum_{t}\min\!\Big(\rho_{i,t}\hat A_i,\ \operatorname{clip}(\rho_{i,t},1-\varepsilon,1+\varepsilon)\hat A_i\Big)\Bigg]-\beta\,D_{\mathrm{KL}}(\pi_\theta\,\|\,\pi_{\mathrm{ref}}).\]</span></p>
+<p>For each problem, <span class="math inline">\(G\)</span> responses are sampled. The advantage of response <span class="math inline">\(i\)</span>, which is shared by all of its tokens, is <span class="math display">\[\hat A_i=\frac{R_i-\operatorname{mean}(R_1,\dots,R_G)}{\operatorname{std}(R_1,\dots,R_G)+\epsilon_{\mathrm{std}}} .\]</span> The objective combines a PPO-style clipped ratio (Section <a href="#s5">1.5</a>) with a KL penalty toward <span class="math inline">\(\pi_{\mathrm{ref}}\)</span>: <span class="math display">\[\mathcal J_{\mathrm{GRPO}}=\mathbb{E}\Bigg[\frac1G\sum_{i=1}^G\frac1{|y_i|}\sum_{t}\min\!\Big(\rho_{i,t}\hat A_i,\ \operatorname{clip}(\rho_{i,t},1-\varepsilon,1+\varepsilon)\hat A_i\Big)\Bigg]-\beta\,D_{\mathrm{KL}}(\pi_\theta\,\|\,\pi_{\mathrm{ref}}).\]</span></p>
 </div></div>
 <div class="box box-def"><div class="box-title"><span class="box-label">Definition</span><span class="box-name">RLOO (Ahmadian et al., 2024)</span></div><div class="box-body">
 <p><span class="math display">\[\hat A_i=R_i-\frac{1}{G-1}\sum_{j\neq i}R_j .\]</span> The baseline is computed from the <em>other</em> samples only; it is therefore independent of <span class="math inline">\(y_i\)</span>, and the resulting estimator is unbiased.</p>
 </div></div>
-<div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">the two are nearly equivalent</span></div><div class="box-body">
+<div class="box box-key"><div class="box-title"><span class="box-label">Key result</span><span class="box-name">The two are nearly equivalent</span></div><div class="box-body">
 <p><span class="math inline">\(\displaystyle R_i-\frac{1}{G-1}\sum_{j\neq i}R_j=\frac{G R_i-\sum_j R_j}{G-1}=\frac{G}{G-1}\Big(R_i-\operatorname{mean}_j R_j\Big).\)</span> Mean-centering therefore equals the RLOO advantage scaled by the constant <span class="math inline">\((G-1)/G\)</span>: the gradient direction remains unbiased, and only its scale changes. The substantive difference in GRPO is the division by the standard deviation.</p>
 </div></div>
-<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">one success in four</span></div><div class="box-body">
+<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">One success in four</span></div><div class="box-body">
 <p>Consider rewards <span class="math inline">\((1,0,0,0)\)</span>, with mean <span class="math inline">\(0.25\)</span> and standard deviation <span class="math inline">\(\sqrt{0.25\cdot0.75}=0.433\)</span>. GRPO gives <span class="math inline">\(\hat A=(+1.73,\,-0.58,\,-0.58,\,-0.58)\)</span>. RLOO gives <span class="math inline">\(\hat A=(1-0,\ 0-\tfrac13,\ 0-\tfrac13,\ 0-\tfrac13)=(+1,\,-0.33,\,-0.33,\,-0.33)\)</span>, which is exactly <span class="math inline">\(\tfrac43\times(0.75,-0.25,-0.25,-0.25)\)</span>.</p>
 </div></div>
 <div class="box box-pit"><div class="box-title"><span class="box-label">Pitfall</span></div><div class="box-body">
@@ -139,49 +138,49 @@
 <li><p>The factor <span class="math inline">\(1/|y_i|\)</span> reduces the per-token penalty on long incorrect responses, so the policy drifts toward longer incorrect answers. Dr. GRPO removes both normalizations (Liu et al., 2025).</p></li>
 </ul>
 </div></div>
-<h2 class="unnumbered" id="s5"><span class="secnum">5</span> Trust regions: PPO clipping and the KL penalty</h2>
-<div class="box box-def"><div class="box-title"><span class="box-label">Definition</span><span class="box-name">the clipped surrogate (Schulman et al., 2017)</span></div><div class="box-body">
+<h2 class="unnumbered" id="s5"><span class="secnum">1.5</span> Trust regions: PPO clipping and the KL penalty<a class="anchor" href="#s5" aria-label="Link to this section">#</a></h2>
+<div class="box box-def"><div class="box-title"><span class="box-label">Definition</span><span class="box-name">The clipped surrogate (Schulman et al., 2017)</span></div><div class="box-body">
 <p>Given the per-token probability ratio <span class="math inline">\(\rho_t=\pi_\theta(y_t\mid x,y_{&lt;t})/\pi_{\mathrm{old}}(y_t\mid x,y_{&lt;t})\)</span>, the clipped surrogate objective is <span class="math display">\[L^{\mathrm{CLIP}}=\mathbb{E}\Big[\min\big(\rho_t\hat A,\ \operatorname{clip}(\rho_t,1-\varepsilon,1+\varepsilon)\,\hat A\big)\Big].\]</span></p>
 </div></div>
-<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">the effect of clipping</span></div><div class="box-body">
+<div class="box box-ex"><div class="box-title"><span class="box-label">Example</span><span class="box-name">The effect of clipping</span></div><div class="box-body">
 <p>Let <span class="math inline">\(\varepsilon=0.2\)</span>. If <span class="math inline">\(\hat A=+1\)</span> and a token’s probability has already increased by <span class="math inline">\(30\%\)</span> (<span class="math inline">\(\rho=1.3\)</span>), then <span class="math inline">\(\min(1.3,1.2)=1.2\)</span> is a constant; the gradient vanishes, and the update no longer raises that token’s probability. Similarly, if <span class="math inline">\(\hat A=-1\)</span> and <span class="math inline">\(\rho=0.7\)</span>, then <span class="math inline">\(\min(-0.7,-0.8)=-0.8\)</span>, which is again constant. Clipping thus confines each update to a small trust region around <span class="math inline">\(\pi_{\mathrm{old}}\)</span>.</p>
 </div></div>
 <p><strong>The KL term.</strong> GRPO estimates <span class="math inline">\(D_{\mathrm{KL}}(\pi_\theta\|\pi_{\mathrm{ref}})\)</span> at each token with the estimator <span class="math inline">\(k_3=r-1-\log r\)</span>, where <span class="math inline">\(r=\pi_{\mathrm{ref}}/\pi_\theta\)</span> and the token is sampled from <span class="math inline">\(\pi_\theta\)</span>. Since <span class="math inline">\(\mathbb{E}_{\pi_\theta}[r]=1\)</span>, it follows that <span class="math inline">\(\mathbb{E}[k_3]=\mathbb{E}[-\log r]=D_{\mathrm{KL}}(\pi_\theta\|\pi_{\mathrm{ref}})\)</span>; the estimator is therefore unbiased, and each individual estimate is non-negative.</p>
 <div class="box box-why"><div class="box-title"><span class="box-label">Why it matters</span></div><div class="box-body">
-<p>R-Zero retains a KL anchor (<span class="math inline">\(\beta=0.01\)</span>), whereas Absolute Zero removes it. The anchor slows drift and collapse, but it also ties the policy to the base model, which is precisely what self-play aims to surpass (Section <a href="what-rl-can-do.html#s6">6</a>). Whether to anchor is therefore a substantive design decision rather than an implementation detail.</p>
+<p>R-Zero retains a KL anchor (<span class="math inline">\(\beta=0.01\)</span>), whereas Absolute Zero removes it. The anchor slows drift and collapse, but it also ties the policy to the base model, which is precisely what self-play aims to surpass (Section <a href="what-rl-can-do.html#s6">2.1</a>). Whether to anchor is therefore a substantive design decision rather than an implementation detail.</p>
 </div></div>
-<h2 id="exercises">Exercises</h2>
-<div class="exercise"><p><strong>Exercise 1.</strong> Compute the GRPO advantages for rewards <span class="math inline">\((1,1,1,0)\)</span>. Which sample receives the largest weight, and why is this desirable?</p><details><summary>Show solution</summary><p>The mean is <span class="math inline">\(0.75\)</span> and the standard deviation is <span class="math inline">\(0.433\)</span>, so the correct samples receive <span class="math inline">\(+0.577\)</span> and the incorrect one receives <span class="math inline">\(-1.732\)</span>. On an easy problem, the rare failure is the most informative sample.</p></details></div>
-<div class="exercise"><p><strong>Exercise 2.</strong> Show that GRPO without the standard-deviation normalization equals RLOO up to a constant factor. What is this factor for <span class="math inline">\(G=8\)</span>?</p><details><summary>Show solution</summary><p>Without the division, <span class="math inline">\(\hat A_i=R_i-\operatorname{mean}R=\frac{G-1}{G}\times\text{RLOO}_i\)</span>. For <span class="math inline">\(G=8\)</span>, the factor is <span class="math inline">\(7/8\)</span>.</p></details></div>
+<h2 id="exercises">Exercises<a class="anchor" href="#exercises" aria-label="Link to this section">#</a></h2>
+<div class="exercise"><p><strong>Exercise 1.</strong> Compute the GRPO advantages for rewards <span class="math inline">\((1,1,1,0)\)</span>. Which sample receives the largest weight, and why is this desirable?</p><details><summary>Show solution</summary><div class="solution"><p>The mean is <span class="math inline">\(0.75\)</span> and the standard deviation is <span class="math inline">\(0.433\)</span>, so the correct samples receive <span class="math inline">\(+0.577\)</span> and the incorrect one receives <span class="math inline">\(-1.732\)</span>. On an easy problem, the rare failure is the most informative sample.</p></div></details></div>
+<div class="exercise"><p><strong>Exercise 2.</strong> Show that GRPO without the standard-deviation normalization equals RLOO up to a constant factor. What is this factor for <span class="math inline">\(G=8\)</span>?</p><details><summary>Show solution</summary><div class="solution"><p>Without the division, <span class="math inline">\(\hat A_i=R_i-\operatorname{mean}R=\frac{G-1}{G}\times\text{RLOO}_i\)</span>. For <span class="math inline">\(G=8\)</span>, the factor is <span class="math inline">\(7/8\)</span>.</p></div></details></div>
 
-<h2 id="references">References</h2>
-<ul class="refs">
-<li>J. Schulman et al. Proximal Policy Optimization Algorithms. arXiv:1707.06347, 2017.</li>
-<li>Z. Shao et al. DeepSeekMath (introduces GRPO). arXiv:2402.03300, 2024.</li>
-<li>A. Ahmadian et al. Back to Basics: Revisiting REINFORCE Style Optimization for Learning from Human Feedback in LLMs (RLOO). arXiv:2402.14740, 2024.</li>
-<li>Q. Yu et al. DAPO: An Open-Source LLM Reinforcement Learning System at Scale. arXiv:2503.14476, 2025.</li>
-<li>Z. Liu et al. Understanding R1-Zero-Like Training: A Critical Perspective (Dr. GRPO). arXiv:2503.20783, 2025.</li>
-<li>A. Zhao et al. Absolute Zero: Reinforced Self-play Reasoning with Zero Data. arXiv:2505.03335, 2025.</li>
-<li>C. Huang et al. R-Zero: Self-Evolving Reasoning LLM from Zero Data. arXiv:2508.05004, 2025.</li>
-<li>S. Sundaram, J. Kempe and Y. Ollivier. Teaching Models to Teach Themselves: Reasoning at the Edge of Learnability (SOAR). arXiv:2601.18778, ICML 2026.</li>
-</ul>
+<h2 id="references">References<a class="anchor" href="#references" aria-label="Link to this section">#</a></h2>
+<ol class="refs">
+<li id="ref-1">J. Schulman et al. Proximal Policy Optimization Algorithms. <a href="https://arxiv.org/abs/1707.06347">arXiv:1707.06347</a>, 2017.</li>
+<li id="ref-2">Z. Shao et al. DeepSeekMath (introduces GRPO). <a href="https://arxiv.org/abs/2402.03300">arXiv:2402.03300</a>, 2024.</li>
+<li id="ref-3">A. Ahmadian et al. Back to Basics: Revisiting REINFORCE Style Optimization for Learning from Human Feedback in LLMs (RLOO). <a href="https://arxiv.org/abs/2402.14740">arXiv:2402.14740</a>, 2024.</li>
+<li id="ref-4">Q. Yu et al. DAPO: An Open-Source LLM Reinforcement Learning System at Scale. <a href="https://arxiv.org/abs/2503.14476">arXiv:2503.14476</a>, 2025.</li>
+<li id="ref-5">Z. Liu et al. Understanding R1-Zero-Like Training: A Critical Perspective (Dr. GRPO). <a href="https://arxiv.org/abs/2503.20783">arXiv:2503.20783</a>, 2025.</li>
+<li id="ref-6">A. Zhao et al. Absolute Zero: Reinforced Self-play Reasoning with Zero Data. <a href="https://arxiv.org/abs/2505.03335">arXiv:2505.03335</a>, 2025.</li>
+<li id="ref-7">C. Huang et al. R-Zero: Self-Evolving Reasoning LLM from Zero Data. <a href="https://arxiv.org/abs/2508.05004">arXiv:2508.05004</a>, 2025.</li>
+<li id="ref-8">S. Sundaram, J. Kempe and Y. Ollivier. Teaching Models to Teach Themselves: Reasoning at the Edge of Learnability (SOAR). <a href="https://arxiv.org/abs/2601.18778">arXiv:2601.18778</a>, ICML 2026.</li>
+</ol>
 
-<h2 id="citation">Citation</h2>
-<p>Cited as:</p>
-<blockquote>Chakma, Chandak. (Nov 2026). The RL Engine Behind LLM Reasoning. Chandak&rsquo;s Notes. https://chandakchakma.github.io/notes/rl-engine.html</blockquote>
-<pre><code>@article{chakma2026rlengine,
-  title   = "The RL Engine Behind LLM Reasoning",
-  author  = "Chakma, Chandak",
-  journal = "chandakchakma.github.io",
-  year    = "2026",
-  month   = "Nov",
-  url     = "https://chandakchakma.github.io/notes/rl-engine.html"
+<details class="cite"><summary>Cite this part</summary>
+<p>Chakma, Chandak. The RL Engine Behind LLM Reasoning. Part 1 of <em>Foundations of Self-Play for LLM Reasoning</em>, November 2026. <a href="https://chandakchakma.github.io/notes/rl-engine.html">https://chandakchakma.github.io/notes/rl-engine.html</a></p>
+<pre><code>@misc{chakma2026rlengine,
+  author = {Chakma, Chandak},
+  title  = {The RL Engine Behind LLM Reasoning},
+  note   = {Part 1 of Foundations of Self-Play for LLM Reasoning},
+  year   = {2026},
+  month  = nov,
+  url    = {https://chandakchakma.github.io/notes/rl-engine.html}
 }</code></pre>
+</details>
 
 </div>
-<nav class="paginav"><span></span><a class="next" href="what-rl-can-do.html"><span class="title">Next &raquo;</span><br><span>What RL Can and Cannot Do: Sharpening, pass@k and Entropy</span></a></nav>
+<nav class="paginav" aria-label="Other parts"><span></span><a class="next" href="what-rl-can-do.html"><span class="title">Part 2 &rarr;</span><span class="name">What RL Can and Cannot Do: Sharpening, pass@k and Entropy</span></a></nav>
 </article>
 </main>
-<footer class="footer">&copy; 2026 <a href="../index.html">Chandak Chakma</a></footer>
+<footer class="footer">&copy; 2026 <a href="../index.html">Chandak Chakma</a><span class="dot">&middot;</span>Found an error? <a href="mailto:chandakchakma2398@gmail.com?subject=Notes%3A%20The%20RL%20Engine%20Behind%20LLM%20Reasoning">Email me</a>.</footer>
 </body>
 </html>
