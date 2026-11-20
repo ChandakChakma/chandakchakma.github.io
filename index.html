@@ -54,7 +54,7 @@
                   In RL with verifiable rewards, my work showed that which prompts count as &ldquo;unlearnable&rdquo; depends heavily on how difficulty is measured
                   (<a href="https://arxiv.org/abs/2609.40115">NeurIPS 2026 workshop</a>).
                   For video world models, it showed that best-of-<i>K</i>, a common way to score one-pass models, can rank the worse model first
-                  (under review at CVPR 2027).
+                  (under review).
                   I have also co-authored work on planning with latent world models and on surgical video generation.
                 </p>
                 <p class="justify">
@@ -122,7 +122,7 @@
               </td>
             </tr>
 
-            <!-- Paper 2: CVPR 2027 submission (under review) -->
+            <!-- Paper 2: under review -->
             <tr class="paper-row">
               <td style="padding:16px;width:30%;vertical-align:middle">
                 <img src="images/paper_oracle_sq.png" width="100%" alt="Kinetics and KITTI examples: true future next to per-patch maps of where the truth falls outside all samples, for DeltaWorld and ALE-WI (ours)">
@@ -137,7 +137,7 @@
                 Md&nbsp;Mehedi&nbsp;Hasan,
                 <a href="https://scholar.google.com/citations?user=9IRPbVkAAAAJ&amp;hl=en">Shifat E. Arman</a>
                 <br>
-                <em>Under review at CVPR</em>, 2027
+                <em>Under review</em>, 2026
                 <br>
                 <!-- TODO: replace with the arXiv link once posted; add the project page -->
                 <span style="color:#888">project page</span> / <span style="color:#888">arXiv</span> <span style="color:#888">(coming soon)</span>
@@ -148,7 +148,91 @@
               </td>
             </tr>
 
-            <!-- Paper 3: IROS 2026 workshop -->
+            <!-- Paper 3: under review, co-author -->
+            <tr class="paper-row">
+              <td style="padding:16px;width:30%;vertical-align:middle">
+                <img src="images/paper_graphanchors_sq.png" width="100%" alt="Two maze panels: LeWM aims at a distant goal and loses its way (13% success); Graph Anchors follow nearby anchors along a graph route and reach the goal (85%)">
+              </td>
+              <td style="padding:8px;width:70%;vertical-align:middle">
+                <span class="papertitle">Long-Horizon Planning with Latent World Models via Graph Anchors</span>
+                <br>
+                <a href="https://scholar.google.com/citations?user=4j76UvsAAAAJ&amp;hl=en">Syed Nazmus Sakib</a>,
+                Abdul&nbsp;Monaf&nbsp;Chowdhury,
+                Peizhen&nbsp;Li,
+                <a href="https://scholar.google.com/citations?user=qDV_nhQAAAAJ&amp;hl=en">Nafiul Haque</a>,
+                <strong>Chandak&nbsp;Chakma</strong>,
+                Md&nbsp;Mehedi&nbsp;Hasan,
+                Zehong&nbsp;Cao,
+                <a href="https://scholar.google.com/citations?user=9IRPbVkAAAAJ&amp;hl=en">Shifat E. Arman</a>
+                <br>
+                <em>Under review</em>, 2026
+                <br>
+                <!-- TODO: replace with the arXiv link once posted; add the project page -->
+                <span style="color:#888">project page</span> / <span style="color:#888">arXiv</span> <span style="color:#888">(coming soon)</span>
+                <p></p>
+                <p class="justify">
+                  Latent world-model planners judge a plan by its latent distance to the goal image, which fails for distant goals and at contact. Graph Anchors, a training-free planner for frozen world models, aims each planning step at a nearby node on a graph of the model's own training data, raising LeWM's success at 200 steps on PointMaze-Medium from 13% to 85%.
+                </p>
+              </td>
+            </tr>
+
+            <!-- Paper 4: under review, co-author -->
+            <tr class="paper-row">
+              <td style="padding:16px;width:30%;vertical-align:middle">
+                <img src="images/paper_colap_sq.png" width="100%" alt="The mean trap: a plan that crosses the ice can fall through, the world model predicts the mean of the outcomes, and CoLaP plans a path around the ice">
+              </td>
+              <td style="padding:8px;width:70%;vertical-align:middle">
+                <span class="papertitle">Contingency Planning with Latent World Models under Irreversible Outcomes</span>
+                <br>
+                Abdul&nbsp;Monaf&nbsp;Chowdhury,
+                <a href="https://scholar.google.com/citations?user=4j76UvsAAAAJ&amp;hl=en">Syed Nazmus Sakib</a>,
+                Ahanaf&nbsp;Hasan&nbsp;Ariq,
+                <strong>Chandak&nbsp;Chakma</strong>,
+                <a href="https://scholar.google.com/citations?user=qDV_nhQAAAAJ&amp;hl=en">Nafiul Haque</a>,
+                <a href="https://scholar.google.com/citations?user=9IRPbVkAAAAJ&amp;hl=en">Shifat E. Arman</a>,
+                Md&nbsp;Mehedi&nbsp;Hasan
+                <br>
+                <em>Under review</em>, 2026
+                <br>
+                <!-- TODO: replace with the arXiv link once posted; add the project page -->
+                <span style="color:#888">project page</span> / <span style="color:#888">arXiv</span> <span style="color:#888">(coming soon)</span>
+                <p></p>
+                <p class="justify">
+                  Latent world-model planners score a plan by one deterministic rollout, which hides irreversible outcomes when the environment is stochastic. CoLaP keeps the world model frozen, samples several futures for each plan, scores them with a learned asymmetric time-to-goal, and lets the plan branch on what the agent will observe; it achieves the highest average success rate on nine stochastic tasks.
+                </p>
+              </td>
+            </tr>
+
+            <!-- Paper 5: under review, co-author -->
+            <tr class="paper-row">
+              <td style="padding:16px;width:30%;vertical-align:middle">
+                <img src="images/paper_whatifsurg_sq.jpg" width="100%" alt="Two laparoscopic scenes, each shown as the real clip with scissors and as the What-IF-Surg result with a hook or a clip applier in place of the scissors">
+              </td>
+              <td style="padding:8px;width:70%;vertical-align:middle">
+                <span class="papertitle">What-IF-Surg: Generating Counterfactual Tool-Tissue Interaction in Laparoscopic Surgery</span>
+                <br>
+                <a href="https://scholar.google.com/citations?user=qDV_nhQAAAAJ&amp;hl=en">Nafiul Haque</a>,
+                <a href="https://scholar.google.com/citations?user=4j76UvsAAAAJ&amp;hl=en">Syed Nazmus Sakib</a>,
+                Abdul&nbsp;Monaf&nbsp;Chowdhury,
+                <strong>Chandak&nbsp;Chakma</strong>,
+                Peizhen&nbsp;Li,
+                Shamim&nbsp;Ahmed&nbsp;Deowan,
+                Md&nbsp;Mehedi&nbsp;Hasan,
+                Zehong&nbsp;Cao,
+                <a href="https://scholar.google.com/citations?user=9IRPbVkAAAAJ&amp;hl=en">Shifat E. Arman</a>
+                <br>
+                <em>Under review</em>, 2026
+                <br>
+                <!-- TODO: replace with the arXiv link once posted; add the project page -->
+                <span style="color:#888">project page</span> / <span style="color:#888">arXiv</span> <span style="color:#888">(coming soon)</span>
+                <p></p>
+                <p class="justify">
+                  What-IF-Surg re-imagines a real laparoscopic scene with a different instrument performing the same motion, together with the tissue response of that instrument (a clip, a cut or a burn). Its two-stage video diffusion model controls the instrument, its motion and its tissue effect separately; in instrument swaps, the requested instrument is recognised in 65% of frames, against at most 41% for current video generators.
+                </p>
+              </td>
+            </tr>
+
+            <!-- Paper 6: IROS 2026 workshop -->
             <tr class="paper-row">
               <td style="padding:16px;width:30%;vertical-align:middle">
                 <img src="images/paper_rover_sq.jpg" width="100%" alt="A six-wheeled rover buried in simulated granular regolith">
