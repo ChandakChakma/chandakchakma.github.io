@@ -234,3 +234,22 @@ p.justify {
   -webkit-hyphens: auto;
   hyphens: auto;
 }
+.visitor-map {
+  width: 100%;
+  margin-top: 10px;
+  line-height: 0;
+}
+.visitor-map img,
+.visitor-map canvas,
+.visitor-map iframe {
+  max-width: 100%;
+}
+p.visitor-foot {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin: 10px 0 0 0;
+  font-size: 14px;
+  color: #8a8a8a;
+}
