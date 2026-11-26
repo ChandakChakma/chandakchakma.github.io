@@ -289,55 +289,45 @@
                   <a class="note-row" href="notes/rl-engine.html">
                     <span class="note-num">1</span>
                     <span class="note-main"><span class="note-title">The RL Engine Behind LLM Reasoning</span><span class="note-desc">PPO, GRPO and self-play all estimate the same policy gradient. They differ only in how they weight each sample and in where the reward comes from.</span></span>
-                    <span class="note-time">10 min</span>
                   </a>
                   <a class="note-row" href="notes/what-rl-can-do.html">
                     <span class="note-num">2</span>
                     <span class="note-main"><span class="note-title">What RL Can and Cannot Do: Sharpening, pass@k and Entropy</span><span class="note-desc">The KL-regularized optimum only re-weights answers the base model already produces, which is why RL mostly sharpens. Its signature shows in pass@k curves.</span></span>
-                    <span class="note-time">6 min</span>
                   </a>
                   <div class="notes-group">The self-play game</div>
                   <a class="note-row" href="notes/challenger-signals.html">
                     <span class="note-num">3</span>
                     <span class="note-main"><span class="note-title">What Should the Challenger Make? Learnability, Proposer Rewards and Noisy Labels</span><span class="note-desc">Problems at the edge of the Solver’s ability carry the most learning signal, but rewards built from the Solver’s own agreement measure difficulty, not correctness.</span></span>
-                    <span class="note-time">7 min</span>
                   </a>
                   <a class="note-row" href="notes/self-play-as-a-game.html">
                     <span class="note-num">4</span>
                     <span class="note-main"><span class="note-title">Self-Play as a Game: Cycling, Expert Iteration and STaR</span><span class="note-desc">Simultaneous gradient play can spiral away from equilibrium, and a teacher built from search or voting helps only when it is reliably better than the policy it teaches.</span></span>
-                    <span class="note-time">6 min</span>
                   </a>
                   <div class="notes-group">Learning without an answer key</div>
                   <a class="note-row" href="notes/information-limits.html">
                     <span class="note-num">5</span>
                     <span class="note-main"><span class="note-title">Where Can New Knowledge Come From? Data Processing and the Verifier Gap</span><span class="note-desc">A loop with no outside information cannot create knowledge, only concentrate it, and filtering one’s own answers helps only when the check is informative.</span></span>
-                    <span class="note-time">3 min</span>
                   </a>
                   <a class="note-row" href="notes/voting-shared-errors.html">
                     <span class="note-num">6</span>
                     <span class="note-main"><span class="note-title">When Does Voting Find the Truth? Shared Errors in Self-Play</span><span class="note-desc">A vote converges to the model’s most common answer, so it fails on exactly the questions where that answer is wrong, however many samples are drawn.</span></span>
-                    <span class="note-time">21 min</span>
                   </a>
                   <a class="note-row" href="notes/search-and-correctness.html">
                     <span class="note-num">7</span>
                     <span class="note-main"><span class="note-title">Search and Correctness: Finding and Recognizing Rare Answers</span><span class="note-desc">Sampling can find a rare correct answer, but recognizing it requires a check whose false-positive rate lies below the answer’s own frequency.</span></span>
-                    <span class="note-time">21 min</span>
                   </a>
                   <a class="note-row" href="notes/collapse-and-weak-to-strong.html">
                     <span class="note-num">8</span>
                     <span class="note-main"><span class="note-title">Model Collapse and Weak-to-Strong Generalization</span><span class="note-desc">Training only on self-generated data erodes the tails of the distribution, yet labels from a weaker supervisor can still teach a stronger student.</span></span>
-                    <span class="note-time">3 min</span>
                   </a>
                   <div class="notes-group">Evidence and reference</div>
                   <a class="note-row" href="notes/evidence-and-open-problems.html">
                     <span class="note-num">9</span>
                     <span class="note-main"><span class="note-title">What Counts as Evidence? Benchmark Noise and Open Problems</span><span class="note-desc">How large benchmark noise is in practice, a checklist for credible claims, six open problems, and a four-week study plan.</span></span>
-                    <span class="note-time">4 min</span>
                   </a>
                   <a class="note-row" href="notes/formula-sheet.html">
                     <span class="note-num">10</span>
                     <span class="note-main"><span class="note-title">A One-Page Formula Sheet for Self-Play</span><span class="note-desc">Every formula of the series on one page, each linked to the part that derives it.</span></span>
-                    <span class="note-time">2 min</span>
                   </a>
                 </div>
               </td>
