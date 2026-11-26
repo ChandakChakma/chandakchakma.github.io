@@ -6,7 +6,7 @@
     <title>Chandak Chakma</title>
 
     <meta name="author" content="Chandak Chakma">
-    <meta name="description" content="Chandak Chakma. B.Sc. in Robotics and Mechatronics Engineering, University of Dhaka (2026). Research on self-play and RL for LLM reasoning without an answer key, and on video world models. Applying to PhD programs for Fall 2027.">
+    <meta name="description" content="Chandak Chakma. B.Sc. in Robotics and Mechatronics Engineering, University of Dhaka (2026). Research on self-play and RL for LLM reasoning without an answer key, and on video world models. Applying to PhD programs for Fall 2028.">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="only light">
     <link rel="canonical" href="https://chandakchakma.github.io/">
@@ -17,12 +17,12 @@
     <!-- Preview card when the link is shared on LinkedIn, Twitter, Slack, etc. -->
     <meta property="og:type" content="profile">
     <meta property="og:title" content="Chandak Chakma">
-    <meta property="og:description" content="Chandak Chakma. B.Sc. in Robotics and Mechatronics Engineering, University of Dhaka (2026). Research on self-play and RL for LLM reasoning without an answer key, and on video world models. Applying to PhD programs for Fall 2027.">
+    <meta property="og:description" content="Chandak Chakma. B.Sc. in Robotics and Mechatronics Engineering, University of Dhaka (2026). Research on self-play and RL for LLM reasoning without an answer key, and on video world models. Applying to PhD programs for Fall 2028.">
     <meta property="og:url" content="https://chandakchakma.github.io/">
     <meta property="og:image" content="https://chandakchakma.github.io/images/chandak_photo6.jpg">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Chandak Chakma">
-    <meta name="twitter:description" content="Chandak Chakma. B.Sc. in Robotics and Mechatronics Engineering, University of Dhaka (2026). Research on self-play and RL for LLM reasoning without an answer key, and on video world models. Applying to PhD programs for Fall 2027.">
+    <meta name="twitter:description" content="Chandak Chakma. B.Sc. in Robotics and Mechatronics Engineering, University of Dhaka (2026). Research on self-play and RL for LLM reasoning without an answer key, and on video world models. Applying to PhD programs for Fall 2028.">
     <meta name="twitter:image" content="https://chandakchakma.github.io/images/chandak_photo6.jpg">
   </head>
 
@@ -45,10 +45,10 @@
                   I recently completed my B.Sc. in Robotics and Mechatronics Engineering at the
                   <a href="https://www.du.ac.bd/">University of Dhaka</a> (2026), where I did my undergraduate thesis in the Robotics Lab with
                   <a href="https://scholar.google.com/citations?user=j8XhiIEAAAAJ&amp;hl=en">Dr. Sejuti Rahman</a>.
-                  <strong>I am applying to PhD programs for Fall 2027.</strong>
+                  <strong>I am applying to PhD programs for Fall 2028.</strong>
                 </p>
                 <p class="justify">
-                  My research interests are <strong>self-evolving LLM reasoning</strong>, <strong>reinforcement learning for LLMs</strong>,
+                  My research interests are <strong>self-improving LLMs</strong>, <strong>reinforcement learning for LLMs</strong>,
                   and <strong>probabilistic evaluation of world models</strong>.
                   A common thread in my work is whether the signals we use to train and evaluate models measure what we think they measure.
                   In RL with verifiable rewards, my work showed that which prompts count as &ldquo;unlearnable&rdquo; depends heavily on how difficulty is measured
@@ -58,14 +58,14 @@
                   I have also co-authored work on planning with latent world models and on surgical video generation.
                 </p>
                 <p class="justify">
-                  Currently, I study <strong>self-play for LLM reasoning</strong>, where a model writes its own problems and learns to solve them
-                  without human labels or answer checkers. I am building <strong>Valid-Zero</strong>, which asks a fixed off-the-shelf model
-                  whether each new problem is well-posed before rewarding it, using no teacher labels.
-                  I found that this check works better inside the reward than as a filter on the training data,
-                  and that over training the model learns to fool a quick check but not a careful one.
-                  I am now testing a second idea: building harder problems whose answers are known in advance,
+                  Currently, on my own, I study <strong>self-play for LLM reasoning</strong>, where a model writes its own problems and learns to solve them
+                  without human labels or answer checkers. I built <strong>Valid-Zero</strong>, which asks a fixed off-the-shelf model
+                  whether each new problem is well-posed before rewarding it.
+                  The check works better inside the reward than as a filter, but over long training the model learns to fool it.
+                  My second idea builds problems whose answers are known by construction,
                   by hiding a number in a problem the model already solves.
-                  On problems the model finds hard, these answers are correct far more often than a majority vote.
+                  Training only on these problems beat majority-vote labels on hard problems across two seeds,
+                  including problems the model almost never solved before. I am now scaling this to a 4B model.
                   In the long term, I want to build models that <strong>keep learning to reason when no one gives them the answers</strong>.
                 </p>
                 <p style="text-align:center">
