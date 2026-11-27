@@ -59,10 +59,10 @@
                 </p>
                 <p class="justify">
                   Currently, on my own, I study <strong>self-play for LLM reasoning</strong>, where a model writes its own problems and learns to solve them
-                  without human labels or answer checkers. I built <strong>Valid-Zero</strong>, which asks a fixed off-the-shelf model
-                  whether each new problem is well-posed before rewarding it.
+                  without human labels or answer checkers. I am building <strong>GroundZero</strong>, which adds one rule to each side of this loop.
+                  First, it asks a fixed off-the-shelf model whether each new problem is well-posed before rewarding it.
                   The check works better inside the reward than as a filter, but over long training the model learns to fool it.
-                  My second idea builds problems whose answers are known by construction,
+                  Second, it builds problems whose answers are known by construction,
                   by hiding a number in a problem the model already solves.
                   Training only on these problems beat majority-vote labels on hard problems across two seeds,
                   including problems the model almost never solved before. I am now scaling this to a 4B model.
